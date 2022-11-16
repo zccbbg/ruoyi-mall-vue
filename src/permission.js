@@ -22,11 +22,6 @@ router.beforeEach((to, from, next) => {
       //当页面刷新，vuex里面没值，请求重新获取,数据会重新初始化
       if (store.getters.roles.length === 0) {
         isRelogin.show = true
-        store.dispatch("wms/getWarehouseList");
-        store.dispatch("wms/getAreaList");
-        store.dispatch("wms/getRackList");
-        store.dispatch('wms/getSuppliers')
-        store.dispatch('wms/getCustomer')
         // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(() => {
           isRelogin.show = false

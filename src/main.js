@@ -37,20 +37,10 @@ import DictTag from '@/components/DictTag'
 import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
-//wms table组件
-import WmsTable from '@/components/WmsTable'
-
-import WmsSupplierSelect from '@/components/WmsSupplierSelect'
-import WmsCustomerSelect from '@/components/WmsCustomerSelect'
-import KrPrintDesigner from "kr-print-designer";
-import "kr-print-designer/lib/kr-print-designer.css";
 
 import DictRadio from '@/components/DictRadio'
 
 import DictSelect from '@/components/DictSelect'
-
-import WmsWarehouseCascader from '@/components/WmsWarehouseCascader'
-import vuePlugsPrint from '@/utils/vuePlugsPrint'
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
@@ -71,15 +61,9 @@ Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
-Vue.component('WmsTable',WmsTable)
-Vue.component('WmsSupplierSelect',WmsSupplierSelect)
-Vue.component('WmsCustomerSelect',WmsCustomerSelect)
 Vue.component('DictRadio',DictRadio)
 Vue.component('DictSelect',DictSelect)
-Vue.component('WmsWarehouseCascader',WmsWarehouseCascader)
 
-Vue.use(KrPrintDesigner);
-Vue.use(vuePlugsPrint);
 Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)
