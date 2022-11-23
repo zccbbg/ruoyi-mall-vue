@@ -50,48 +50,15 @@
           v-hasPermi="['pms:brand:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['pms:brand:edit']"
-        >修改</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['pms:brand:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['pms:brand:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="pmsBrandList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="NAME" align="center" prop="name" v-if="columns[0].visible"/>
-      <el-table-column label="SORT" align="center" prop="sort" v-if="columns[1].visible"/>
-      <el-table-column label="SHOW_STATUS" align="center" prop="showStatus" v-if="columns[2].visible"/>
-      <el-table-column label="品牌logo" align="center" prop="logo" v-if="columns[3].visible"/>
+      <el-table-column label="NAME" align="center" prop="name" />
+      <el-table-column label="SORT" align="center" prop="sort" />
+      <el-table-column label="SHOW_STATUS" align="center" prop="showStatus" />
+      <el-table-column label="品牌logo" align="center" prop="logo" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -187,12 +154,6 @@ export default {
       // 表单校验
       rules: {
       },
-      columns: [
-            { key: 1, label: "NAME", visible:  true  },
-            { key: 2, label: "SORT", visible:  true  },
-            { key: 3, label: "SHOW_STATUS", visible:  true  },
-            { key: 4, label: "品牌logo", visible:  true  },
-                             ],
     };
   },
   created() {

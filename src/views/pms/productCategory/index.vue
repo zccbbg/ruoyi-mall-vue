@@ -68,50 +68,17 @@
           v-hasPermi="['pms:productCategory:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['pms:productCategory:edit']"
-        >修改</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['pms:productCategory:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['pms:productCategory:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="pmsProductCategoryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="上机分类的编号：0表示一级分类" align="center" prop="parentId" v-if="columns[0].visible"/>
-      <el-table-column label="NAME" align="center" prop="name" v-if="columns[1].visible"/>
-      <el-table-column label="分类级别：0->1级；1->2级" align="center" prop="level" v-if="columns[2].visible"/>
-      <el-table-column label="显示状态：0->不显示；1->显示" align="center" prop="showStatus" v-if="columns[3].visible"/>
-      <el-table-column label="SORT" align="center" prop="sort" v-if="columns[4].visible"/>
-      <el-table-column label="图标" align="center" prop="icon" v-if="columns[5].visible"/>
+      <el-table-column label="上机分类的编号：0表示一级分类" align="center" prop="parentId" />
+      <el-table-column label="NAME" align="center" prop="name" />
+      <el-table-column label="分类级别：0->1级；1->2级" align="center" prop="level" />
+      <el-table-column label="显示状态：0->不显示；1->显示" align="center" prop="showStatus" />
+      <el-table-column label="SORT" align="center" prop="sort" />
+      <el-table-column label="图标" align="center" prop="icon" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -215,14 +182,6 @@ export default {
       // 表单校验
       rules: {
       },
-      columns: [
-            { key: 1, label: "上机分类的编号：0表示一级分类", visible:  true  },
-            { key: 2, label: "NAME", visible:  true  },
-            { key: 3, label: "分类级别：0->1级；1->2级", visible:  true  },
-            { key: 4, label: "显示状态：0->不显示；1->显示", visible:  true  },
-            { key: 5, label: "SORT", visible:  true  },
-            { key: 6, label: "图标", visible:  true  },
-                             ],
     };
   },
   created() {

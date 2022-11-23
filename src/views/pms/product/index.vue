@@ -1,34 +1,25 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="名称" prop="name">
+      <el-form-item label="BRAND_ID" prop="brandId">
         <el-input
-          v-model="queryParams.name"
-          placeholder="请输入商品名称"
+          v-model="queryParams.brandId"
+          placeholder="请输入BRAND_ID"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="品牌" prop="brandName">
-        <el-input
-          v-model="queryParams.brandName"
-          placeholder="请输入品牌名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="分类" prop="categoryId">
+      <el-form-item label="CATEGORY_ID" prop="categoryId">
         <el-input
           v-model="queryParams.categoryId"
-          placeholder="请输入分类名称"
+          placeholder="请输入CATEGORY_ID"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="编码" prop="outProductId">
+      <el-form-item label="商品编码" prop="outProductId">
         <el-input
           v-model="queryParams.outProductId"
           placeholder="请输入商品编码"
@@ -37,15 +28,98 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-
-      <el-form-item label="上架状态" prop="publishStatus">
+      <el-form-item label="NAME" prop="name">
+        <el-input
+          v-model="queryParams.name"
+          placeholder="请输入NAME"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="主图" prop="pic">
+        <el-input
+          v-model="queryParams.pic"
+          placeholder="请输入主图"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="画册图片，连产品图片限制为5张，以逗号分割" prop="albumPics">
+        <el-input
+          v-model="queryParams.albumPics"
+          placeholder="请输入画册图片，连产品图片限制为5张，以逗号分割"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="上架状态：0->下架；1->上架" prop="publishStatus">
         <el-select v-model="queryParams.publishStatus" placeholder="请选择上架状态：0->下架；1->上架" clearable size="small">
               <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
+      <template v-if="showMoreCondition">
+      <el-form-item label="排序" prop="sort">
+        <el-input
+          v-model="queryParams.sort"
+          placeholder="请输入排序"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="PRICE" prop="price">
+        <el-input
+          v-model="queryParams.price"
+          placeholder="请输入PRICE"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="单位" prop="unit">
+        <el-input
+          v-model="queryParams.unit"
+          placeholder="请输入单位"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="商品重量，默认为克" prop="weight">
+        <el-input
+          v-model="queryParams.weight"
+          placeholder="请输入商品重量，默认为克"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="品牌名称" prop="brandName">
+        <el-input
+          v-model="queryParams.brandName"
+          placeholder="请输入品牌名称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="商品分类名称" prop="productCategoryName">
+        <el-input
+          v-model="queryParams.productCategoryName"
+          placeholder="请输入商品分类名称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+    </template>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>
       </el-form-item>
     </el-form>
 
@@ -60,16 +134,26 @@
           v-hasPermi="['pms:product:add']"
         >新增</el-button>
       </el-col>
+      </el-col>
     </el-row>
 
     <el-table v-loading="loading" :data="pmsProductList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编码" align="center" prop="outProductId"/>
-      <el-table-column label="主图" align="center" prop="pic"/>
-      <el-table-column label="名称" align="center" prop="name"/>
-      <el-table-column label="价格" align="center" prop="price"/>
-      <el-table-column label="上架状态" align="center" prop="publishStatus"/>
-      <el-table-column label="排序" align="center" prop="sort"/>
+      <el-table-column label="BRAND_ID" align="center" prop="brandId" />
+      <el-table-column label="CATEGORY_ID" align="center" prop="categoryId" />
+      <el-table-column label="商品编码" align="center" prop="outProductId" />
+      <el-table-column label="NAME" align="center" prop="name" />
+      <el-table-column label="主图" align="center" prop="pic" />
+      <el-table-column label="画册图片，连产品图片限制为5张，以逗号分割" align="center" prop="albumPics" />
+      <el-table-column label="上架状态：0->下架；1->上架" align="center" prop="publishStatus" />
+      <el-table-column label="排序" align="center" prop="sort" />
+      <el-table-column label="PRICE" align="center" prop="price" />
+      <el-table-column label="单位" align="center" prop="unit" />
+      <el-table-column label="商品重量，默认为克" align="center" prop="weight" />
+      <el-table-column label="产品详情网页内容" align="center" prop="detailHtml" />
+      <el-table-column label="移动端网页详情" align="center" prop="detailMobileHtml" />
+      <el-table-column label="品牌名称" align="center" prop="brandName" />
+      <el-table-column label="商品分类名称" align="center" prop="productCategoryName" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -215,6 +299,7 @@ export default {
           { required: true, message: "NAME不能为空", trigger: "blur" }
         ],
       },
+      showMoreCondition: false
     };
   },
   created() {

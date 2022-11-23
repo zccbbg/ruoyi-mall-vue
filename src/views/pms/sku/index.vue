@@ -54,49 +54,16 @@
           v-hasPermi="['pms:sku:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['pms:sku:edit']"
-        >修改</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['pms:sku:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['pms:sku:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="pmsSkuList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="PRODUCT_ID" align="center" prop="productId" v-if="columns[0].visible"/>
-      <el-table-column label="sku编码" align="center" prop="outSkuId" v-if="columns[1].visible"/>
-      <el-table-column label="PRICE" align="center" prop="price" v-if="columns[2].visible"/>
-      <el-table-column label="展示图片" align="center" prop="pic" v-if="columns[3].visible"/>
-      <el-table-column label="商品销售属性，json格式" align="center" prop="spData" v-if="columns[4].visible"/>
+      <el-table-column label="PRODUCT_ID" align="center" prop="productId" />
+      <el-table-column label="sku编码" align="center" prop="outSkuId" />
+      <el-table-column label="PRICE" align="center" prop="price" />
+      <el-table-column label="展示图片" align="center" prop="pic" />
+      <el-table-column label="商品销售属性，json格式" align="center" prop="spData" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -197,13 +164,6 @@ export default {
           { required: true, message: "sku编码不能为空", trigger: "blur" }
         ],
       },
-      columns: [
-            { key: 1, label: "PRODUCT_ID", visible:  true  },
-            { key: 2, label: "sku编码", visible:  true  },
-            { key: 3, label: "PRICE", visible:  true  },
-            { key: 4, label: "展示图片", visible:  true  },
-            { key: 5, label: "商品销售属性，json格式", visible:  true  },
-                             ],
     };
   },
   created() {
