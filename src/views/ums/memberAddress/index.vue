@@ -283,7 +283,9 @@ export default {
         district: null,
         detailAddress: null,
         isDefault: null,
+        createBy: null,
         createTime: null,
+        updateBy: null,
         updateTime: null
       };
       this.resetForm("form");

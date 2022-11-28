@@ -319,7 +319,9 @@ export default {
         expiresIn: null,
         refreshToken: null,
         expireTime: null,
+        createBy: null,
         createTime: null,
+        updateBy: null,
         updateTime: null
       };
       this.resetForm("form");

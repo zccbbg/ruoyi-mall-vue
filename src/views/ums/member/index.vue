@@ -386,7 +386,9 @@ export default {
         spreadTime: null,
         level: null,
         integral: null,
+        createBy: null,
         createTime: null,
+        updateBy: null,
         updateTime: null
       };
       this.resetForm("form");
