@@ -142,6 +142,7 @@ export default {
           }
           this.$store.dispatch("Login", this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
+            this.$store.dispatch('loadDictionaries', true)
           }).catch(() => {
             this.loading = false;
             if (this.captchaEnabled) {

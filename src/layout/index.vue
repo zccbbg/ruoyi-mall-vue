@@ -58,7 +58,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('loadAllDict')
+    this.$store.dispatch('loadDictionaries')
   },
   methods: {
     handleClickOutside() {

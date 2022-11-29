@@ -1,37 +1,26 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="上机分类的编号：0表示一级分类" prop="parentId">
-        <el-input
-          v-model="queryParams.parentId"
-          placeholder="请输入上机分类的编号：0表示一级分类"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="NAME" prop="name">
+      <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入NAME"
+          placeholder="名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="分类级别：0->1级；1->2级" prop="level">
+      <el-form-item label="层级" prop="level">
         <el-input
           v-model="queryParams.level"
-          placeholder="请输入分类级别：0->1级；1->2级"
+          placeholder="层级"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="显示状态：0->不显示；1->显示" prop="showStatus">
-        <el-select v-model="queryParams.showStatus" placeholder="请选择显示状态：0->不显示；1->显示" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
+      <el-form-item label="显示状态" prop="showStatus">
+        <dict-select v-model="queryParams.showStatus" prop-name="sys_normal_disable" />
       </el-form-item>
       <el-form-item label="SORT" prop="sort">
         <el-input
@@ -73,7 +62,7 @@
 
     <el-table v-loading="loading" :data="pmsProductCategoryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="上机分类的编号：0表示一级分类" align="center" prop="parentId" />
+      <el-table-column label="上级分类的编号：0表示一级分类" align="center" prop="parentId" />
       <el-table-column label="NAME" align="center" prop="name" />
       <el-table-column label="分类级别：0->1级；1->2级" align="center" prop="level" />
       <el-table-column label="显示状态：0->不显示；1->显示" align="center" prop="showStatus" />
@@ -98,7 +87,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -110,8 +99,8 @@
     <!-- 添加或修改商品分类对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="上机分类的编号：0表示一级分类" prop="parentId">
-          <el-input v-model="form.parentId" placeholder="请输入上机分类的编号：0表示一级分类" />
+        <el-form-item label="上级分类的编号：0表示一级分类" prop="parentId">
+          <el-input v-model="form.parentId" placeholder="请输入上级分类的编号：0表示一级分类" />
         </el-form-item>
         <el-form-item label="NAME" prop="name">
           <el-input v-model="form.name" placeholder="请输入NAME" />
