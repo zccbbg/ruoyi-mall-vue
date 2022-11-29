@@ -22,19 +22,10 @@
       <el-form-item label="显示状态" prop="showStatus">
         <dict-select v-model="queryParams.showStatus" prop-name="sys_normal_disable" />
       </el-form-item>
-      <el-form-item label="SORT" prop="sort">
+      <el-form-item label="排序" prop="sort">
         <el-input
           v-model="queryParams.sort"
-          placeholder="请输入SORT"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="图标" prop="icon">
-        <el-input
-          v-model="queryParams.icon"
-          placeholder="请输入图标"
+          placeholder="排序"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -57,17 +48,18 @@
           v-hasPermi="['pms:productCategory:add']"
         >新增</el-button>
       </el-col>
-      </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="pmsProductCategoryList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="上级分类的编号：0表示一级分类" align="center" prop="parentId" />
-      <el-table-column label="NAME" align="center" prop="name" />
-      <el-table-column label="分类级别：0->1级；1->2级" align="center" prop="level" />
-      <el-table-column label="显示状态：0->不显示；1->显示" align="center" prop="showStatus" />
-      <el-table-column label="SORT" align="center" prop="sort" />
-      <el-table-column label="图标" align="center" prop="icon" />
+    <el-table v-loading="loading" :data="pmsProductCategoryList" @selection-change="handleSelectionChange" row-key="id">
+      <el-table-column width="55" align="center" />
+      <el-table-column label="编号" align="center" prop="id" />
+      <el-table-column label="名称" align="center" prop="name" />
+      <el-table-column label="层级" align="center" prop="level" />
+      <el-table-column label="显示状态" align="center" prop="showStatus">
+        <template v-slot="{ row }">
+          <dict-tag :value="row.showStatus" prop-name="sys_normal_disable"></dict-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -88,33 +80,23 @@
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
-
     <!-- 添加或修改商品分类对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body >
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="上级分类的编号：0表示一级分类" prop="parentId">
-          <el-input v-model="form.parentId" placeholder="请输入上级分类的编号：0表示一级分类" />
+        <el-form-item label="上级分类" prop="parentId">
+          <prod-category v-model="form.parentId" />
         </el-form-item>
-        <el-form-item label="NAME" prop="name">
-          <el-input v-model="form.name" placeholder="请输入NAME" />
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="form.name" placeholder="名称" />
         </el-form-item>
-        <el-form-item label="分类级别：0->1级；1->2级" prop="level">
-          <el-input v-model="form.level" placeholder="请输入分类级别：0->1级；1->2级" />
+        <el-form-item label="层级" prop="level">
+          <el-input v-model="form.level" placeholder="层级：0->1级；1->2级" />
         </el-form-item>
-        <el-form-item label="显示状态：0->不显示；1->显示">
-          <el-radio-group v-model="form.showStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
+        <el-form-item label="显示状态">
+          <dict-select v-model="form.showStatus" prop-name="sys_normal_disable" />
         </el-form-item>
-        <el-form-item label="SORT" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入SORT" />
+        <el-form-item label="顺序" prop="sort">
+          <el-input v-model="form.sort" placeholder="顺序" />
         </el-form-item>
         <el-form-item label="图标" prop="icon">
           <el-input v-model="form.icon" placeholder="请输入图标" />
@@ -130,9 +112,11 @@
 
 <script>
 import { listPmsProductCategory, getPmsProductCategory, delPmsProductCategory, addPmsProductCategory, updatePmsProductCategory, exportPmsProductCategory } from "@/api/pms/productCategory";
+import ProdCategory from "@/views/components/ProdCategory";
 
 export default {
   name: "PmsProductCategory",
+  components: {ProdCategory},
   data() {
     return {
       // 遮罩层
@@ -147,8 +131,6 @@ export default {
       multiple: true,
       // 显示搜索条件
       showSearch: true,
-      // 总条数
-      total: 0,
       // 商品分类表格数据
       pmsProductCategoryList: [],
       // 弹出层标题
@@ -157,14 +139,11 @@ export default {
       open: false,
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 10,
         parentId: null,
         name: null,
         level: null,
         showStatus: null,
         sort: null,
-        icon: null,
       },
       // 表单参数
       form: {},
@@ -180,13 +159,27 @@ export default {
     /** 查询商品分类列表 */
     getList() {
       this.loading = true;
-      const {pageNum, pageSize} = this.queryParams;
-      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
-      const pageReq = {page: pageNum - 1, size: pageSize};
-      listPmsProductCategory(query, pageReq).then(response => {
-        const { content, totalElements } = response
-        this.pmsProductCategoryList = content;
-        this.total = totalElements;
+      const query = {...this.queryParams};
+      listPmsProductCategory(query).then(rows => {
+        const map = {}
+        rows.forEach(it => {
+          let list = map[it.parentId]
+          if (!list) {
+            list = [];
+            map[it.parentId] = list;
+          }
+          list.push(it);
+        })
+        const stack = [...map['0']];
+        while (stack.length > 0) {
+          const p = stack.shift();
+          if (!map[p.id]) {
+            continue
+          }
+          p.children = map[p.id];
+          stack.push(...map[p.id])
+        }
+        this.pmsProductCategoryList = map['0'];
         this.loading = false;
       });
     },
@@ -214,7 +207,6 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
       this.getList();
     },
     /** 重置按钮操作 */
@@ -248,19 +240,23 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          let p;
           if (this.form.id != null) {
-            updatePmsProductCategory(this.form).then(response => {
+            p = updatePmsProductCategory(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addPmsProductCategory(this.form).then(response => {
+            p = addPmsProductCategory(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
           }
+          p.then(() => {
+            this.$store.dispatch('loadProductCategories', true)
+          })
         }
       });
     },
