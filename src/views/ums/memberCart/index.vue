@@ -52,9 +52,9 @@
         />
       </el-form-item>
       <template v-if="showMoreCondition">
-      <el-form-item label="商品数量" prop="cartNum">
+      <el-form-item label="商品数量" prop="quantity">
         <el-input
-          v-model="queryParams.cartNum"
+          v-model="queryParams.quantity"
           placeholder="请输入商品数量"
           clearable
           size="small"
@@ -92,7 +92,7 @@
       <el-table-column label="SKU ID" align="center" prop="skuId" />
       <el-table-column label="PRODUCT_NAME" align="center" prop="productName" />
       <el-table-column label="商品属性" align="center" prop="spData" />
-      <el-table-column label="商品数量" align="center" prop="cartNum" />
+      <el-table-column label="商品数量" align="center" prop="quantity" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -147,8 +147,8 @@
         <el-form-item label="商品属性" prop="spData">
           <el-input v-model="form.spData" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="商品数量" prop="cartNum">
-          <el-input v-model="form.cartNum" placeholder="请输入商品数量" />
+        <el-form-item label="商品数量" prop="quantity">
+          <el-input v-model="form.quantity" placeholder="请输入商品数量" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -197,7 +197,7 @@ export default {
         skuId: null,
         productName: null,
         spData: null,
-        cartNum: null,
+        quantity: null,
       },
       // 表单参数
       form: {},
@@ -212,7 +212,7 @@ export default {
         productName: [
           { required: true, message: "PRODUCT_NAME不能为空", trigger: "blur" }
         ],
-        cartNum: [
+        quantity: [
           { required: true, message: "商品数量不能为空", trigger: "blur" }
         ],
       },
@@ -252,7 +252,7 @@ export default {
         skuId: null,
         productName: null,
         spData: null,
-        cartNum: null,
+        quantity: null,
         createBy: null,
         createTime: null,
         updateBy: null,
