@@ -1,9 +1,10 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+             class="ry_form">
       <el-form-item label="名称" prop="name">
         <el-input
-          v-model="queryParams.name"
+          v-model="queryParams.nameLike"
           placeholder="名称"
           clearable
           size="small"
@@ -20,7 +21,7 @@
         />
       </el-form-item>
       <el-form-item label="显示状态" prop="showStatus">
-        <dict-select v-model="queryParams.showStatus" prop-name="sys_normal_disable" />
+        <dict-select v-model="queryParams.showStatus" prop-name="sys_normal_disable"/>
       </el-form-item>
       <el-form-item label="排序" prop="sort">
         <el-input
@@ -46,15 +47,20 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['pms:productCategory:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="pmsProductCategoryList" @selection-change="handleSelectionChange" row-key="id">
-      <el-table-column width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="层级" align="center" prop="level" />
+    <el-table
+      v-loading="loading"
+      :data="pmsProductCategoryList"
+      :tree-props="{ hasChildren: 'hasChildren', children: 'children' }"
+      @selection-change="handleSelectionChange"
+      row-key="id">
+      <el-table-column label="编号" align="center" prop="id" width="100"/>
+      <el-table-column label="名称" align="center" prop="name"/>
+      <el-table-column label="层级" align="center" prop="level"/>
       <el-table-column label="显示状态" align="center" prop="showStatus">
         <template v-slot="{ row }">
           <dict-tag :value="row.showStatus" prop-name="sys_normal_disable"></dict-tag>
@@ -68,38 +74,40 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['pms:productCategory:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['pms:productCategory:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 添加或修改商品分类对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body >
+    <el-dialog :title="title" :visible.sync="open" width="50%">
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
         <el-form-item label="上级分类" prop="parentId">
-          <prod-category v-model="form.parentId" />
+          <prod-category v-model="form.parentId"/>
         </el-form-item>
         <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" placeholder="名称" />
+          <el-input v-model="form.name" placeholder="名称"/>
         </el-form-item>
         <el-form-item label="层级" prop="level">
-          <el-input v-model="form.level" placeholder="层级：0->1级；1->2级" />
+          <el-input v-model="form.level" placeholder="层级：0->1级；1->2级"/>
         </el-form-item>
         <el-form-item label="显示状态">
-          <dict-select v-model="form.showStatus" prop-name="sys_normal_disable" />
+          <dict-select v-model="form.showStatus" prop-name="sys_normal_disable"/>
         </el-form-item>
         <el-form-item label="顺序" prop="sort">
-          <el-input v-model="form.sort" placeholder="顺序" />
+          <el-input v-model="form.sort" placeholder="顺序"/>
         </el-form-item>
         <el-form-item label="图标" prop="icon">
-          <el-input v-model="form.icon" placeholder="请输入图标" />
+          <el-input v-model="form.icon" placeholder="请输入图标"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -111,7 +119,14 @@
 </template>
 
 <script>
-import { listPmsProductCategory, getPmsProductCategory, delPmsProductCategory, addPmsProductCategory, updatePmsProductCategory, exportPmsProductCategory } from "@/api/pms/productCategory";
+import {
+  listPmsProductCategory,
+  getPmsProductCategory,
+  delPmsProductCategory,
+  addPmsProductCategory,
+  updatePmsProductCategory,
+  exportPmsProductCategory
+} from "@/api/pms/productCategory";
 import ProdCategory from "@/views/components/ProdCategory";
 
 export default {
@@ -140,7 +155,7 @@ export default {
       // 查询参数
       queryParams: {
         parentId: null,
-        name: null,
+        nameLike: null,
         level: null,
         showStatus: null,
         sort: null,
@@ -148,8 +163,7 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
     };
   },
   created() {
@@ -170,16 +184,27 @@ export default {
           }
           list.push(it);
         })
-        const stack = [...map['0']];
-        while (stack.length > 0) {
-          const p = stack.shift();
-          if (!map[p.id]) {
-            continue
+        const idMap = {};
+        rows.forEach((it, index) => idMap[it.id] = index);
+        const rows1= [...rows]
+        const removeIndex = new Set();
+        for (let i = 0; i < rows1.length; i ++) {
+          if (removeIndex.has(i)) {
+            continue;
           }
-          p.children = map[p.id];
-          stack.push(...map[p.id])
+          let n = rows1[i];
+          while (idMap[n.parentId] !== undefined) {
+            removeIndex.add(idMap[n.id]);
+            n = rows[idMap[n.parentId]];
+            n.children = map[n.id];
+            continue;
+          }
         }
-        this.pmsProductCategoryList = map['0'];
+        const idxs = [...removeIndex].sort();
+        for (let i = idxs.length - 1; i >= 0; i--) {
+          rows.splice(idxs[i], 1);
+        }
+        this.pmsProductCategoryList = rows;
         this.loading = false;
       });
     },
@@ -217,7 +242,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -262,13 +287,18 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除商品分类编号为"' + ids + '"的数据项？').then(function() {
+      if (row.children && row.children.length > 0) {
+        this.$message.error('请先删除子目录');
+        return;
+      }
+      const ids = row.id;
+      this.$modal.confirm('是否确认删除商品分类编号为"' + ids + '"的数据项？').then(function () {
         return delPmsProductCategory(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -279,7 +309,8 @@ export default {
       }).then(response => {
         this.$download.download(response);
         this.exportLoading = false;
-      }).catch(() => {});
+      }).catch(() => {
+      });
     }
   }
 };
