@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="model" v-bind="$props" @change="valueChange">
+  <el-select v-model="value1" clearable>
     <el-option
       v-for="item in options"
       :key="item.value"
@@ -11,27 +11,26 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
-  props: ["size", "value","options"],
-  data() {
-    return {
-      // value:this.value
-    }
-  },
-  methods: {
-    valueChange(val){
-      this.$emit("change",val)
-    }
-  },
+  props: ["size", "value", "propName"],
   computed: {
-    model: {
+    ...mapGetters(['dictMap']),
+    value1: {
       get() {
-        return this.value+'';
+        return this.value;
       },
       set(v) {
         this.$emit("input", v);
       },
     },
+    options() {
+      if (!this.propName) {
+        return [];
+      }
+      return this.dictMap[this.propName] || []
+    }
   },
 };
 </script>

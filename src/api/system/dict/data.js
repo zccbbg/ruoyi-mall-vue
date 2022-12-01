@@ -58,3 +58,12 @@ export function listByTypes(dictTypes) {
     data: dictTypes
   })
 }
+
+// 删除字典数据
+export function allByTypes(dictTypes) {
+  return request({
+    url: '/system/dict/data/all-by-types',
+    method: 'POST',
+    data: dictTypes
+  })
+}
