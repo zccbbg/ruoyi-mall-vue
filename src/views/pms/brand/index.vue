@@ -1,37 +1,26 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="NAME" prop="name">
+      <el-form-item label="名称" prop="name">
         <el-input
-          v-model="queryParams.name"
-          placeholder="请输入NAME"
+          v-model="queryParams.nameLike"
+          placeholder="名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="SORT" prop="sort">
+      <el-form-item label="优先级" prop="sort">
         <el-input
           v-model="queryParams.sort"
-          placeholder="请输入SORT"
+          placeholder="请输入优先级"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="SHOW_STATUS" prop="showStatus">
-        <el-select v-model="queryParams.showStatus" placeholder="请选择SHOW_STATUS" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="品牌logo" prop="logo">
-        <el-input
-          v-model="queryParams.logo"
-          placeholder="请输入品牌logo"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="展示状态" prop="showStatus">
+        <dict-select v-model="queryParams.showStatus" prop-name="sys_normal_disable" />
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -50,15 +39,22 @@
           v-hasPermi="['pms:brand:add']"
         >新增</el-button>
       </el-col>
-      </el-col>
     </el-row>
 
     <el-table v-loading="loading" :data="pmsBrandList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="NAME" align="center" prop="name" />
-      <el-table-column label="SORT" align="center" prop="sort" />
-      <el-table-column label="SHOW_STATUS" align="center" prop="showStatus" />
-      <el-table-column label="品牌logo" align="center" prop="logo" />
+      <el-table-column label="品牌logo" align="center" prop="logo">
+        <template slot-scope="{ row }">
+          <el-image v-if="row.logo" :src="row.logo" :preview-src-list="[row.logo]" class="small-img circle-img"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="名称" align="center" prop="name" />
+      <el-table-column label="优先级" align="center" prop="sort" />
+      <el-table-column label="展示状态" align="center" prop="showStatus">
+        <template slot-scope="{ row }">
+          <dict-tag :value="row.showStatus" prop-name="sys_normal_disable" />
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -78,7 +74,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -90,16 +86,14 @@
     <!-- 添加或修改品牌管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="NAME" prop="name">
-          <el-input v-model="form.name" placeholder="请输入NAME" />
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="form.name" placeholder="名称" />
         </el-form-item>
-        <el-form-item label="SORT" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入SORT" />
+        <el-form-item label="优先级" prop="sort">
+          <el-input v-model="form.sort" placeholder="请输入优先级" />
         </el-form-item>
-        <el-form-item label="SHOW_STATUS">
-          <el-radio-group v-model="form.showStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
+        <el-form-item label="展示状态">
+          <dict-select v-model="form.showStatus" prop-name="sys_normal_disable" />
         </el-form-item>
         <el-form-item label="品牌logo" prop="logo">
           <el-input v-model="form.logo" placeholder="请输入品牌logo" />
@@ -144,10 +138,9 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        name: null,
+        nameLike: null,
         sort: null,
         showStatus: null,
-        logo: null,
       },
       // 表单参数
       form: {},

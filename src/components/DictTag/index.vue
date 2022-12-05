@@ -1,5 +1,5 @@
 <template>
-  <el-tag>{{valueLabel}}</el-tag>
+  <el-tag :type="valueType">{{valueLabel}}</el-tag>
 </template>
 
 <script>
@@ -17,6 +17,9 @@ export default {
     },
     valueLabel() {
       return this.options.find(it => it.value == this.value)?.label;
+    },
+    valueType() {
+      return this.options.find(it => it.value == this.value)?.listClass;
     }
   },
 };
