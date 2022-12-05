@@ -161,6 +161,20 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
+  },
+  {
+    path: '/product',
+    component: Layout,
+    hidden: true,
+    permissions: ['pms:product:add'],
+    children: [
+      {
+        path: 'edit',
+        component: () => import('@/views/pms/product/AddProduct'),
+        name: 'AddProduct',
+        meta: { title: '编辑商品' }
+      }
+    ]
   }
 ]
 

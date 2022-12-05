@@ -9,6 +9,14 @@ export function listPmsBrand(query, pageReq) {
     params: pageReq
   })
 }
+export function allBrand(query, pageReq) {
+  return request({
+    url: '/pms/brand/all',
+    method: 'post',
+    data: query,
+    params: pageReq
+  })
+}
 
 // 查询品牌管理详细
 export function getPmsBrand(id) {

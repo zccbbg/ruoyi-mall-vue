@@ -1,11 +1,13 @@
 import {allByTypes} from "@/api/system/dict/data";
 import {dict_types} from "@/config/business";
 import {listPmsProductCategory} from "@/api/pms/productCategory";
+import {allBrand} from "@/api/pms/brand";
 
 const dict = {
   state: {
     dictMap: {},
-    productCategories: []
+    productCategories: [],
+    brandList: []
   },
 
   mutations: {
@@ -14,6 +16,9 @@ const dict = {
     },
     SET_PRODUCT_CATEGORIES: (state, value) => {
       state.productCategories = value
+    },
+    SET_BRAND_LIST: (state, value) => {
+      state.brandList = value
     },
   },
   actions: {
@@ -43,7 +48,15 @@ const dict = {
       return listPmsProductCategory({}).then(res => {
         commit('SET_PRODUCT_CATEGORIES', res);
       })
-    }
+    },
+    loadBrandList({ commit, state }, force = false) {
+      if (!force && state.brandList.length > 0) {
+        return Promise.resolve();
+      }
+      return allBrand({}).then(res => {
+        commit('SET_BRAND_LIST', res);
+      })
+    },
   }
 }
 

@@ -89,7 +89,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -97,68 +97,11 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 添加或修改商品信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="BRAND_ID" prop="brandId">
-          <el-input v-model="form.brandId" placeholder="请输入BRAND_ID" />
-        </el-form-item>
-        <el-form-item label="CATEGORY_ID" prop="categoryId">
-          <el-input v-model="form.categoryId" placeholder="请输入CATEGORY_ID" />
-        </el-form-item>
-        <el-form-item label="商品编码" prop="outProductId">
-          <el-input v-model="form.outProductId" placeholder="请输入商品编码" />
-        </el-form-item>
-        <el-form-item label="NAME" prop="name">
-          <el-input v-model="form.name" placeholder="请输入NAME" />
-        </el-form-item>
-        <el-form-item label="主图" prop="pic">
-          <el-input v-model="form.pic" placeholder="请输入主图" />
-        </el-form-item>
-        <el-form-item label="画册图片，连产品图片限制为5张，以逗号分割" prop="albumPics">
-          <el-input v-model="form.albumPics" placeholder="请输入画册图片，连产品图片限制为5张，以逗号分割" />
-        </el-form-item>
-        <el-form-item label="上架状态：0->下架；1->上架">
-          <el-radio-group v-model="form.publishStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入排序" />
-        </el-form-item>
-        <el-form-item label="PRICE" prop="price">
-          <el-input v-model="form.price" placeholder="请输入PRICE" />
-        </el-form-item>
-        <el-form-item label="单位" prop="unit">
-          <el-input v-model="form.unit" placeholder="请输入单位" />
-        </el-form-item>
-        <el-form-item label="商品重量，默认为克" prop="weight">
-          <el-input v-model="form.weight" placeholder="请输入商品重量，默认为克" />
-        </el-form-item>
-        <el-form-item label="产品详情网页内容" prop="detailHtml">
-          <el-input v-model="form.detailHtml" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="移动端网页详情" prop="detailMobileHtml">
-          <el-input v-model="form.detailMobileHtml" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="品牌名称" prop="brandName">
-          <el-input v-model="form.brandName" placeholder="请输入品牌名称" />
-        </el-form-item>
-        <el-form-item label="商品分类名称" prop="productCategoryName">
-          <el-input v-model="form.productCategoryName" placeholder="请输入商品分类名称" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listPmsProduct, getPmsProduct, delPmsProduct, addPmsProduct, updatePmsProduct, exportPmsProduct } from "@/api/pms/product";
+import {delPmsProduct, listPmsProduct} from "@/api/pms/product";
 
 export default {
   name: "PmsProduct",
@@ -180,10 +123,6 @@ export default {
       total: 0,
       // 商品信息表格数据
       pmsProductList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -204,17 +143,6 @@ export default {
         brandName: null,
         productCategoryName: null,
       },
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-        outProductId: [
-          { required: true, message: "商品编码不能为空", trigger: "blur" }
-        ],
-        name: [
-          { required: true, message: "NAME不能为空", trigger: "blur" }
-        ],
-      },
     };
   },
   created() {
@@ -234,37 +162,6 @@ export default {
         this.loading = false;
       });
     },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        brandId: null,
-        categoryId: null,
-        outProductId: null,
-        name: null,
-        pic: null,
-        albumPics: null,
-        publishStatus: 0,
-        sort: null,
-        price: null,
-        unit: null,
-        weight: null,
-        detailHtml: null,
-        detailMobileHtml: null,
-        brandName: null,
-        productCategoryName: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null
-      };
-      this.resetForm("form");
-    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -283,39 +180,11 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加商品信息";
+      this.$router.push({ path: '/product/edit' });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getPmsProduct(id).then(response => {
-        this.form = response;
-        this.open = true;
-        this.title = "修改商品信息";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updatePmsProduct(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addPmsProduct(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
+      this.$router.push({ path: '/product/edit', query: { id: row.id } });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -327,17 +196,6 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有商品信息数据项？').then(() => {
-        this.exportLoading = true;
-        return exportPmsProduct(queryParams);
-      }).then(response => {
-        this.$download.download(response);
-        this.exportLoading = false;
-      }).catch(() => {});
-    }
   }
 };
 </script>
