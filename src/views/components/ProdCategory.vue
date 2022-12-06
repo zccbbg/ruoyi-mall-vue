@@ -11,10 +11,11 @@
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {mapGetters} from "vuex";
+
 export default {
   name: "ProdCategory",
   components: {Treeselect},
-  props: ['value'],
+  props: ['value', 'root'],
   computed: {
     ...mapGetters(['productCategories']),
     value1: {
@@ -47,7 +48,10 @@ export default {
         p.children = map[p.id];
         stack.push(...map[p.id])
       }
-      return [{id: 0, label: '根节点', children: map['0']}];
+      if (this.root) {
+        return [{id: 0, label: '根节点', children: map['0']}];
+      }
+      return map['0'];
     }
   },
   created() {

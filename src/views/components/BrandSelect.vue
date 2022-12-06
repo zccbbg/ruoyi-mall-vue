@@ -1,6 +1,6 @@
 <template lang="pug">
 el-select(v-model="value1")
-  el-option(v-for="it in options" :key="it.id" :value="it.id") {{it.name}}
+  el-option(v-for="it in options" :key="it.id" :value="it.id" :label="it.name") {{it.name}}
 </template>
 
 <script>

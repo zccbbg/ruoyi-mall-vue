@@ -92,7 +92,7 @@
     <el-dialog :title="title" :visible.sync="open" width="50%">
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
         <el-form-item label="上级分类" prop="parentId">
-          <prod-category v-model="form.parentId"/>
+          <prod-category class="w200" v-model="form.parentId" :root="true"/>
         </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="名称"/>
