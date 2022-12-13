@@ -4,7 +4,7 @@
       v-for="item in options"
       :key="item.value"
       :label="item.label"
-      :value="item.value"
+      :value="item[valueProp1]"
     >
     </el-option>
   </el-select>
@@ -14,9 +14,12 @@
 import {mapGetters} from "vuex";
 
 export default {
-  props: ["size", "value", "propName"],
+  props: ["size", "value", "propName", 'valueProp'],
   computed: {
     ...mapGetters(['dictMap']),
+    valueProp1() {
+      return this.valueProp || 'value';
+    },
     value1: {
       get() {
         return this.value;

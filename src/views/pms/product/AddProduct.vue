@@ -4,7 +4,6 @@
     label-width="108px"
     :model="form"
     ref="form"
-    :rules="rules"
   )
     el-form-item(label="品牌" prop="brandId")
       brand-select(v-model="form.brandId")
@@ -28,8 +27,29 @@
       el-input(v-model="form.unit" placeholder="请输入单位")
     el-form-item(label="商品重量" prop="weight")
       el-input(v-model="form.weight" placeholder="商品重量，默认为克")
-    el-form-item(label="规格")
-
+    .title 规格信息
+    el-form-item(label="商品规格")
+      .sku-wrapper
+        .sku_sorts
+          .sku_sort(v-for="(s, idx0) in skuSorts" :key="s.name")
+            .label.flex-center
+              .flex-one
+                dict-select(v-model="s.name" prop-name="sku_sort_list" value-prop="label")
+              a.red(@click="deleteSkuSort(idx0)") 删除规格类型
+            .values(v-if="s.name")
+              .value(v-for="(it2, idx1) in s.options" :key="idx1")
+                el-input(:value="it2.name" @input="changeName(s, idx1, $event)")
+                a.red.no-break.ml8(v-if="idx1 < s.options.length - 1 || (s.options.length === maxOptionNum && idx1 === 3)" @click="deleteOption(s, idx1)") 删除
+        el-button(v-if="skuSorts.length < 2" @click="addSkuSort") 添加规格类型
+    el-form-item(label=" 价格")
+      el-table(:data="skus" :max-height="800")
+        el-table-column(v-for="s in skuSorts" :label="s.name" :key="s.name" :prop="s.name")
+        el-table-column(label="展示图片")
+        el-table-column(label="销售价格")
+        el-table-column(label="编码")
+        el-table-column(label="操作")
+          template(v-slot="{row, index}")
+            a.red 删除{{index}}
     el-form-item(label="产品详情网页内容" prop="detailHtml")
       el-input(
         v-model="form.detailHtml"
@@ -58,7 +78,43 @@ export default {
   data() {
     return {
       form: {},
-      rules: []
+      skuSorts: [
+        {
+          name: '颜色',
+          options: [
+            {name: '红'},
+            {name: null}
+          ]
+        }
+      ],
+      maxOptionNum: 44
+    }
+  },
+  computed: {
+    skus() {
+      let arr = [];
+      this.skuSorts.forEach((it1, idx1) => {
+        const arr1 = [];
+        it1.options.forEach((it2) => {
+          if (!it2.name) {
+            return
+          }
+          if (idx1 === 0) {
+            arr1.push({[it1.name]: it2.name});
+          } else {
+            arr.forEach(it3 => {
+              arr1.push({...it3, [it1.name]: it2.name })
+            })
+          }
+        })
+        arr = arr1;
+      })
+      arr.forEach(it => {
+        it.outSkuId = null;
+        it.price = null;
+        it.pic = null;
+      })
+      return arr
     }
   },
   created() {
@@ -99,6 +155,25 @@ export default {
     },
     cancel() {
 
+    },
+    changeName(s, idx, val) {
+      s.options[idx].name = val;
+      if (s.options.length - 1 !== idx || s.options.length >= this.maxOptionNum) {
+        return
+      }
+      s.options.push({name: null})
+    },
+    addSkuSort() {
+      this.skuSorts.push({
+        name: null,
+        options: [{name: null}]
+      })
+    },
+    deleteSkuSort(idx) {
+      this.skuSorts.splice(idx);
+    },
+    deleteOption(s, idx) {
+      s.options.splice(idx, 1);
     }
   }
 }
@@ -111,4 +186,23 @@ export default {
     margin 0 auto
     width 75%
     min-width 800px
+  .sku-wrapper
+    background-color #f7f8fa
+    padding 12px
+    .sku_sorts
+      .sku_sort
+        background-color white
+        margin-bottom 12px
+        .label
+          padding 8px
+        .values
+          padding 8px 0 0 8px
+          border-top 1px solid $border-color
+          display flex
+          flex-wrap wrap
+          .value
+            padding 0 32px 8px 0
+            width 200px!important
+            display flex
+            align-items center
 </style>
