@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      title: 'WMS仓库管理系统',
+      title: 'ruoyi-mall商城管理系统',
       logo: logoImg
     }
   }
