@@ -42,11 +42,17 @@
                 a.red.no-break.ml8(v-if="idx1 < s.options.length - 1 || (s.options.length === maxOptionNum && idx1 === 3)" @click="deleteOption(s, idx1)") 删除
         el-button(v-if="skuSorts.length < 2" @click="addSkuSort") 添加规格类型
     el-form-item(label=" 价格")
-      el-table(:data="skus" :max-height="800")
+      el-table(:data="skus" :max-height="400")
         el-table-column(v-for="s in skuSorts" :label="s.name" :key="s.name" :prop="s.name")
         el-table-column(label="展示图片")
+          template(v-slot="{ row }")
+            image-upload.img-upload-mini(v-model="row.pic" :is-show-tip="false")
         el-table-column(label="销售价格")
+          template(v-slot="{ row }")
+            el-input(v-model="row.price")
         el-table-column(label="编码")
+          template(v-slot="{ row }")
+            el-input(v-model="row.outSkuId")
         el-table-column(label="操作")
           template(v-slot="{row, index}")
             a.red 删除{{index}}
@@ -205,4 +211,8 @@ export default {
             width 200px!important
             display flex
             align-items center
+  .img-upload-mini .el-upload--picture-card
+    width: 48px;
+    height: 48px;
+    line-height: 57px;
 </style>
