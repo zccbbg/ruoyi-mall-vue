@@ -16,55 +16,55 @@
         p(style="font-size:12px;color:rgb(185, 181, 189)") 今天是：{{nowTime}}
       .first
         ul
-          li.li(style="width: 33%") 仓库
+          li.li(style="width: 33%") 访客数
             +info
-          li.li(style="width: 33%") 库区
+          li.li(style="width: 33%") 支付买家数
             +info
-          li.li(style="width: 33%") 货架
+          li.li(style="width: 33%") 浏览量
             +info
         ul
           li.da(style="width: 33%")
-            router-link(to="/basic/warehouse") 10
+            router-link(to="/basic/warehouse") 2,910
           li.da(style="width: 33%")
-            router-link(to="/basic/area") 20
+            router-link(to="/basic/area") 56
           li.da(style="width: 33%")
-            router-link(to="/basic/rack") 30
+            router-link(to="/basic/rack") 21,085
     el-row.pl20.pr20(:gutter="10")
       el-col(:span="8")
         el-card(shadow="always" style="padding-bottom: 20px")
           div(slot="header")
-            span 预警/到期
+            span 售后
           ul
-            li.li(style="width: 50%") 库存预警
+            li.li(style="width: 50%") 待处理
               +info
-            li.li(style="width: 50%") 库存到期
+            li.li(style="width: 50%") 处理中
               +info
           ul
-            li.da(style="width: 50%") 10
-            li.da(style="width: 50%") 5
+            li.da(style="width: 50%") 2
+            li.da(style="width: 50%") 1
       el-col(:span="16")
         el-card(shadow="always" style="padding-bottom: 20px")
           div(slot="header")
-            span 客户/供应商/承运商/物料
+            span 订单
           div
             ul
-              li.li 客户
+              li.li 未发订单数
                 +info
-              li.li 供应商
+              li.li 未揽件有退款
                 +info
-              li.li 承运商
+              li.li 发货超时
                 +info
-              li.li 物料
+              li.li 物流预警
                 +info
             ul
               li.da
                 router-link(to="/relation/customer") 50
               li.da
-                router-link(to="/relation/supplier") 5
+                router-link(to="/relation/supplier") 0
               li.da
                 router-link(to="/relation/carrier") 4
               li.da
-                router-link(to="/item") 24
+                router-link(to="/item") 3
     el-card(style="margin: 20px 20px; font-size: 14px")
       div(slot="header")
         span 发展历程
