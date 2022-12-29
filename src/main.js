@@ -13,6 +13,7 @@ import router from './router'
 import directive from './directive' // directive
 import plugins from './plugins' // plugins
 import { download } from '@/utils/request'
+import VCharts from 'v-charts'
 
 import './assets/icons' // icon
 import './permission' // permission control
@@ -67,6 +68,7 @@ Vue.component('DictSelect',DictSelect)
 Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)
+Vue.use(VCharts)
 DictData.install()
 
 /**
