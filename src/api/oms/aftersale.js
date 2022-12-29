@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 // 查询订单售后列表
-export function listOmsRefund(query, pageReq) {
+export function listOmsAftersale(query, pageReq) {
   return request({
-    url: '/oms/refund/list',
+    url: '/oms/aftersale/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -11,43 +11,43 @@ export function listOmsRefund(query, pageReq) {
 }
 
 // 查询订单售后详细
-export function getOmsRefund(id) {
+export function getOmsAftersale(id) {
   return request({
-    url: '/oms/refund/' + id,
+    url: '/oms/aftersale/' + id,
     method: 'get'
   })
 }
 
 // 新增订单售后
-export function addOmsRefund(data) {
+export function addOmsAftersale(data) {
   return request({
-    url: '/oms/refund',
+    url: '/oms/aftersale',
     method: 'post',
     data: data
   })
 }
 
 // 修改订单售后
-export function updateOmsRefund(data) {
+export function updateOmsAftersale(data) {
   return request({
-    url: '/oms/refund',
+    url: '/oms/aftersale',
     method: 'put',
     data: data
   })
 }
 
 // 删除订单售后
-export function delOmsRefund(id) {
+export function delOmsAftersale(id) {
   return request({
-    url: '/oms/refund/' + id,
+    url: '/oms/aftersale/' + id,
     method: 'delete'
   })
 }
 
 // 导出订单售后
-export function exportOmsRefund(query) {
+export function exportOmsAftersale(query) {
   return request({
-    url: '/oms/refund/export',
+    url: '/oms/aftersale/export',
     method: 'get',
     params: query
   })

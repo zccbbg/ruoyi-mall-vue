@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 // 查询订单售后列表
-export function listOmsRefundItem(query, pageReq) {
+export function listOmsAftersaleItem(query, pageReq) {
   return request({
-    url: '/oms/refundItem/list',
+    url: '/oms/aftersaleItem/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -11,43 +11,43 @@ export function listOmsRefundItem(query, pageReq) {
 }
 
 // 查询订单售后详细
-export function getOmsRefundItem(id) {
+export function getOmsAftersaleItem(id) {
   return request({
-    url: '/oms/refundItem/' + id,
+    url: '/oms/aftersaleItem/' + id,
     method: 'get'
   })
 }
 
 // 新增订单售后
-export function addOmsRefundItem(data) {
+export function addOmsAftersaleItem(data) {
   return request({
-    url: '/oms/refundItem',
+    url: '/oms/aftersaleItem',
     method: 'post',
     data: data
   })
 }
 
 // 修改订单售后
-export function updateOmsRefundItem(data) {
+export function updateOmsAftersaleItem(data) {
   return request({
-    url: '/oms/refundItem',
+    url: '/oms/aftersaleItem',
     method: 'put',
     data: data
   })
 }
 
 // 删除订单售后
-export function delOmsRefundItem(id) {
+export function delOmsAftersaleItem(id) {
   return request({
-    url: '/oms/refundItem/' + id,
+    url: '/oms/aftersaleItem/' + id,
     method: 'delete'
   })
 }
 
 // 导出订单售后
-export function exportOmsRefundItem(query) {
+export function exportOmsAftersaleItem(query) {
   return request({
-    url: '/oms/refundItem/export',
+    url: '/oms/aftersaleItem/export',
     method: 'get',
     params: query
   })

@@ -66,8 +66,8 @@
               <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
-      <el-form-item label="退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" prop="refundStatus">
-        <el-select v-model="queryParams.refundStatus" placeholder="请选择退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" clearable size="small">
+      <el-form-item label="退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" prop="aftersaleStatus">
+        <el-select v-model="queryParams.aftersaleStatus" placeholder="请选择退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" clearable size="small">
               <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
@@ -260,7 +260,7 @@
       <el-table-column label="运费金额" align="center" prop="freightAmount" />
       <el-table-column label="支付方式：0->未支付；1->支付宝；2->微信" align="center" prop="payType" />
       <el-table-column label="订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单" align="center" prop="status" />
-      <el-table-column label="退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" align="center" prop="refundStatus" />
+      <el-table-column label="退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" align="center" prop="aftersaleStatus" />
       <el-table-column label="物流公司(配送方式)" align="center" prop="deliveryCompany" />
       <el-table-column label="物流单号" align="center" prop="deliverySn" />
       <el-table-column label="自动确认时间" align="center" prop="autoConfirmDay" />
@@ -352,7 +352,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功">
-          <el-radio-group v-model="form.refundStatus">
+          <el-radio-group v-model="form.aftersaleStatus">
             <el-radio label="1">请选择字典生成</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -480,7 +480,7 @@ export default {
         freightAmount: null,
         payType: null,
         status: null,
-        refundStatus: null,
+        aftersaleStatus: null,
         deliveryCompany: null,
         deliverySn: null,
         autoConfirmDay: null,
@@ -552,7 +552,7 @@ export default {
         freightAmount: null,
         payType: null,
         status: 0,
-        refundStatus: 0,
+        aftersaleStatus: 0,
         deliveryCompany: null,
         deliverySn: null,
         autoConfirmDay: null,

@@ -19,15 +19,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="子订单id" prop="orderItemId">
-        <el-input
-          v-model="queryParams.orderItemId"
-          placeholder="请输入子订单id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="退款金额" prop="returnAmount">
         <el-input
           v-model="queryParams.returnAmount"
@@ -36,6 +27,26 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="售后类型：1：退款，2：退货退款" prop="type">
+        <el-select v-model="queryParams.type" placeholder="请选择售后类型：1：退款，2：退货退款" clearable size="small">
+              <el-option label="请选择字典生成" value="" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="申请状态：0->待处理；1->退货中；2->已完成；3->已拒绝" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择申请状态：0->待处理；1->退货中；2->已完成；3->已拒绝" clearable size="small">
+              <el-option label="请选择字典生成" value="" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="处理时间" prop="handleTime">
+        <el-date-picker
+            clearable
+            size="small"
+            v-model="queryParams.handleTime"
+            type="datetime"
+            value-format="yyyy-MM-ddTHH:mm:ss"
+            placeholder="选择处理时间">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="退货数量" prop="quantity">
         <el-input
@@ -46,9 +57,30 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <template v-if="showMoreCondition">
+      <el-form-item label="原因" prop="reason">
+        <el-input
+          v-model="queryParams.reason"
+          placeholder="请输入原因"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="处理人员" prop="handleMan">
+        <el-input
+          v-model="queryParams.handleMan"
+          placeholder="请输入处理人员"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+    </template>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>
       </el-form-item>
     </el-form>
 
@@ -60,19 +92,30 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['oms:refundItem:add']"
+          v-hasPermi="['oms:aftersale:add']"
         >新增</el-button>
       </el-col>
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="omsRefundItemList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="omsAftersaleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="MEMBER_ID" align="center" prop="memberId" />
       <el-table-column label="订单id" align="center" prop="orderId" />
-      <el-table-column label="子订单id" align="center" prop="orderItemId" />
       <el-table-column label="退款金额" align="center" prop="returnAmount" />
+      <el-table-column label="售后类型：1：退款，2：退货退款" align="center" prop="type" />
+      <el-table-column label="申请状态：0->待处理；1->退货中；2->已完成；3->已拒绝" align="center" prop="status" />
+      <el-table-column label="处理时间" align="center" prop="handleTime" width="180" >
+        <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.handleTime, '')}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="退货数量" align="center" prop="quantity" />
+      <el-table-column label="原因" align="center" prop="reason" />
+      <el-table-column label="描述" align="center" prop="description" />
+      <el-table-column label="凭证图片，以逗号隔开" align="center" prop="proofPics" />
+      <el-table-column label="处理备注" align="center" prop="handleNote" />
+      <el-table-column label="处理人员" align="center" prop="handleMan" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -80,14 +123,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['oms:refundItem:edit']"
+            v-hasPermi="['oms:aftersale:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['oms:refundItem:remove']"
+            v-hasPermi="['oms:aftersale:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -110,14 +153,44 @@
         <el-form-item label="订单id" prop="orderId">
           <el-input v-model="form.orderId" placeholder="请输入订单id" />
         </el-form-item>
-        <el-form-item label="子订单id" prop="orderItemId">
-          <el-input v-model="form.orderItemId" placeholder="请输入子订单id" />
-        </el-form-item>
         <el-form-item label="退款金额" prop="returnAmount">
           <el-input v-model="form.returnAmount" placeholder="请输入退款金额" />
         </el-form-item>
+        <el-form-item label="售后类型：1：退款，2：退货退款" prop="type">
+          <el-select v-model="form.type" placeholder="请选择售后类型：1：退款，2：退货退款">
+            <el-option label="请选择字典生成" value="" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="申请状态：0->待处理；1->退货中；2->已完成；3->已拒绝">
+          <el-radio-group v-model="form.status">
+            <el-radio label="1">请选择字典生成</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="处理时间" prop="handleTime">
+          <el-date-picker clearable size="small"
+                        v-model="form.handleTime"
+                        type="datetime"
+                        value-format="yyyy-MM-ddTHH:mm:ss"
+                        placeholder="选择处理时间">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="退货数量" prop="quantity">
           <el-input v-model="form.quantity" placeholder="请输入退货数量" />
+        </el-form-item>
+        <el-form-item label="原因" prop="reason">
+          <el-input v-model="form.reason" placeholder="请输入原因" />
+        </el-form-item>
+        <el-form-item label="描述" prop="description">
+          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="凭证图片，以逗号隔开" prop="proofPics">
+          <el-input v-model="form.proofPics" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="处理备注" prop="handleNote">
+          <el-input v-model="form.handleNote" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="处理人员" prop="handleMan">
+          <el-input v-model="form.handleMan" placeholder="请输入处理人员" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -129,10 +202,10 @@
 </template>
 
 <script>
-import { listOmsRefundItem, getOmsRefundItem, delOmsRefundItem, addOmsRefundItem, updateOmsRefundItem, exportOmsRefundItem } from "@/api/oms/refundItem";
+import { listOmsAftersale, getOmsAftersale, delOmsAftersale, addOmsAftersale, updateOmsAftersale, exportOmsAftersale } from "@/api/oms/aftersale";
 
 export default {
-  name: "OmsRefundItem",
+  name: "OmsAftersale",
   data() {
     return {
       // 遮罩层
@@ -150,7 +223,7 @@ export default {
       // 总条数
       total: 0,
       // 订单售后表格数据
-      omsRefundItemList: [],
+      omsAftersaleList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -161,9 +234,16 @@ export default {
         pageSize: 10,
         memberId: null,
         orderId: null,
-        orderItemId: null,
         returnAmount: null,
+        type: null,
+        status: null,
+        handleTime: null,
         quantity: null,
+        reason: null,
+        description: null,
+        proofPics: null,
+        handleNote: null,
+        handleMan: null,
       },
       // 表单参数
       form: {},
@@ -173,6 +253,7 @@ export default {
           { required: true, message: "MEMBER_ID不能为空", trigger: "blur" }
         ],
       },
+      showMoreCondition: false
     };
   },
   created() {
@@ -185,9 +266,9 @@ export default {
       const {pageNum, pageSize} = this.queryParams;
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       const pageReq = {page: pageNum - 1, size: pageSize};
-      listOmsRefundItem(query, pageReq).then(response => {
+      listOmsAftersale(query, pageReq).then(response => {
         const { content, totalElements } = response
-        this.omsRefundItemList = content;
+        this.omsAftersaleList = content;
         this.total = totalElements;
         this.loading = false;
       });
@@ -203,9 +284,16 @@ export default {
         id: null,
         memberId: null,
         orderId: null,
-        orderItemId: null,
         returnAmount: null,
+        type: null,
+        status: 0,
+        handleTime: null,
         quantity: null,
+        reason: null,
+        description: null,
+        proofPics: null,
+        handleNote: null,
+        handleMan: null,
         createBy: null,
         createTime: null,
         updateBy: null,
@@ -239,7 +327,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getOmsRefundItem(id).then(response => {
+      getOmsAftersale(id).then(response => {
         this.form = response;
         this.open = true;
         this.title = "修改订单售后";
@@ -250,13 +338,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateOmsRefundItem(this.form).then(response => {
+            updateOmsAftersale(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addOmsRefundItem(this.form).then(response => {
+            addOmsAftersale(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -269,7 +357,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal.confirm('是否确认删除订单售后编号为"' + ids + '"的数据项？').then(function() {
-        return delOmsRefundItem(ids);
+        return delOmsAftersale(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -280,7 +368,7 @@ export default {
       const queryParams = this.queryParams;
       this.$modal.confirm('是否确认导出所有订单售后数据项？').then(() => {
         this.exportLoading = true;
-        return exportOmsRefundItem(queryParams);
+        return exportOmsAftersale(queryParams);
       }).then(response => {
         this.$download.download(response);
         this.exportLoading = false;
