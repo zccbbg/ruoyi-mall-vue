@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+      <el-form-item label="状态" prop="showStatus">
+        <DictRadio v-model="queryParams.showStatus" @change="handleQuery" size="small"
+                   :radioData="dict.type.sys_normal_disable" :showAll="'all'"/>
+      </el-form-item>
       <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.nameLike"
@@ -9,18 +13,6 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="优先级" prop="sort">
-        <el-input
-          v-model="queryParams.sort"
-          placeholder="请输入优先级"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="展示状态" prop="showStatus">
-        <dict-select v-model="queryParams.showStatus" prop-name="sys_normal_disable" />
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -85,17 +77,18 @@
 
     <!-- 添加或修改品牌管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
+      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-one">
+        <el-form-item label="状态">
+          <DictRadio v-model="form.showStatus" size="small"
+                   :radioData="dict.type.sys_normal_disable"/>
+        </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="名称" />
         </el-form-item>
         <el-form-item label="优先级" prop="sort">
           <el-input v-model="form.sort" placeholder="请输入优先级" />
         </el-form-item>
-        <el-form-item label="展示状态">
-          <dict-select v-model="form.showStatus" prop-name="sys_normal_disable" />
-        </el-form-item>
-        <el-form-item label="品牌logo" prop="logo">
+        <el-form-item label="logo" prop="logo">
           <oss-image-upload v-model="form.logo" :limit="1" />
         </el-form-item>
       </el-form>
@@ -112,6 +105,7 @@ import { listPmsBrand, getPmsBrand, delPmsBrand, addPmsBrand, updatePmsBrand, ex
 
 export default {
   name: "PmsBrand",
+  dicts: ['sys_normal_disable'],
   data() {
     return {
       // 遮罩层

@@ -31,13 +31,11 @@ export default {
       }
     },
     dictList(){
-      if(this.showAll === "all"){
-        let list = this.radioData;
+      let list = [...this.radioData];
+      if(this.showAll === "all"){ 
         list.splice(0, 0, {label:"全部"})
-        return list
-      }else{
-        return this.radioData
       }
+      return list
     }
   },
   methods: {
