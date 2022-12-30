@@ -165,37 +165,7 @@ export default {
       this.loading = true;
       const query = {...this.queryParams};
       listPmsProductCategory(query).then(rows => {
-        const map = {}
-        rows.forEach(it => {
-          let list = map[it.parentId]
-          if (!list) {
-            list = [];
-            map[it.parentId] = list;
-          }
-          list.push(it);
-        })
-        const idMap = {};
-        rows.forEach((it, index) => idMap[it.id] = index);
-        const rows1= [...rows]
-        const removeIndex = new Set();
-        for (let i = 0; i < rows1.length; i ++) {
-          if (removeIndex.has(i)) {
-            continue;
-          }
-          let n = rows1[i];
-          while (idMap[n.parentId] !== undefined) {
-            removeIndex.add(idMap[n.id]);
-            n = rows[idMap[n.parentId]];
-            n.children = map[n.id];
-            continue;
-          }
-        }
-        const idxs = [...removeIndex].sort();
-        for (let i = idxs.length - 1; i >= 0; i--) {
-          rows.splice(idxs[i], 1);
-        }
         this.pmsProductCategoryList = rows;
-        debugger
         this.loading = false;
       });
     },
