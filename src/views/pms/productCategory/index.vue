@@ -2,6 +2,10 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
              class="ry_form">
+      <el-form-item label="状态" prop="showStatus">
+        <DictRadio v-model="queryParams.showStatus" @change="handleQuery" size="small"
+                   :radioData="dict.type.sys_normal_disable" :showAll="'all'"/>
+      </el-form-item>
       <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.nameLike"
@@ -11,27 +15,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="层级" prop="level">
-        <el-input
-          v-model="queryParams.level"
-          placeholder="层级"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="显示状态" prop="showStatus">
-        <dict-select v-model="queryParams.showStatus" prop-name="sys_normal_disable"/>
-      </el-form-item>
-      <el-form-item label="排序" prop="sort">
-        <el-input
-          v-model="queryParams.sort"
-          placeholder="排序"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+      
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -58,10 +42,14 @@
       :tree-props="{ hasChildren: 'hasChildren', children: 'children' }"
       @selection-change="handleSelectionChange"
       row-key="id">
-      <el-table-column label="编号" align="center" prop="id" width="100"/>
       <el-table-column label="名称" align="center" prop="name"/>
-      <el-table-column label="层级" align="center" prop="level"/>
-      <el-table-column label="显示状态" align="center" prop="showStatus">
+      <el-table-column label="图片" align="center" prop="icon">
+        <template slot-scope="{ row }">
+          <el-image v-if="row.icon" :src="row.icon" :preview-src-list="[row.icon]" class="small-img circle-img"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" align="center" prop="sort"/>
+      <el-table-column label="状态" align="center" prop="showStatus">
         <template v-slot="{ row }">
           <dict-tag :value="row.showStatus" prop-name="sys_normal_disable"></dict-tag>
         </template>
@@ -89,25 +77,26 @@
     </el-table>
 
     <!-- 添加或修改商品分类对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%">
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="上级分类" prop="parentId">
-          <prod-category class="w200" v-model="form.parentId" :root="true"/>
-        </el-form-item>
+    <el-dialog :title="title" :visible.sync="open" width="500px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="108px">
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="名称"/>
+        </el-form-item>
+        <el-form-item label="图片" prop="icon">
+          <oss-image-upload v-model="form.icon" :limit="1" />
+        </el-form-item>
+        <el-form-item label="状态">
+          <DictRadio v-model="form.showStatus" size="small"
+                   :radioData="dict.type.sys_normal_disable"/>
+        </el-form-item>
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model="form.sort" placeholder="排序"/>
         </el-form-item>
         <el-form-item label="层级" prop="level">
           <el-input v-model="form.level" placeholder="层级：0->1级；1->2级"/>
         </el-form-item>
-        <el-form-item label="显示状态">
-          <dict-select v-model="form.showStatus" prop-name="sys_normal_disable"/>
-        </el-form-item>
-        <el-form-item label="顺序" prop="sort">
-          <el-input v-model="form.sort" placeholder="顺序"/>
-        </el-form-item>
-        <el-form-item label="图标" prop="icon">
-          <el-input v-model="form.icon" placeholder="请输入图标"/>
+        <el-form-item label="上级分类" prop="parentId">
+          <prod-category class="w200" v-model="form.parentId" :root="true"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -131,6 +120,7 @@ import ProdCategory from "@/views/components/ProdCategory";
 
 export default {
   name: "PmsProductCategory",
+  dicts: ['sys_normal_disable'],
   components: {ProdCategory},
   data() {
     return {
@@ -205,6 +195,7 @@ export default {
           rows.splice(idxs[i], 1);
         }
         this.pmsProductCategoryList = rows;
+        debugger
         this.loading = false;
       });
     },

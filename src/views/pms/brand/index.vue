@@ -41,8 +41,8 @@
         </template>
       </el-table-column>
       <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="优先级" align="center" prop="sort" />
-      <el-table-column label="展示状态" align="center" prop="showStatus">
+      <el-table-column label="排序" align="center" prop="sort" />
+      <el-table-column label="状态" align="center" prop="showStatus">
         <template slot-scope="{ row }">
           <dict-tag :value="row.showStatus" prop-name="sys_normal_disable" />
         </template>
@@ -85,8 +85,8 @@
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="名称" />
         </el-form-item>
-        <el-form-item label="优先级" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入优先级" />
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model="form.sort" placeholder="请输入排序" />
         </el-form-item>
         <el-form-item label="logo" prop="logo">
           <oss-image-upload v-model="form.logo" :limit="1" />
