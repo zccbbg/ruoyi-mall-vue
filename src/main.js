@@ -30,6 +30,7 @@ import Editor from "@/components/Editor"
 import FileUpload from "@/components/FileUpload"
 // 图片上传组件
 import ImageUpload from "@/components/ImageUpload"
+import OssImageUpload from "@/components/OssImageUpload"
 // 图片预览组件
 import ImagePreview from "@/components/ImagePreview"
 // 字典标签组件
@@ -61,6 +62,7 @@ Vue.component('RightToolbar', RightToolbar)
 Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
+Vue.component('OssImageUpload', OssImageUpload)
 Vue.component('ImagePreview', ImagePreview)
 Vue.component('DictRadio',DictRadio)
 Vue.component('DictSelect',DictSelect)

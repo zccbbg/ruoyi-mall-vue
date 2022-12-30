@@ -96,7 +96,7 @@
           <dict-select v-model="form.showStatus" prop-name="sys_normal_disable" />
         </el-form-item>
         <el-form-item label="品牌logo" prop="logo">
-          <el-input v-model="form.logo" placeholder="请输入品牌logo" />
+          <oss-image-upload v-model="form.logo" :limit="1" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
