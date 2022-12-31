@@ -93,10 +93,10 @@
           <el-input v-model="form.sort" placeholder="排序"/>
         </el-form-item>
         <el-form-item label="层级" prop="level">
-          <el-input v-model="form.level" placeholder="层级：0->1级；1->2级"/>
+          <el-input v-model="form.level" placeholder="层级"/>
         </el-form-item>
         <el-form-item label="上级分类" prop="parentId">
-          <prod-category class="w200" v-model="form.parentId" :root="true"/>
+          <product-category-select class="w200" v-model="form.parentId"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -116,12 +116,12 @@ import {
   updatePmsProductCategory,
   exportPmsProductCategory
 } from "@/api/pms/productCategory";
-import ProdCategory from "@/views/components/ProdCategory";
+import ProductCategorySelect from "@/views/components/ProductCategorySelect";
 
 export default {
   name: "PmsProductCategory",
   dicts: ['sys_normal_disable'],
-  components: {ProdCategory},
+  components: {ProductCategorySelect},
   data() {
     return {
       // 遮罩层
@@ -227,6 +227,9 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           let p;
+          if(this.form.parentId){
+            this.form.parentId = this.form.parentId.pop()
+          }
           if (this.form.id != null) {
             p = updatePmsProductCategory(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");

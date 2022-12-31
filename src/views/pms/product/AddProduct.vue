@@ -75,12 +75,12 @@
 
 <script>
 import {addPmsProduct, getPmsProduct, updatePmsProduct} from "@/api/pms/product";
-import ProdCategory from "@/views/components/ProdCategory";
+import ProductCategorySelect from "@/views/components/ProductCategorySelect";
 import BrandSelect from "@/views/components/BrandSelect";
 
 export default {
   name: "AddProduct",
-  components: {BrandSelect, ProdCategory},
+  components: {BrandSelect, ProductCategorySelect},
   data() {
     return {
       form: {},
