@@ -229,9 +229,7 @@ export default {
       },
       initOrderCountDate(){
         let start = new Date();
-        start.setFullYear(2018);
-        start.setMonth(10);
-        start.setDate(1);
+        start.setFullYear(2018, 10, 1);
         const end = new Date();
         end.setTime(start.getTime() + 1000 * 60 * 60 * 24 * 7);
         this.orderCountDate=[start,end];
@@ -293,20 +291,6 @@ export default {
     },
     showTimes() {
       this.timeFormate(new Date())
-//       if(date.getHours()>=0&&date.getHours()<12){
-
-// 　　　　this.hello="上午好"
-
-// 　　}else if(date.getHours()>=12&&date.getHours()<18){
-
-// 　　　　this.hello="下午好"
-
-// 　　}else{
-
-// 　　　　this.hello="晚上好"
-
-// 　　}
-
     },
     helloTimes() {
       let hh = new Date().getHours()
