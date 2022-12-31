@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+      <el-form-item label="上架状态" prop="publishStatus">
+         <DictRadio v-model="queryParams.publishStatus" @change="handleQuery" size="small"
+                   :radioData="dict.type.pms_publish_status" :showAll="'all'"/>
+      </el-form-item>
       <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -36,12 +40,6 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-
-      <el-form-item label="上架状态" prop="publishStatus">
-        <el-select v-model="queryParams.publishStatus" placeholder="请选择上架状态：0->下架；1->上架" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -105,6 +103,7 @@ import {delPmsProduct, listPmsProduct} from "@/api/pms/product";
 
 export default {
   name: "PmsProduct",
+  dicts: ['pms_publish_status'],
   data() {
     return {
       // 遮罩层

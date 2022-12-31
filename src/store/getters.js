@@ -16,7 +16,7 @@ const getters = {
   sidebarRouters:state => state.permission.sidebarRouters,
 
   dictMap: state => state.dict.dictMap,
-  productCategories: state => state.dict.productCategories,
-  brandList: state => state.dict.brandList,
+  productCategories: state => state.mall.productCategories,
+  brandList: state => state.mall.brandList,
 }
 export default getters

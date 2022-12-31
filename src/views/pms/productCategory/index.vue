@@ -241,7 +241,7 @@ export default {
             });
           }
           p.then(() => {
-            this.$store.dispatch('loadProductCategories', true)
+            this.$store.dispatch('mall/loadProductCategories', true)
           })
         }
       });

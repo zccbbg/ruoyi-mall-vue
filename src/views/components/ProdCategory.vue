@@ -55,7 +55,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('loadProductCategories')
+    this.$store.dispatch('mall/loadProductCategories')
   }
 }
 </script>

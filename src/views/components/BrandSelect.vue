@@ -24,7 +24,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('loadBrandList')
+    this.$store.dispatch('mall/loadBrandList')
   }
 }
 </script>
