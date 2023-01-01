@@ -1,6 +1,7 @@
-<template lang="pug">
-el-select(v-model="value1")
-  el-option(v-for="it in options" :key="it.id" :value="it.id" :label="it.name") {{it.name}}
+<template>
+  <el-select v-model="value1" placeholder="选择品牌">
+    <el-option v-for="it in options" :key="it.id" :value="it.id" :label="it.name">{{it.name}}</el-option>
+  </el-select>
 </template>
 
 <script>

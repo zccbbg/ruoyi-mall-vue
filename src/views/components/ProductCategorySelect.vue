@@ -3,7 +3,7 @@
     v-model="value1"
     :options="menuOptions"
     :props="{ checkStrictly: true }"
-    placeholder="选择上级类目"
+    placeholder="选择类目"
   />
 </template>
 
