@@ -1,88 +1,106 @@
 <template>
   <div class="add-product-wrapper">
-    <el-form class="content" label-width="108px" :model="form" ref="form">
-      <el-form-item label="品牌" prop="brandId">
-        <brand-select v-model="form.brandId"></brand-select>
-      </el-form-item>
-      <el-form-item label="分类" prop="categoryId">
-        <product-category-select class="w200" v-model="form.categoryId"></product-category-select>
-      </el-form-item>
-      <el-form-item label="商品编码" prop="outProductId">
-        <el-input v-model="form.outProductId" placeholder="请输入商品编码"></el-input>
-      </el-form-item>
-      <el-form-item label="商品名称" prop="name">
-        <el-input v-model="form.name" placeholder="请输入商品名称"></el-input>
-      </el-form-item>
-      <el-form-item label="主图" prop="pic">
-        <image-upload v-model="form.pic" :limit="1"></image-upload>
-      </el-form-item>
-      <el-form-item label="商品图片" prop="albumPics">
-        <image-upload v-model="form.albumPics" :limit="5"></image-upload>
-      </el-form-item>
-      <el-form-item label="上架状态">
-        <dict-select v-model="form.publishStatus" prop-name="pms_publish_status"></dict-select>
-      </el-form-item>
-      <el-form-item label="排序" prop="sort">
-        <el-input v-model="form.sort" placeholder="请输入排序"></el-input>
-      </el-form-item>
-      <el-form-item label="价格" prop="price">
-        <el-input v-model="form.price" placeholder="请输入PRICE"></el-input>
-      </el-form-item>
-      <el-form-item label="单位" prop="unit">
-        <el-input v-model="form.unit" placeholder="请输入单位"></el-input>
-      </el-form-item>
-      <el-form-item label="商品重量" prop="weight">
-        <el-input v-model="form.weight" placeholder="商品重量，默认为克"></el-input>
-      </el-form-item>
-      <div class="title">规格信息</div>
-      <el-form-item label="商品规格">
-        <div class="sku-wrapper">
-          <div class="sku_sorts">
-            <div class="sku_sort" v-for="(s, idx0) in skuSorts" :key="s.name">
-              <div class="label flex-center">
-                <div class="flex-one">
-                  <dict-select v-model="s.name" prop-name="sku_sort_list" value-prop="label"></dict-select>
-                </div><a class="red" @click="deleteSkuSort(idx0)">删除规格类型</a>
-              </div>
-              <div class="values" v-if="s.name">
-                <div class="value" v-for="(it2, idx1) in s.options" :key="idx1">
-                  <el-input :value="it2.name" @input="changeName(s, idx1, $event)"></el-input><a class="red no-break ml8" v-if="idx1 &lt; s.options.length - 1 || (s.options.length === maxOptionNum &amp;&amp; idx1 === 3)" @click="deleteOption(s, idx1)">删除</a>
+    <el-form label-width="108px" :model="form" ref="form">
+      <el-card style="margin: 20px 20px; font-size: 14px">
+        <div slot="header">
+          <span>基本信息</span>
+        </div>
+        <el-form-item label="商品名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入商品名称"></el-input>
+        </el-form-item>
+        <el-form-item label="商品编码" prop="outProductId">
+          <el-input v-model="form.outProductId" placeholder="请输入商品编码"></el-input>
+        </el-form-item>
+        <el-form-item label="品牌" prop="brandId">
+          <brand-select v-model="form.brandId"></brand-select>
+        </el-form-item>
+        <el-form-item label="分类" prop="categoryId">
+          <product-category-select class="w200" v-model="form.categoryId"></product-category-select>
+        </el-form-item>
+        <el-form-item label="主图" prop="pic">
+          <oss-image-upload v-model="form.pic" :limit="1"></oss-image-upload>
+        </el-form-item>
+        <el-form-item label="轮播图" prop="albumPics">
+          <oss-image-upload v-model="form.albumPics" :limit="5"></oss-image-upload>
+        </el-form-item>
+        <el-form-item label="上架状态">
+          <DictRadio v-model="form.publishStatus" size="small"
+                    :radioData="dict.type.pms_publish_status"/>
+        </el-form-item>
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model="form.sort" placeholder="请输入排序"></el-input>
+        </el-form-item>
+        <el-form-item label="价格" prop="price">
+          <el-input v-model="form.price" placeholder="请输入PRICE"></el-input>
+        </el-form-item>
+        <el-form-item label="单位" prop="unit">
+          <el-input v-model="form.unit" placeholder="请输入单位"></el-input>
+        </el-form-item>
+        <el-form-item label="商品重量" prop="weight">
+          <el-input v-model="form.weight" placeholder="商品重量，默认为克"></el-input>
+        </el-form-item>
+      </el-card>
+      
+      <el-card style="margin: 20px 20px; font-size: 14px">
+        <div slot="header">
+          <span>规格信息</span>
+        </div>
+        <el-form-item label="规格类型">
+          <div class="sku-wrapper">
+            <div class="sku_sorts">
+              <div class="sku_sort" v-for="(s, idx0) in skuSorts" :key="s.name">
+                <div class="label flex-center">
+                  <div class="flex-one">
+                    <dict-select v-model="s.name" prop-name="sku_sort_list" value-prop="label"></dict-select>
+                  </div><a class="red" @click="deleteSkuSort(idx0)">删除规格类型</a>
+                </div>
+                <div class="values" v-if="s.name">
+                  <div class="value" v-for="(it2, idx1) in s.options" :key="idx1">
+                    <el-input :value="it2.name" @input="changeName(s, idx1, $event)" placeholder="请输入规格名称"></el-input><a class="red no-break ml8" v-if="idx1 &lt; s.options.length - 1 || (s.options.length === maxOptionNum &amp;&amp; idx1 === 3)" @click="deleteOption(s, idx1)">删除</a>
+                  </div>
                 </div>
               </div>
             </div>
+            <el-button v-if="skuSorts.length &lt; 2" @click="addSkuSort">+添加规格类型</el-button>
           </div>
-          <el-button v-if="skuSorts.length &lt; 2" @click="addSkuSort">添加规格类型</el-button>
+        </el-form-item>
+        <el-form-item label="规格信息">
+          <el-table :data="skuList" :max-height="400">
+            <el-table-column v-for="s in skuSorts" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
+            <el-table-column label="展示图片">
+              <template v-slot="{ row }">
+                <oss-image-upload class="img-upload-mini" v-model="row.pic" :is-show-tip="false"></oss-image-upload>
+              </template>
+            </el-table-column>
+            <el-table-column label="销售价格">
+              <template v-slot="{ row }">
+                <el-input v-model="row.price"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="编码">
+              <template v-slot="{ row }">
+                <el-input v-model="row.outSkuId"></el-input>
+                <el-input v-model="row.spData" v-show="false"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template v-slot="{row, index}"><a class="red">删除{{index}}</a></template>
+            </el-table-column>
+          </el-table>
+        </el-form-item>
+      </el-card>
+      <el-card style="margin: 20px 20px; font-size: 14px">
+        <div slot="header">
+          <span>详情页</span>
         </div>
-      </el-form-item>
-      <el-form-item label=" 价格">
-        <el-table :data="skus" :max-height="400">
-          <el-table-column v-for="s in skuSorts" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
-          <el-table-column label="展示图片">
-            <template v-slot="{ row }">
-              <image-upload class="img-upload-mini" v-model="row.pic" :is-show-tip="false"></image-upload>
-            </template>
-          </el-table-column>
-          <el-table-column label="销售价格">
-            <template v-slot="{ row }">
-              <el-input v-model="row.price"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="编码">
-            <template v-slot="{ row }">
-              <el-input v-model="row.outSkuId"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template v-slot="{row, index}"><a class="red">删除{{index}}</a></template>
-          </el-table-column>
-        </el-table>
-      </el-form-item>
-      <el-form-item label="产品详情网页内容" prop="detailHtml">
-        <el-input v-model="form.detailHtml" placeholder="请输入内容" type="textarea"></el-input>
-      </el-form-item>
-      <el-form-item label="移动端网页详情" prop="detailMobileHtml">
-        <el-input v-model="form.detailMobileHtml" placeholder="请输入内容" type="textarea"></el-input>
-      </el-form-item>
+        <el-form-item label="产品详情网页内容" prop="detailHtml">
+          <el-input v-model="form.detailHtml" placeholder="请输入内容" type="textarea"></el-input>
+        </el-form-item>
+        <el-form-item label="移动端网页详情" prop="detailMobileHtml">
+          <el-input v-model="form.detailMobileHtml" placeholder="请输入内容" type="textarea"></el-input>
+        </el-form-item>
+      </el-card>
+      
       <div class="tc">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -98,6 +116,7 @@ import BrandSelect from "@/views/components/BrandSelect";
 
 export default {
   name: "AddProduct",
+  dicts: ['pms_publish_status'],
   components: {BrandSelect, ProductCategorySelect},
   data() {
     return {
@@ -115,29 +134,36 @@ export default {
     }
   },
   computed: {
-    skus() {
+    skuList() {
       let arr = [];
-      this.skuSorts.forEach((it1, idx1) => {
+      this.skuSorts.forEach((sku, index) => {
         const arr1 = [];
-        it1.options.forEach((it2) => {
-          if (!it2.name) {
+        sku.options.forEach((option) => {
+          if (!option.name) {
             return
           }
-          if (idx1 === 0) {
-            arr1.push({[it1.name]: it2.name});
+          if (index === 0) {
+            arr1.push({[sku.name]: option.name});
           } else {
             arr.forEach(it3 => {
-              arr1.push({...it3, [it1.name]: it2.name })
+              arr1.push({...it3, [sku.name]: option.name })
             })
           }
         })
         arr = arr1;
       })
       arr.forEach(it => {
+        if(it){
+          it.spData=JSON.stringify(it)
+        }
+        
+      })
+      arr.forEach(it => {
         it.outSkuId = null;
         it.price = null;
         it.pic = null;
       })
+      console.log(arr)
       return arr
     }
   },
@@ -161,17 +187,18 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.skuList = this.skuList
+          if(this.form.categoryId){
+            this.form.categoryId = this.form.categoryId.pop()
+          }
           if (this.form.id != null) {
             updatePmsProduct(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
             });
           } else {
             addPmsProduct(this.form).then(response => {
+              console.log(this.form)
               this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
             });
           }
         }
