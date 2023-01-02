@@ -83,9 +83,6 @@
                 <el-input v-model="row.spData" v-show="false"></el-input>
               </template>
             </el-table-column>
-            <el-table-column label="操作">
-              <template v-slot="{row, index}"><a class="red">删除{{index}}</a></template>
-            </el-table-column>
           </el-table>
         </el-form-item>
       </el-card>
@@ -135,36 +132,48 @@ export default {
   },
   computed: {
     skuList() {
-      let arr = [];
-      this.productAttr.forEach((sku, index) => {
-        const arr1 = [];
-        sku.options.forEach((option) => {
+      let skus = [];
+      let skuMap = new Map()
+      if(this.form.skuList){
+        this.form.skuList.forEach(sku=>{
+          skuMap.set(sku.spData,sku)
+        })
+      }
+      this.productAttr.forEach((attr, index) => {
+        const attrSku = [];
+        attr.options.forEach((option) => {
           if (!option.name) {
             return
           }
           if (index === 0) {
-            arr1.push({[sku.name]: option.name});
+            attrSku.push({[attr.name]: option.name});
           } else {
-            arr.forEach(it3 => {
-              arr1.push({...it3, [sku.name]: option.name })
+            skus.forEach(it3 => {
+              attrSku.push({...it3, [attr.name]: option.name })
             })
           }
         })
-        arr = arr1;
+        skus = attrSku;
       })
-      arr.forEach(it => {
+      skus.forEach(it => {
         if(it){
           it.spData=JSON.stringify(it)
         }
+      })
+      skus.forEach(it => {
+        let sku = skuMap.get(it.spData);
+        if(sku){
+          it.outSkuId = sku.outSkuId;
+          it.price = sku.price;
+          it.pic = sku.pic;
+        }else{
+          it.outSkuId = null;
+          it.price = null;
+          it.pic = null;
+        }
         
       })
-      arr.forEach(it => {
-        it.outSkuId = null;
-        it.price = null;
-        it.pic = null;
-      })
-      console.log(arr)
-      return arr
+      return skus
     }
   },
   created() {
