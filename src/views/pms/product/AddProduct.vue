@@ -43,7 +43,7 @@
           <oss-image-upload v-model="form.pic" :limit="1"></oss-image-upload>
         </el-form-item>
         <el-form-item label="轮播图" prop="albumPics">
-          <oss-image-upload v-model="form.albumPics" :limit="5"></oss-image-upload>
+          <oss-image-upload v-model="albumPics" :limit="5"></oss-image-upload>
         </el-form-item>
       </el-card>
       
@@ -71,7 +71,7 @@
           </div>
         </el-form-item>
         <el-form-item label="规格信息">
-          <el-button @click="refreshSku(null)">刷新列表</el-button>
+          <el-button @click="refreshSku(null)" class="mb20">刷新列表</el-button>
           <el-table :data="skuList" :max-height="400">
             <el-table-column v-for="s in skuAttr" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
             <el-table-column label="展示图片">
@@ -97,12 +97,13 @@
         <div slot="header">
           <span>详情页</span>
         </div>
-        <el-form-item label="产品详情网页内容" prop="detailHtml">
-          <el-input v-model="form.detailHtml" placeholder="请输入内容" type="textarea"></el-input>
+        <el-form-item label="移动端" prop="detailMobileHtml">
+          <Editor v-model="form.detailMobileHtml" placeholder="请输入内容" type="url"></Editor>
         </el-form-item>
-        <el-form-item label="移动端网页详情" prop="detailMobileHtml">
-          <el-input v-model="form.detailMobileHtml" placeholder="请输入内容" type="textarea"></el-input>
+        <el-form-item label="PC端" prop="detailHtml">
+          <Editor v-model="form.detailHtml" placeholder="请输入内容" type=""></Editor>
         </el-form-item>
+        
       </el-card>
       
       <div class="tc">
@@ -127,6 +128,7 @@ export default {
       form: {},
       skuList:[],
       skuAttr:[],
+      albumPics:null,
       productAttr: [
         {
           name: '颜色',
@@ -143,6 +145,8 @@ export default {
     const {id} = this.$route.query
     if (id) {
       this.getInfo(id);
+    }else{
+      this.form.publishStatus=0
     }
   },
   methods: {
@@ -199,7 +203,7 @@ export default {
       getPmsProduct(id).then(response => {
         const {albumPics } = response
         if (albumPics) {
-          response.albumPics = albumPics.split(',')
+          this.albumPics = albumPics.split(',')
         }
         this.form = response;
         if(this.form.productAttr){
@@ -212,6 +216,9 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          if(this.albumPics){
+            this.form.albumPics = this.albumPics.toString()
+          }
           this.form.skuList = this.skuList
           if(this.form.categoryId && Array.isArray(this.form.categoryId)){
             this.form.categoryId = this.form.categoryId.pop()

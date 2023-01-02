@@ -63,10 +63,18 @@
     <el-table v-loading="loading" :data="pmsProductList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="编码" align="center" prop="outProductId"/>
-      <el-table-column label="主图" align="center" prop="pic"/>
+      <el-table-column label="主图" align="center" prop="pic">
+        <template slot-scope="{ row }">
+          <el-image v-if="row.pic" :src="row.pic" :preview-src-list="[row.pic]" class="small-img circle-img"/>
+        </template>
+      </el-table-column>
       <el-table-column label="名称" align="center" prop="name"/>
       <el-table-column label="价格" align="center" prop="price"/>
-      <el-table-column label="上架状态" align="center" prop="publishStatus"/>
+      <el-table-column label="上架状态" align="center" prop="publishStatus">
+        <template slot-scope="{ row }">
+          <dict-tag :value="row.publishStatus" prop-name="pms_publish_status" />
+        </template>
+      </el-table-column>
       <el-table-column label="排序" align="center" prop="sort"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
