@@ -17,12 +17,6 @@
         <el-form-item label="分类" prop="categoryId">
           <product-category-select class="w200" v-model="form.categoryId"></product-category-select>
         </el-form-item>
-        <el-form-item label="主图" prop="pic">
-          <oss-image-upload v-model="form.pic" :limit="1"></oss-image-upload>
-        </el-form-item>
-        <el-form-item label="轮播图" prop="albumPics">
-          <oss-image-upload v-model="form.albumPics" :limit="5"></oss-image-upload>
-        </el-form-item>
         <el-form-item label="上架状态">
           <DictRadio v-model="form.publishStatus" size="small"
                     :radioData="dict.type.pms_publish_status"/>
@@ -40,10 +34,22 @@
           <el-input v-model="form.weight" placeholder="商品重量，默认为克"></el-input>
         </el-form-item>
       </el-card>
+
+      <el-card style="margin: 20px 20px; font-size: 14px">
+        <div slot="header">
+          <span>产品图片</span>
+        </div>
+        <el-form-item label="主图" prop="pic">
+          <oss-image-upload v-model="form.pic" :limit="1"></oss-image-upload>
+        </el-form-item>
+        <el-form-item label="轮播图" prop="albumPics">
+          <oss-image-upload v-model="form.albumPics" :limit="5"></oss-image-upload>
+        </el-form-item>
+      </el-card>
       
       <el-card style="margin: 20px 20px; font-size: 14px">
         <div slot="header">
-          <span>规格信息</span>
+          <span>产品规格</span>
         </div>
         <el-form-item label="规格类型">
           <div class="sku-wrapper">
@@ -67,10 +73,10 @@
         <el-form-item label="规格信息">
           <el-button @click="refreshSku(null)">刷新列表</el-button>
           <el-table :data="skuList" :max-height="400">
-            <el-table-column v-for="s in productAttr" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
+            <el-table-column v-for="s in skuAttr" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
             <el-table-column label="展示图片">
               <template v-slot="{ row }">
-                <oss-image-upload class="img-upload-mini" v-model="row.pic" :is-show-tip="false"></oss-image-upload>
+                <oss-image-upload class="img-upload-mini" v-model="row.pic" :limit="1" :is-show-tip="false"></oss-image-upload>
               </template>
             </el-table-column>
             <el-table-column label="销售价格">
@@ -120,6 +126,7 @@ export default {
     return {
       form: {},
       skuList:[],
+      skuAttr:[],
       productAttr: [
         {
           name: '颜色',
@@ -145,6 +152,7 @@ export default {
       if(preSkus){
         this.skuList=preSkus
       }
+      this.skuAttr=[...this.productAttr]
       if(this.skuList){
         this.skuList.forEach(sku=>{
           skuMap.set(sku.spData,sku)
@@ -214,15 +222,15 @@ export default {
             });
           } else {
             addPmsProduct(this.form).then(response => {
-              console.log(this.form)
               this.$modal.msgSuccess("新增成功");
             });
           }
+          this.cancel();
         }
       });
     },
     cancel() {
-
+      this.$tab.closeOpenPage({ path: '/pms/product' })
     },
     changeName(s, idx, val) {
       s.options[idx].name = val;
