@@ -65,6 +65,7 @@
           </div>
         </el-form-item>
         <el-form-item label="规格信息">
+          <el-button @click="refreshSku(null)">刷新列表</el-button>
           <el-table :data="skuList" :max-height="400">
             <el-table-column v-for="s in productAttr" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
             <el-table-column label="展示图片">
@@ -118,6 +119,7 @@ export default {
   data() {
     return {
       form: {},
+      skuList:[],
       productAttr: [
         {
           name: '颜色',
@@ -130,12 +132,21 @@ export default {
       maxOptionNum: 44
     }
   },
-  computed: {
-    skuList() {
+  created() {
+    const {id} = this.$route.query
+    if (id) {
+      this.getInfo(id);
+    }
+  },
+  methods: {
+    refreshSku(preSkus){
       let skus = [];
       let skuMap = new Map()
-      if(this.form.skuList){
-        this.form.skuList.forEach(sku=>{
+      if(preSkus){
+        this.skuList=preSkus
+      }
+      if(this.skuList){
+        this.skuList.forEach(sku=>{
           skuMap.set(sku.spData,sku)
         })
       }
@@ -173,16 +184,9 @@ export default {
         }
         
       })
-      return skus
-    }
-  },
-  created() {
-    const {id} = this.$route.query
-    if (id) {
-      this.getInfo(id);
-    }
-  },
-  methods: {
+      this.form.productAttr = JSON.stringify(this.productAttr)
+      this.skuList= skus
+    },
     getInfo(id) {
       getPmsProduct(id).then(response => {
         const {albumPics } = response
@@ -193,13 +197,13 @@ export default {
         if(this.form.productAttr){
           this.productAttr =JSON.parse(this.form.productAttr)
         }
+        this.refreshSku(this.form.skuList)
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          this.form.productAttr = JSON.stringify(this.productAttr)
           this.form.skuList = this.skuList
           if(this.form.categoryId && Array.isArray(this.form.categoryId)){
             this.form.categoryId = this.form.categoryId.pop()
