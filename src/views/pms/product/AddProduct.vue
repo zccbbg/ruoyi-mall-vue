@@ -48,7 +48,7 @@
         <el-form-item label="规格类型">
           <div class="sku-wrapper">
             <div class="sku_sorts">
-              <div class="sku_sort" v-for="(s, idx0) in skuSorts" :key="s.name">
+              <div class="sku_sort" v-for="(s, idx0) in productAttr" :key="s.name">
                 <div class="label flex-center">
                   <div class="flex-one">
                     <dict-select v-model="s.name" prop-name="sku_sort_list" value-prop="label"></dict-select>
@@ -61,12 +61,12 @@
                 </div>
               </div>
             </div>
-            <el-button v-if="skuSorts.length &lt; 2" @click="addSkuSort">+添加规格类型</el-button>
+            <el-button v-if="productAttr.length &lt; 2" @click="addSkuSort">+添加规格类型</el-button>
           </div>
         </el-form-item>
         <el-form-item label="规格信息">
           <el-table :data="skuList" :max-height="400">
-            <el-table-column v-for="s in skuSorts" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
+            <el-table-column v-for="s in productAttr" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
             <el-table-column label="展示图片">
               <template v-slot="{ row }">
                 <oss-image-upload class="img-upload-mini" v-model="row.pic" :is-show-tip="false"></oss-image-upload>
@@ -121,7 +121,7 @@ export default {
   data() {
     return {
       form: {},
-      skuSorts: [
+      productAttr: [
         {
           name: '颜色',
           options: [
@@ -136,7 +136,7 @@ export default {
   computed: {
     skuList() {
       let arr = [];
-      this.skuSorts.forEach((sku, index) => {
+      this.productAttr.forEach((sku, index) => {
         const arr1 = [];
         sku.options.forEach((option) => {
           if (!option.name) {
@@ -181,14 +181,18 @@ export default {
           response.albumPics = albumPics.split(',')
         }
         this.form = response;
+        if(this.form.productAttr){
+          this.productAttr =JSON.parse(this.form.productAttr)
+        }
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.productAttr = JSON.stringify(this.productAttr)
           this.form.skuList = this.skuList
-          if(this.form.categoryId){
+          if(this.form.categoryId && Array.isArray(this.form.categoryId)){
             this.form.categoryId = this.form.categoryId.pop()
           }
           if (this.form.id != null) {
@@ -215,13 +219,13 @@ export default {
       s.options.push({name: null})
     },
     addSkuSort() {
-      this.skuSorts.push({
+      this.productAttr.push({
         name: null,
         options: [{name: null}]
       })
     },
     deleteSkuSort(idx) {
-      this.skuSorts.splice(idx);
+      this.productAttr.splice(idx);
     },
     deleteOption(s, idx) {
       s.options.splice(idx, 1);
