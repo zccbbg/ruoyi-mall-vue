@@ -2,7 +2,8 @@
   <el-cascader
     v-model="value1"
     :options="menuOptions"
-    :props="{ checkStrictly: true }"
+    v-bind="$props"
+    clearable
     placeholder="选择类目"
   />
 </template>
@@ -13,16 +14,14 @@ import {mapGetters} from "vuex";
 
 export default {
   name: "ProductCategorySelect",
-  props: ['value'],
+  props: ['value','props'],
   computed: {
     ...mapGetters(['productCategories']),
     value1: {
       get() {
-        console.log(this.value)
         return this.value;
       },
       set(v) {
-        console.log(v)
         this.$emit('input', v);
       }
     },

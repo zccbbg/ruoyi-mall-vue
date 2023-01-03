@@ -96,7 +96,7 @@
           <el-input v-model="form.level" placeholder="层级"/>
         </el-form-item>
         <el-form-item label="上级分类" prop="parentId">
-          <product-category-select class="w200" v-model="form.parentId"/>
+          <product-category-select class="w200" v-model="form.parentId" :props="{ checkStrictly: true }"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
