@@ -7,7 +7,7 @@
       </el-form-item>
       <el-form-item label="名称" prop="name">
         <el-input
-          v-model="queryParams.name"
+          v-model="queryParams.nameLike"
           placeholder="请输入商品名称"
           clearable
           size="small"
@@ -16,16 +16,16 @@
       </el-form-item>
       <el-form-item label="品牌" prop="brandName">
         <el-input
-          v-model="queryParams.brandName"
+          v-model="queryParams.brandNameLike"
           placeholder="请输入品牌名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="分类" prop="categoryId">
+      <el-form-item label="分类" prop="productCategoryName">
         <el-input
-          v-model="queryParams.categoryId"
+          v-model="queryParams.productCategoryNameLike"
           placeholder="请输入分类名称"
           clearable
           size="small"
@@ -75,6 +75,8 @@
           <dict-tag :value="row.publishStatus" prop-name="pms_publish_status" />
         </template>
       </el-table-column>
+      <el-table-column label="品牌" align="center" prop="brandName"/>
+      <el-table-column label="分类" align="center" prop="productCategoryName"/>
       <el-table-column label="排序" align="center" prop="sort"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
