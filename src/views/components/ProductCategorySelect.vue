@@ -1,5 +1,7 @@
 <template>
   <el-cascader
+    ref="cascaderMallCatergory"
+    @change="handleMallCatergoryChange"
     v-model="value1"
     :options="menuOptions"
     v-bind="$props"
@@ -34,6 +36,12 @@ export default {
     }
   },
   methods: {
+    handleMallCatergoryChange () {
+      if (this.value1 && this.value1.length != 0) {       
+        let arr = this.$refs['cascaderMallCatergory'].getCheckedNodes()[0].pathLabels
+        this.$emit('change', arr);
+      }
+    },
     recurs(list){
       list.forEach(it => {
         it.label = it.name

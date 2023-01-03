@@ -12,10 +12,10 @@
           <el-input v-model="form.outProductId" placeholder="请输入商品编码"></el-input>
         </el-form-item>
         <el-form-item label="品牌" prop="brandId">
-          <brand-select v-model="form.brandId"></brand-select>
+          <brand-select v-model="form.brandId" @change="onBrandChange"></brand-select>
         </el-form-item>
         <el-form-item label="分类" prop="categoryId">
-          <product-category-select class="w200" v-model="form.categoryId"></product-category-select>
+          <product-category-select class="w200" v-model="form.categoryId" @change="categoryChange"></product-category-select>
         </el-form-item>
         <el-form-item label="上架状态">
           <DictRadio v-model="form.publishStatus" size="small"
@@ -198,6 +198,18 @@ export default {
       })
       this.form.productAttr = JSON.stringify(this.productAttr)
       this.skuList= skus
+    },
+    categoryChange(value){
+      if(Array.isArray(value)){
+        console.log(value.toString())
+        this.form.productCategoryName=value.toString()
+      }else{
+        this.form.productCategoryName=null
+      }
+      
+    },
+    onBrandChange(value){
+      this.form.brandName = value
     },
     getInfo(id) {
       getPmsProduct(id).then(response => {

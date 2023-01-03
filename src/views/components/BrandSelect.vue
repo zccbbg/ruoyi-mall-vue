@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="value1" placeholder="选择品牌">
+  <el-select v-model="value1" placeholder="选择品牌" ref="brandSelect" @change="handleBrandChange">
     <el-option v-for="it in options" :key="it.id" :value="it.id" :label="it.name">{{it.name}}</el-option>
   </el-select>
 </template>
@@ -23,6 +23,16 @@ export default {
     options() {
       return this.brandList
     }
+  },
+  methods:{
+    handleBrandChange (id) {
+      if (this.value1) {       
+        let brand=this.brandList.find(item=>{
+          return item.id==id
+        })
+        this.$emit('change', brand.name);
+      }
+    },
   },
   created() {
     this.$store.dispatch('mall/loadBrandList')
