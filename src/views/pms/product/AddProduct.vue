@@ -1,6 +1,6 @@
 <template>
   <div class="add-product-wrapper">
-    <el-form label-width="108px" :model="form" ref="form">
+    <el-form label-width="108px" :model="form" ref="form" :rules="rules">
       <el-card style="margin: 20px 20px; font-size: 14px">
         <div slot="header">
           <span>基本信息</span>
@@ -62,32 +62,38 @@
                 </div>
                 <div class="values" v-if="s.name">
                   <div class="value" v-for="(it2, idx1) in s.options" :key="idx1">
-                    <el-input :value="it2.name" @input="changeName(s, idx1, $event)" placeholder="请输入规格名称"></el-input><a class="red no-break ml8" v-if="idx1 &lt; s.options.length - 1 || (s.options.length === maxOptionNum &amp;&amp; idx1 === 3)" @click="deleteOption(s, idx1)">删除</a>
+                    <el-input :value="it2.name" @input="changeName(s, idx1, $event)" placeholder="请输入规格名称"></el-input><a class="red no-break ml8" v-if="idx1 < s.options.length - 1 || (s.options.length === maxOptionNum &amp;&amp; idx1 === 3)" @click="deleteOption(s, idx1)">删除</a>
                   </div>
                 </div>
               </div>
             </div>
-            <el-button v-if="productAttr.length &lt; 2" @click="addSkuSort">+添加规格类型</el-button>
+            <el-button v-if="productAttr.length < 2" @click="addSkuSort">+添加规格类型</el-button>
           </div>
         </el-form-item>
         <el-form-item label="规格信息">
-          <el-button @click="refreshSku(null)" class="mb20">刷新列表</el-button>
-          <el-table :data="skuList" :max-height="400">
+          <el-button @click="refreshSku()" class="mb20">刷新列表</el-button>
+          <el-table :data="form.skuList" :max-height="400">
             <el-table-column v-for="s in skuAttr" :label="s.name" :key="s.name" :prop="s.name"></el-table-column>
             <el-table-column label="展示图片">
               <template v-slot="{ row }">
                 <oss-image-upload class="img-upload-mini" v-model="row.pic" :limit="1" :is-show-tip="false"></oss-image-upload>
               </template>
             </el-table-column>
-            <el-table-column label="销售价格">
-              <template v-slot="{ row }">
-                <el-input v-model="row.price"></el-input>
+            <el-table-column label="销售价格" >
+              <template v-slot="{ row,$index }">
+                <el-form-item 
+                  :rules="{ required: true, message: '请填写价格', trigger: 'blur' }"
+                  :prop="'skuList['+$index+'].price'">
+                  <el-input v-model="row.price"></el-input>
+                </el-form-item>
               </template>
             </el-table-column>
             <el-table-column label="编码">
               <template v-slot="{ row }">
-                <el-input v-model="row.outSkuId"></el-input>
-                <el-input v-model="row.spData" v-show="false"></el-input>
+                <el-form-item>
+                  <el-input v-model="row.outSkuId"></el-input>
+                  <el-input v-model="row.spData" v-show="false"></el-input>
+                </el-form-item>
               </template>
             </el-table-column>
           </el-table>
@@ -125,8 +131,12 @@ export default {
   components: {BrandSelect, ProductCategorySelect},
   data() {
     return {
+       rules: {
+          name: [
+            { required: true, message: '请输入商品名称', trigger: 'blur' }, 
+          ],
+       },
       form: {},
-      skuList:[],
       skuAttr:[],
       albumPics:null,
       productAttr: [
@@ -150,15 +160,12 @@ export default {
     }
   },
   methods: {
-    refreshSku(preSkus){
+    refreshSku(){
       let skus = [];
       let skuMap = new Map()
-      if(preSkus){
-        this.skuList=preSkus
-      }
       this.skuAttr=[...this.productAttr]
-      if(this.skuList){
-        this.skuList.forEach(sku=>{
+      if(this.form.skuList){
+        this.form.skuList.forEach(sku=>{
           skuMap.set(sku.spData,sku)
         })
       }
@@ -197,7 +204,7 @@ export default {
         
       })
       this.form.productAttr = JSON.stringify(this.productAttr)
-      this.skuList= skus
+      this.form.skuList= skus
     },
     categoryChange(value){
       if(Array.isArray(value)){
@@ -221,7 +228,7 @@ export default {
         if(this.form.productAttr){
           this.productAttr =JSON.parse(this.form.productAttr)
         }
-        this.refreshSku(this.form.skuList)
+        this.refreshSku()
       });
     },
     /** 提交按钮 */
@@ -231,7 +238,6 @@ export default {
           if(this.albumPics){
             this.form.albumPics = this.albumPics.toString()
           }
-          this.form.skuList = this.skuList
           if(this.form.categoryId && Array.isArray(this.form.categoryId)){
             this.form.categoryId = this.form.categoryId.pop()
           }
@@ -245,6 +251,16 @@ export default {
             });
           }
           this.cancel();
+        }else{
+          if(this.form.name){
+            this.$alert('请填写规格价格', '提示', {
+              confirmButtonText: '确定',
+            });
+          }else{
+            this.$alert('请填写商品名称', '提示', {
+              confirmButtonText: '确定',
+            });
+          }
         }
       });
     },
