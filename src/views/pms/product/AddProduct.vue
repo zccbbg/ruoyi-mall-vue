@@ -5,34 +5,60 @@
         <div slot="header">
           <span>基本信息</span>
         </div>
-        <el-form-item label="商品名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入商品名称"></el-input>
-        </el-form-item>
-        <el-form-item label="商品编码" prop="outProductId">
-          <el-input v-model="form.outProductId" placeholder="请输入商品编码"></el-input>
-        </el-form-item>
-        <el-form-item label="品牌" prop="brandId">
-          <brand-select v-model="form.brandId" @change="onBrandChange"></brand-select>
-        </el-form-item>
-        <el-form-item label="分类" prop="categoryId">
-          <product-category-select class="w200" v-model="form.categoryId" @change="categoryChange"></product-category-select>
-        </el-form-item>
-        <el-form-item label="上架状态">
-          <DictRadio v-model="form.publishStatus" size="small"
-                    :radioData="dict.type.pms_publish_status"/>
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入排序"></el-input>
-        </el-form-item>
-        <el-form-item label="价格" prop="price">
-          <el-input v-model="form.price" placeholder="请输入PRICE"></el-input>
-        </el-form-item>
-        <el-form-item label="单位" prop="unit">
-          <el-input v-model="form.unit" placeholder="请输入单位"></el-input>
-        </el-form-item>
-        <el-form-item label="商品重量" prop="weight">
-          <el-input v-model="form.weight" placeholder="商品重量，默认为克"></el-input>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="商品名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入商品名称"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="商品编码" prop="outProductId">
+              <el-input v-model="form.outProductId" placeholder="请输入商品编码"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="品牌" prop="brandId">
+              <brand-select v-model="form.brandId" @change="onBrandChange"></brand-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="分类" prop="categoryId">
+              <product-category-select v-model="form.categoryId" @change="categoryChange"></product-category-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="排序" prop="sort">
+              <el-input v-model="form.sort" placeholder="请输入排序"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="价格" prop="price">
+              <el-input v-model="form.price" placeholder="请输入PRICE"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="单位" prop="unit">
+              <el-input v-model="form.unit" placeholder="请输入单位"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="商品重量" prop="weight">
+              <el-input v-model="form.weight" placeholder="商品重量，默认为克"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="上架状态">
+              <DictRadio v-model="form.publishStatus" size="small"
+                        :radioData="dict.type.pms_publish_status"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-card>
 
       <el-card style="margin: 20px 20px; font-size: 14px">
@@ -156,6 +182,7 @@ export default {
     if (id) {
       this.getInfo(id);
     }else{
+      this.form.sort=1000
       this.form.publishStatus=0
     }
   },

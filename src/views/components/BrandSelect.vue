@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="value1" placeholder="选择品牌" ref="brandSelect" @change="handleBrandChange">
+  <el-select v-model="value1" placeholder="选择品牌" ref="brandSelect" @change="handleBrandChange" clearable>
     <el-option v-for="it in options" :key="it.id" :value="it.id" :label="it.name">{{it.name}}</el-option>
   </el-select>
 </template>
