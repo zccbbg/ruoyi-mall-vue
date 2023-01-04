@@ -62,22 +62,34 @@
 
     <el-table v-loading="loading" :data="pmsProductList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编码" align="center" prop="outProductId"/>
       <el-table-column label="主图" align="center" prop="pic">
         <template slot-scope="{ row }">
           <el-image v-if="row.pic" :src="row.pic" :preview-src-list="[row.pic]" class="small-img circle-img"/>
         </template>
       </el-table-column>
-      <el-table-column label="名称" align="center" prop="name"/>
-      <el-table-column label="价格" align="center" prop="price"/>
+      <el-table-column label="名称/编码" min-width="200" align="center" prop="outProductId">
+        <template slot-scope="{ row }">
+          <div>名称：{{row.name}}</div>
+          <div v-if="row.outProductId">编码：{{row.outProductId}}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="品牌/分类" align="center" prop="brandName">
+        <template slot-scope="{ row }">
+          <div v-if="row.brandName">品牌：{{row.brandName}}</div>
+          <div v-if="row.productCategoryName">分类：{{row.productCategoryName}}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="价格/排序" align="center" prop="price">
+        <template slot-scope="{ row }">
+          <div v-if="row.price">价格：{{row.price}}</div>
+          <div v-if="row.sort">排序：{{row.sort}}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="上架状态" align="center" prop="publishStatus">
         <template slot-scope="{ row }">
           <dict-tag :value="row.publishStatus" prop-name="pms_publish_status" />
         </template>
       </el-table-column>
-      <el-table-column label="品牌" align="center" prop="brandName"/>
-      <el-table-column label="分类" align="center" prop="productCategoryName"/>
-      <el-table-column label="排序" align="center" prop="sort"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
