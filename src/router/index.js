@@ -166,7 +166,7 @@ export const dynamicRoutes = [
     path: '/product',
     component: Layout,
     hidden: true,
-    permissions: ['pms:product:add'],
+    permissions: ['pms:product:list'],
     children: [
       {
         path: 'edit',

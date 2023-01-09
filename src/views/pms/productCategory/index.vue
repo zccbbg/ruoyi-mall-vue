@@ -30,7 +30,6 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['pms:productCategory:add']"
         >新增
         </el-button>
       </el-col>
@@ -61,7 +60,6 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['pms:productCategory:edit']"
           >修改
           </el-button>
           <el-button
@@ -69,7 +67,6 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['pms:productCategory:remove']"
           >删除
           </el-button>
         </template>
