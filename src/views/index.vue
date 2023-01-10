@@ -20,13 +20,16 @@
         </ul>
         <ul>
           <li class="da" style="width: 33%">
-            <router-link to="/basic/warehouse">2,910</router-link>
+            <!-- <router-link to="/index">2,910</router-link> -->
+            2,910
           </li>
           <li class="da" style="width: 33%">
-            <router-link to="/basic/area">56</router-link>
+            <!-- <router-link to="/index">56</router-link> -->
+            56
           </li>
           <li class="da" style="width: 33%">
-            <router-link to="/basic/rack">21,085</router-link>
+            <!-- <router-link to="/index">21,085</router-link> -->
+            21085
           </li>
         </ul>
       </div>
@@ -44,8 +47,12 @@
             </li>
           </ul>
           <ul>
-            <li class="da" style="width: 50%">2</li>
-            <li class="da" style="width: 50%">1</li>
+            <li class="da" style="width: 50%">
+              <router-link to="/order/aftersale">2</router-link>
+            </li>
+            <li class="da" style="width: 50%">
+              <router-link to="/order/aftersale">1</router-link>
+            </li>
           </ul>
         </el-card>
       </el-col>
@@ -69,16 +76,19 @@
             </ul>
             <ul>
               <li class="da">
-                <router-link to="/relation/customer">50</router-link>
+                <router-link to="/order/order">50</router-link>
               </li>
               <li class="da">
-                <router-link to="/relation/supplier">0</router-link>
+                <!-- <router-link to="/relation/supplier">0</router-link> -->
+                0
               </li>
               <li class="da">
-                <router-link to="/relation/carrier">4</router-link>
+                <!-- <router-link to="/relation/carrier">4</router-link> -->
+                0
               </li>
               <li class="da">
-                <router-link to="/item">3</router-link>
+                <!-- <router-link to="/item">3</router-link> -->
+                3
               </li>
             </ul>
           </div>
