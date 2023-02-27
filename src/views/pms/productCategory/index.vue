@@ -4,7 +4,7 @@
              class="ry_form">
       <el-form-item label="状态" prop="showStatus">
         <DictRadio v-model="queryParams.showStatus" @change="handleQuery" size="small"
-                   :radioData="dict.type.sys_normal_disable" :showAll="'all'"/>
+                   :radioData="dict.type.sys_show_status" :showAll="'all'"/>
       </el-form-item>
       <el-form-item label="名称" prop="name">
         <el-input
@@ -15,7 +15,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      
+
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -50,7 +50,7 @@
       <el-table-column label="排序" align="center" prop="sort"/>
       <el-table-column label="状态" align="center" prop="showStatus">
         <template v-slot="{ row }">
-          <dict-tag :value="row.showStatus" prop-name="sys_normal_disable"></dict-tag>
+          <dict-tag :value="row.showStatus" prop-name="sys_show_status"></dict-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -84,7 +84,7 @@
         </el-form-item>
         <el-form-item label="状态">
           <DictRadio v-model="form.showStatus" size="small"
-                   :radioData="dict.type.sys_normal_disable"/>
+                   :radioData="dict.type.sys_show_status"/>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input v-model="form.sort" placeholder="排序"/>
@@ -117,7 +117,7 @@ import ProductCategorySelect from "@/views/components/ProductCategorySelect";
 
 export default {
   name: "PmsProductCategory",
-  dicts: ['sys_normal_disable'],
+  dicts: ['sys_show_status'],
   components: {ProductCategorySelect},
   data() {
     return {
