@@ -29,8 +29,10 @@ https://github.com/zccbbg/ruoyi-mall
 ## 在线体验
 - 演示地址：mall.ichengle.top
 
-## 若依技术专栏
-https://blog.csdn.net/qq_27575627/category_12005108.html
+## CSDN若依技术专栏
+- 后端技术：https://blog.csdn.net/qq_27575627/category_12331868.html
+- 前端技术：https://blog.csdn.net/qq_27575627/category_12331867.html
+- 运维：https://blog.csdn.net/qq_27575627/category_12332546.html
 
 ## 若依mall简介
 若依是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。我们在此基础上开发了ruoyi-mall。希望能给做商城的朋友减轻工作量。
