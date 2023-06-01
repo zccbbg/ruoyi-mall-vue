@@ -30,6 +30,7 @@ https://github.com/zccbbg/ruoyi-mall
 - 演示地址：mall.ichengle.top
 
 ## CSDN若依技术专栏
+- 常见问题：https://blog.csdn.net/qq_27575627/category_12336113.html
 - 后端技术：https://blog.csdn.net/qq_27575627/category_12331868.html
 - 前端技术：https://blog.csdn.net/qq_27575627/category_12331867.html
 - 运维：https://blog.csdn.net/qq_27575627/category_12332546.html
