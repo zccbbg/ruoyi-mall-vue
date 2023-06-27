@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="收货人名称" prop="name">
+      <el-form-item label="收货人姓名" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入收货人名称"
+          placeholder="请输入收货人姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -89,13 +89,17 @@
 
     <el-table v-loading="loading" :data="umsMemberAddressList">
 <!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="收货人名称" align="center" prop="name" />
+      <el-table-column label="收货人姓名" align="center" prop="name" >
+        <template v-slot="scope">
+          <div>{{ getHiddenName(scope.row.name)  }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="手机号" align="center" prop="phoneHidden" />
       <el-table-column label="邮政编码" align="center" prop="postCode" />
       <el-table-column label="省份/直辖市" align="center" prop="province" />
       <el-table-column label="城市" align="center" prop="city" />
       <el-table-column label="区" align="center" prop="district" />
-      <el-table-column label="详细地址" align="center" prop="detailAddress">
+      <el-table-column label="详细地址" align="center" prop="detailAddress" width="250">
         <template v-slot="scope">
           <div>{{ replaceDetailAddress(scope.row.detailAddress.replaceAll((/[\d]+/g),'*')) }}</div>
         </template>
@@ -355,6 +359,12 @@ export default {
         }
       }
       return result
+    },
+    getHiddenName(name){
+      if (!name) return
+      const surname = name.substr(0, 1)
+      const star = '*'.repeat(name.length - 1)
+      return surname + star
     }
   }
 };

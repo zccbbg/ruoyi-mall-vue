@@ -3,6 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="创建时间">
         <el-date-picker
+          size="small"
           v-model="dateRange"
           style="width: 240px"
           value-format="yyyy-MM-dd"
@@ -13,6 +14,14 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="账号启用状态">
+        <el-select v-model="queryParams.status" placeholder="请选择" :clearable="true" size="small">
+          <el-option label="禁用" value="0">
+          </el-option>
+          <el-option label="启用" value="1">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="昵称" prop="nickname">
         <el-input
@@ -39,7 +48,7 @@
 
     <el-table v-loading="loading" :data="umsMemberList">
       <el-table-column label="昵称" align="center" prop="nickname" />
-      <el-table-column label="手机号码" align="center" prop="phone" />
+      <el-table-column label="手机号码" align="center" prop="phoneHidden" />
       <el-table-column label="性别" align="center" prop="gender" >
         <template v-slot="scope">
           <div>{{ scope.row.gender === 0 ? '未知' : (scope.row.gender === 1 ? '男' : '女') }}</div>
@@ -49,7 +58,19 @@
       <el-table-column label="用户所在省份" align="center" prop="province" />
       <el-table-column label="用户所在国家" align="center" prop="country" />
       <el-table-column label="等级" align="center" prop="level" />
-      <el-table-column label="创建时间" align="center" prop="createTime">
+      <el-table-column label="账号启用状态" align="center" prop="status">
+        <template v-slot="scope">
+          <el-switch
+            style="display: block"
+            v-model="scope.row.status"
+            :active-value="1"
+            :inactive-value="0"
+            active-color="#13ce66"
+            @change="changeStatus(scope.row)">
+          </el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template v-slot="scope">
           <div>{{ parseTime(scope.row.createTime) }}</div>
         </template>
@@ -86,7 +107,7 @@
 </template>
 
 <script>
-import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember, exportUmsMember } from "@/api/ums/member";
+import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember, exportUmsMember, changeAccountStatus } from "@/api/ums/member";
 import dateUtil from '@/utils/DateUtil';
 import moment from "moment";
 
@@ -122,7 +143,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         nickname: null,
-        phone: null
+        phone: null,
+        status: undefined
       },
       dateRange:[],
       // 表单参数
@@ -263,6 +285,19 @@ export default {
         this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
+    },
+    // 更改账户状态
+    changeStatus(row){
+      const data = {
+        memberId: row.id,
+        status: row.status
+      }
+      changeAccountStatus(data).then(response => {
+        if (response < 1){
+          this.$modal.msgError('操作失败')
+          this.getList()
+        }
+      })
     }
   }
 };
