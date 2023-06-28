@@ -1,285 +1,89 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="MEMBER_ID" prop="memberId">
-        <el-input
-          v-model="queryParams.memberId"
-          placeholder="请输入MEMBER_ID"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="用户帐号" prop="memberUsername">
-        <el-input
-          v-model="queryParams.memberUsername"
-          placeholder="请输入用户帐号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="订单总金额" prop="totalAmount">
-        <el-input
-          v-model="queryParams.totalAmount"
-          placeholder="请输入订单总金额"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="采购价" prop="purchasePrice">
-        <el-input
-          v-model="queryParams.purchasePrice"
-          placeholder="请输入采购价"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="应付金额" prop="payAmount">
-        <el-input
-          v-model="queryParams.payAmount"
-          placeholder="请输入应付金额"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="运费金额" prop="freightAmount">
-        <el-input
-          v-model="queryParams.freightAmount"
-          placeholder="请输入运费金额"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="支付方式：0->未支付；1->支付宝；2->微信" prop="payType">
-        <el-select v-model="queryParams.payType" placeholder="请选择支付方式：0->未支付；1->支付宝；2->微信" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
+      <el-form-item label="订单状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择订单状态" clearable size="small">
+          <el-option v-for="(item, index) in dict.type.oms_order_status" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <template v-if="showMoreCondition">
-      <el-form-item label="订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
+      <el-form-item label="订单编号" prop="orderId">
+        <el-input v-model.trim="queryParams.orderId" placeholder="请输入订单编号" clearable size="small"
+                  @keyup.enter.native="handleQuery"/>
+      </el-form-item>
+      <el-form-item label="支付方式" prop="payType">
+        <el-select v-model="queryParams.payType" placeholder="请选择支付方式" clearable size="small">
+          <el-option v-for="(item, index) in dict.type.oms_pay_type" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" prop="aftersaleStatus">
-        <el-select v-model="queryParams.aftersaleStatus" placeholder="请选择退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
+<!--      <el-form-item label="商品名称" prop="productName">-->
+<!--        <el-input v-model.trim="queryParams.productName" placeholder="请输入商品名称" clearable size="small"-->
+<!--                  @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
+      <el-form-item label="会员手机号" prop="userPhone">
+        <el-input v-model.trim="queryParams.userPhone" placeholder="请输入会员手机号" clearable size="small"
+                  @keyup.enter.native="handleQuery"/>
       </el-form-item>
-      <el-form-item label="物流公司(配送方式)" prop="deliveryCompany">
-        <el-input
-          v-model="queryParams.deliveryCompany"
-          placeholder="请输入物流公司(配送方式)"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="省市区" prop="provinces">
+        <address-selector v-model="queryParams.provinces"></address-selector>
       </el-form-item>
-      <el-form-item label="物流单号" prop="deliverySn">
-        <el-input
-          v-model="queryParams.deliverySn"
-          placeholder="请输入物流单号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="自动确认时间" prop="autoConfirmDay">
-        <el-input
-          v-model="queryParams.autoConfirmDay"
-          placeholder="请输入自动确认时间"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="收货人姓名" prop="receiverName">
-        <el-input
-          v-model="queryParams.receiverName"
-          placeholder="请输入收货人姓名"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="收货人电话" prop="receiverPhone">
-        <el-input
-          v-model="queryParams.receiverPhone"
-          placeholder="请输入收货人电话"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="收货人邮编" prop="receiverPostCode">
-        <el-input
-          v-model="queryParams.receiverPostCode"
-          placeholder="请输入收货人邮编"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="省份/直辖市" prop="receiverProvince">
-        <el-input
-          v-model="queryParams.receiverProvince"
-          placeholder="请输入省份/直辖市"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="城市" prop="receiverCity">
-        <el-input
-          v-model="queryParams.receiverCity"
-          placeholder="请输入城市"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="区" prop="receiverDistrict">
-        <el-input
-          v-model="queryParams.receiverDistrict"
-          placeholder="请输入区"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="省份/直辖市id" prop="receiverProvinceId">
-        <el-input
-          v-model="queryParams.receiverProvinceId"
-          placeholder="请输入省份/直辖市id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="城市id" prop="receiverCityId">
-        <el-input
-          v-model="queryParams.receiverCityId"
-          placeholder="请输入城市id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="区id" prop="receiverDistrictId">
-        <el-input
-          v-model="queryParams.receiverDistrictId"
-          placeholder="请输入区id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="详细地址" prop="receiverDetailAddress">
-        <el-input
-          v-model="queryParams.receiverDetailAddress"
-          placeholder="请输入详细地址"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="确认收货状态：0->未确认；1->已确认" prop="confirmStatus">
-        <el-select v-model="queryParams.confirmStatus" placeholder="请选择确认收货状态：0->未确认；1->已确认" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="删除状态：0->未删除；1->已删除" prop="deleteStatus">
-        <el-select v-model="queryParams.deleteStatus" placeholder="请选择删除状态：0->未删除；1->已删除" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="支付时间" prop="paymentTime">
-        <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.paymentTime"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择支付时间">
+      <el-form-item label="下单时间" prop="Time">
+        <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
+                        range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']"
+                        align="right"
+                        @change="handleChange">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="发货时间" prop="deliveryTime">
-        <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.deliveryTime"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择发货时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="确认收货时间" prop="receiveTime">
-        <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.receiveTime"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择确认收货时间">
-        </el-date-picker>
-      </el-form-item>
-    </template>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>
+<!--        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>-->
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['oms:order:add']"
-        >新增</el-button>
-      </el-col>
-      </el-col>
-    </el-row>
-
-    <el-table v-loading="loading" :data="omsOrderList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="MEMBER_ID" align="center" prop="memberId" />
-      <el-table-column label="用户帐号" align="center" prop="memberUsername" />
-      <el-table-column label="订单总金额" align="center" prop="totalAmount" />
-      <el-table-column label="采购价" align="center" prop="purchasePrice" />
-      <el-table-column label="应付金额" align="center" prop="payAmount" />
-      <el-table-column label="运费金额" align="center" prop="freightAmount" />
-      <el-table-column label="支付方式：0->未支付；1->支付宝；2->微信" align="center" prop="payType" />
-      <el-table-column label="订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单" align="center" prop="status" />
-      <el-table-column label="退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功" align="center" prop="aftersaleStatus" />
-      <el-table-column label="物流公司(配送方式)" align="center" prop="deliveryCompany" />
-      <el-table-column label="物流单号" align="center" prop="deliverySn" />
-      <el-table-column label="自动确认时间" align="center" prop="autoConfirmDay" />
-      <el-table-column label="收货人姓名" align="center" prop="receiverName" />
-      <el-table-column label="收货人电话" align="center" prop="receiverPhone" />
-      <el-table-column label="收货人邮编" align="center" prop="receiverPostCode" />
-      <el-table-column label="省份/直辖市" align="center" prop="receiverProvince" />
-      <el-table-column label="城市" align="center" prop="receiverCity" />
-      <el-table-column label="区" align="center" prop="receiverDistrict" />
-      <el-table-column label="省份/直辖市id" align="center" prop="receiverProvinceId" />
-      <el-table-column label="城市id" align="center" prop="receiverCityId" />
-      <el-table-column label="区id" align="center" prop="receiverDistrictId" />
-      <el-table-column label="详细地址" align="center" prop="receiverDetailAddress" />
-      <el-table-column label="订单备注" align="center" prop="note" />
-      <el-table-column label="确认收货状态：0->未确认；1->已确认" align="center" prop="confirmStatus" />
-      <el-table-column label="删除状态：0->未删除；1->已删除" align="center" prop="deleteStatus" />
-      <el-table-column label="支付时间" align="center" prop="paymentTime" width="180" >
+    <el-table v-loading="loading" :data="omsOrderList">
+<!--      <el-table-column type="selection" width="55" align="center" />-->
+      <el-table-column label="订单号" align="center" prop="id" width="180"/>
+      <el-table-column label="订单状态" align="center" prop="status">
+        <template v-slot="scope">
+          <el-tag :type="getOrderTypeTag(scope.row.status)">
+            {{ getOrderTypeText(scope.row.status) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单金额" align="center" prop="totalAmount">
+        <template v-slot="scope">
+          <div>￥{{ scope.row.totalAmount }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="应付金额" align="center" prop="payAmount">
+        <template v-slot="scope">
+          <div>￥{{ scope.row.payAmount }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="支付方式" align="center" prop="payType">
+        <template v-slot="scope">
+          <el-tag :type="getPayTypeTag(scope.row.payType)">
+            {{ getPayTypeText(scope.row.payType) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="收件信息" align="center" prop="receiverName" width="180">
+        <template v-slot="scope">
+          <div>{{ scope.row.receiverName }} {{ scope.row.receiverPhone }}</div>
+          <div>{{ scope.row.receiverDetailAddress }}</div>
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="省份/直辖市" align="center" prop="receiverProvince" />-->
+<!--      <el-table-column label="城市" align="center" prop="receiverCity" />-->
+<!--      <el-table-column label="区" align="center" prop="receiverDistrict" />-->
+<!--      <el-table-column label="省份/直辖市id" align="center" prop="receiverProvinceId" />-->
+<!--      <el-table-column label="城市id" align="center" prop="receiverCityId" />-->
+<!--      <el-table-column label="区id" align="center" prop="receiverDistrictId" />-->
+      <el-table-column label="支付时间" align="center" prop="payTime" width="180" >
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.paymentTime, '')}}</span>
+            <span>{{ parseTime(scope.row.payTime, '')}}</span>
         </template>
       </el-table-column>
       <el-table-column label="发货时间" align="center" prop="deliveryTime" width="180" >
@@ -292,26 +96,24 @@
             <span>{{ parseTime(scope.row.receiveTime, '')}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="下单时间" align="center" prop="createTime" width="180" >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime, '')}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单备注" align="center" prop="note" width="180"/>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['oms:order:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['oms:order:remove']"
-          >删除</el-button>
+            @click="goDetail(scope.row)"
+            v-hasPermi="['oms:order:detail']"
+          >详情</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -319,137 +121,27 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 添加或修改订单表对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="MEMBER_ID" prop="memberId">
-          <el-input v-model="form.memberId" placeholder="请输入MEMBER_ID" />
-        </el-form-item>
-        <el-form-item label="用户帐号" prop="memberUsername">
-          <el-input v-model="form.memberUsername" placeholder="请输入用户帐号" />
-        </el-form-item>
-        <el-form-item label="订单总金额" prop="totalAmount">
-          <el-input v-model="form.totalAmount" placeholder="请输入订单总金额" />
-        </el-form-item>
-        <el-form-item label="采购价" prop="purchasePrice">
-          <el-input v-model="form.purchasePrice" placeholder="请输入采购价" />
-        </el-form-item>
-        <el-form-item label="应付金额" prop="payAmount">
-          <el-input v-model="form.payAmount" placeholder="请输入应付金额" />
-        </el-form-item>
-        <el-form-item label="运费金额" prop="freightAmount">
-          <el-input v-model="form.freightAmount" placeholder="请输入运费金额" />
-        </el-form-item>
-        <el-form-item label="支付方式：0->未支付；1->支付宝；2->微信" prop="payType">
-          <el-select v-model="form.payType" placeholder="请选择支付方式：0->未支付；1->支付宝；2->微信">
-            <el-option label="请选择字典生成" value="" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单">
-          <el-radio-group v-model="form.status">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功">
-          <el-radio-group v-model="form.aftersaleStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="物流公司(配送方式)" prop="deliveryCompany">
-          <el-input v-model="form.deliveryCompany" placeholder="请输入物流公司(配送方式)" />
-        </el-form-item>
-        <el-form-item label="物流单号" prop="deliverySn">
-          <el-input v-model="form.deliverySn" placeholder="请输入物流单号" />
-        </el-form-item>
-        <el-form-item label="自动确认时间" prop="autoConfirmDay">
-          <el-input v-model="form.autoConfirmDay" placeholder="请输入自动确认时间" />
-        </el-form-item>
-        <el-form-item label="收货人姓名" prop="receiverName">
-          <el-input v-model="form.receiverName" placeholder="请输入收货人姓名" />
-        </el-form-item>
-        <el-form-item label="收货人电话" prop="receiverPhone">
-          <el-input v-model="form.receiverPhone" placeholder="请输入收货人电话" />
-        </el-form-item>
-        <el-form-item label="收货人邮编" prop="receiverPostCode">
-          <el-input v-model="form.receiverPostCode" placeholder="请输入收货人邮编" />
-        </el-form-item>
-        <el-form-item label="省份/直辖市" prop="receiverProvince">
-          <el-input v-model="form.receiverProvince" placeholder="请输入省份/直辖市" />
-        </el-form-item>
-        <el-form-item label="城市" prop="receiverCity">
-          <el-input v-model="form.receiverCity" placeholder="请输入城市" />
-        </el-form-item>
-        <el-form-item label="区" prop="receiverDistrict">
-          <el-input v-model="form.receiverDistrict" placeholder="请输入区" />
-        </el-form-item>
-        <el-form-item label="省份/直辖市id" prop="receiverProvinceId">
-          <el-input v-model="form.receiverProvinceId" placeholder="请输入省份/直辖市id" />
-        </el-form-item>
-        <el-form-item label="城市id" prop="receiverCityId">
-          <el-input v-model="form.receiverCityId" placeholder="请输入城市id" />
-        </el-form-item>
-        <el-form-item label="区id" prop="receiverDistrictId">
-          <el-input v-model="form.receiverDistrictId" placeholder="请输入区id" />
-        </el-form-item>
-        <el-form-item label="详细地址" prop="receiverDetailAddress">
-          <el-input v-model="form.receiverDetailAddress" placeholder="请输入详细地址" />
-        </el-form-item>
-        <el-form-item label="订单备注" prop="note">
-          <el-input v-model="form.note" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="确认收货状态：0->未确认；1->已确认">
-          <el-radio-group v-model="form.confirmStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="删除状态：0->未删除；1->已删除">
-          <el-radio-group v-model="form.deleteStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="支付时间" prop="paymentTime">
-          <el-date-picker clearable size="small"
-                        v-model="form.paymentTime"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择支付时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="发货时间" prop="deliveryTime">
-          <el-date-picker clearable size="small"
-                        v-model="form.deliveryTime"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择发货时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="确认收货时间" prop="receiveTime">
-          <el-date-picker clearable size="small"
-                        v-model="form.receiveTime"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择确认收货时间">
-          </el-date-picker>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { listOmsOrder, getOmsOrder, delOmsOrder, addOmsOrder, updateOmsOrder, exportOmsOrder } from "@/api/oms/order";
+import AddressSelector from "@/views/components/AddressSelector/index.vue";
+import dateUtil from '@/utils/DateUtil';
 
 export default {
   name: "OmsOrder",
+  dicts: ["oms_order_status","oms_pay_type"],
+  components: {
+    AddressSelector
+  },
   data() {
     return {
       // 遮罩层
       loading: true,
+      pickerOptions: {
+        shortcuts: dateUtil.getTimeShort2()
+      },
       // 导出遮罩层
       exportLoading: false,
       // 选中数组
@@ -472,34 +164,18 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        memberId: null,
-        memberUsername: null,
-        totalAmount: null,
-        purchasePrice: null,
-        payAmount: null,
-        freightAmount: null,
         payType: null,
         status: null,
-        aftersaleStatus: null,
-        deliveryCompany: null,
-        deliverySn: null,
-        autoConfirmDay: null,
-        receiverName: null,
-        receiverPhone: null,
-        receiverPostCode: null,
-        receiverProvince: null,
-        receiverCity: null,
-        receiverDistrict: null,
+        Time:[],
+        provinces: [],
         receiverProvinceId: null,
         receiverCityId: null,
         receiverDistrictId: null,
-        receiverDetailAddress: null,
-        note: null,
-        confirmStatus: null,
-        deleteStatus: null,
-        paymentTime: null,
-        deliveryTime: null,
-        receiveTime: null,
+        orderId: null,
+        productName: null,
+        userPhone: null,
+        startTime: null,
+        endTime: null
       },
       // 表单参数
       form: {},
@@ -524,9 +200,23 @@ export default {
   methods: {
     /** 查询订单表列表 */
     getList() {
+      if (this.queryParams.Time) {
+        this.queryParams.startTime = this.queryParams.Time[0]
+        this.queryParams.endTime = this.queryParams.Time[1]
+      }
       this.loading = true;
       const {pageNum, pageSize} = this.queryParams;
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
+      if (query.provinces) {
+        const [receiverProvinceId,receiverCityId,receiverDistrictId] =query.provinces
+        query.receiverProvinceId = receiverProvinceId
+        query.receiverCityId = receiverCityId
+        query.receiverDistrictId = receiverDistrictId
+      } else {
+        query.receiverProvinceId = null
+        query.receiverCityId = null
+        query.receiverDistrictId = null
+      }
       const pageReq = {page: pageNum - 1, size: pageSize};
       listOmsOrder(query, pageReq).then(response => {
         const { content, totalElements } = response
@@ -651,6 +341,67 @@ export default {
         this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
+    },
+    //时间搜索条件change方法
+    handleChange(value) {
+      if (!value) {
+        this.queryParams.startTime = null;
+        this.queryParams.endTime = null;
+      }
+    },
+    getOrderTypeTag(status){
+      switch (status){
+        case 0:
+        case 1:
+          return 'info';
+        case 2:
+          return 'primary';
+        case 3:
+          return 'success';
+        case  4:
+          return 'warning';
+        case 5:
+          return 'danger';
+      }
+    },
+    getOrderTypeText(status){
+      switch (status){
+        case 0:
+          return '待付款';
+        case 1:
+          return '待发货';
+        case 2:
+          return '待发货';
+        case 3:
+          return '已发货';
+        case  4:
+          return '已关闭';
+        case 5:
+          return '无效订单';
+      }
+    },
+    getPayTypeTag(type){
+      switch (type){
+        case 0:
+          return 'info';
+        case 1:
+          return 'primary';
+        case 2:
+          return 'success';
+      }
+    },
+    getPayTypeText(type){
+      switch (type){
+        case 0:
+          return '未支付';
+        case 1:
+          return '支付宝';
+        case 2:
+          return '微信';
+      }
+    },
+    goDetail(row){
+      // this.$router.push()
     }
   }
 };
