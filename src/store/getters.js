@@ -17,6 +17,7 @@ const getters = {
 
   dictMap: state => state.dict.dictMap,
   productCategories: state => state.mall.productCategories,
+  areaSelect: state => state.mall.areaSelect,
   brandList: state => state.mall.brandList,
 }
 export default getters

@@ -52,3 +52,14 @@ export function exportUmsMember(query) {
     params: query
   })
 }
+
+// 更改会员账号状态
+export function changeAccountStatus(data) {
+  return request({
+    url: '/ums/member/status/change',
+    method: 'post',
+    data: data
+  })
+}
+
+

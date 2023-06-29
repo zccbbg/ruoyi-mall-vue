@@ -1,37 +1,23 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="MEMBER_ID" prop="memberId">
-        <el-input
-          v-model="queryParams.memberId"
-          placeholder="请输入MEMBER_ID"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="收货人名称" prop="name">
+      <el-form-item label="收货人姓名" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入收货人名称"
+          placeholder="请输入收货人姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="PHONE" prop="phone">
+      <el-form-item label="手机号" prop="phone">
         <el-input
           v-model="queryParams.phone"
-          placeholder="请输入PHONE"
+          placeholder="请输入手机号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="是否为默认" prop="defaultStatus">
-        <el-select v-model="queryParams.defaultStatus" placeholder="请选择是否为默认" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
       </el-form-item>
       <el-form-item label="邮政编码" prop="postCode">
         <el-input
@@ -70,19 +56,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="详细地址(街道)" prop="detailAddress">
+      <el-form-item label="详细地址" prop="detailAddress">
         <el-input
           v-model="queryParams.detailAddress"
-          placeholder="请输入详细地址(街道)"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="是否默认" prop="isDefault">
-        <el-input
-          v-model="queryParams.isDefault"
-          placeholder="请输入是否默认"
+          placeholder="请输入详细地址"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -96,52 +73,57 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['ums:memberAddress:add']"
-        >新增</el-button>
-      </el-col>
-      </el-col>
-    </el-row>
+<!--    <el-row :gutter="10" class="mb8">-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          icon="el-icon-plus"-->
+<!--          size="mini"-->
+<!--          @click="handleAdd"-->
+<!--          v-hasPermi="['ums:memberAddress:add']"-->
+<!--        >新增</el-button>-->
+<!--      </el-col>-->
+<!--      </el-col>-->
+<!--    </el-row>-->
 
-    <el-table v-loading="loading" :data="umsMemberAddressList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="MEMBER_ID" align="center" prop="memberId" />
-      <el-table-column label="收货人名称" align="center" prop="name" />
-      <el-table-column label="PHONE" align="center" prop="phone" />
-      <el-table-column label="是否为默认" align="center" prop="defaultStatus" />
+    <el-table v-loading="loading" :data="umsMemberAddressList">
+<!--      <el-table-column type="selection" width="55" align="center" />-->
+      <el-table-column label="收货人姓名" align="center" prop="name" >
+        <template v-slot="scope">
+          <div>{{ getHiddenName(scope.row.name)  }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="手机号" align="center" prop="phoneHidden" />
       <el-table-column label="邮政编码" align="center" prop="postCode" />
       <el-table-column label="省份/直辖市" align="center" prop="province" />
       <el-table-column label="城市" align="center" prop="city" />
       <el-table-column label="区" align="center" prop="district" />
-      <el-table-column label="详细地址(街道)" align="center" prop="detailAddress" />
-      <el-table-column label="是否默认" align="center" prop="isDefault" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['ums:memberAddress:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['ums:memberAddress:remove']"
-          >删除</el-button>
+      <el-table-column label="详细地址" align="center" prop="detailAddress" width="250">
+        <template v-slot="scope">
+          <div>{{ replaceDetailAddress(scope.row.detailAddress.replaceAll((/[\d]+/g),'*')) }}</div>
         </template>
       </el-table-column>
+<!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            type="text"-->
+<!--            icon="el-icon-edit"-->
+<!--            @click="handleUpdate(scope.row)"-->
+<!--            v-hasPermi="['ums:memberAddress:edit']"-->
+<!--          >修改</el-button>-->
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            type="text"-->
+<!--            icon="el-icon-delete"-->
+<!--            @click="handleDelete(scope.row)"-->
+<!--            v-hasPermi="['ums:memberAddress:remove']"-->
+<!--          >删除</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -244,7 +226,8 @@ export default {
           { required: true, message: "是否默认不能为空", trigger: "blur" }
         ],
       },
-      showMoreCondition: false
+      showMoreCondition: false,
+      chineseNumbers: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
     };
   },
   created() {
@@ -362,6 +345,26 @@ export default {
         this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
+    },
+    replaceDetailAddress(data){
+      if (!data || data.length === 0){
+        return ''
+      }
+      let result = ''
+      for(let i=0;i<data.length;i++){
+        if (this.chineseNumbers.includes(data[i])){
+          result += '*'
+        }else {
+          result += data[i]
+        }
+      }
+      return result
+    },
+    getHiddenName(name){
+      if (!name) return
+      const surname = name.substr(0, 1)
+      const star = '*'.repeat(name.length - 1)
+      return surname + star
     }
   }
 };
