@@ -7,7 +7,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="订单编号" prop="orderId">
-        <el-input v-model.trim="queryParams.orderId" placeholder="请输入订单编号" clearable size="small"
+        <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单编号" clearable size="small"
                   @keyup.enter.native="handleQuery"/>
       </el-form-item>
       <el-form-item label="支付方式" prop="payType">
@@ -102,9 +102,9 @@
           <span>{{ parseTime(scope.row.createTime, '')}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单编号/操作" align="center" class-name="small-padding fixed-width" fixed="right" width="180">
+      <el-table-column label="订单编号/操作" align="center" class-name="small-padding fixed-width" fixed="right" width="200">
         <template slot-scope="scope">
-          <div>{{ scope.row.id }}</div>
+          <div>{{ scope.row.orderSn }}</div>
           <el-button
             size="mini"
             type="text"
@@ -178,7 +178,7 @@ export default {
         receiverProvinceId: null,
         receiverCityId: null,
         receiverDistrictId: null,
-        orderId: null,
+        orderSn: null,
         productName: null,
         userPhone: null,
         startTime: null,

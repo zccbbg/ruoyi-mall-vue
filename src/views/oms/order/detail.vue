@@ -6,7 +6,7 @@
                     <template slot="extra">
                         <el-button size="small" @click="$router.back()">返回</el-button>
                     </template>
-                    <el-descriptions-item label="订单编号">{{ orderDetail.orderId }}</el-descriptions-item>
+                    <el-descriptions-item label="订单编号">{{ orderDetail.orderSn }}</el-descriptions-item>
                     <el-descriptions-item label="用户名称">{{ orderDetail.userName }}</el-descriptions-item>
                     <el-descriptions-item label="用户手机号">{{ orderDetail.userPhone }}</el-descriptions-item>
                     <el-descriptions-item label="下单时间">{{ parseTime(orderDetail.createTime, '') }}</el-descriptions-item>
