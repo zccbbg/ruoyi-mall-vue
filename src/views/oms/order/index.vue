@@ -42,24 +42,47 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="omsOrderList">
+    <el-table v-loading="loading" :data="omsOrderList" border>
 <!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="订单号" align="center" prop="id" width="180"/>
+      <el-table-column label="收件信息" align="center" prop="receiverName" width="180">
+        <template v-slot="scope">
+          <div>{{ getHiddenName(scope.row.receiverName) }} {{ scope.row.receiverPhone }}</div>
+          <div>{{ getHiddenDetailAddress(scope.row.receiverDetailAddress) }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单备注" align="center" prop="note" width="180"/>
+      <el-table-column label="支付时间/发货时间" align="center" prop="payTime" width="220" >
+        <template slot-scope="scope">
+          <div v-if="scope.row.payTime">{{ parseTime(scope.row.payTime, '')}} 支付</div>
+          <div v-if="scope.row.deliveryTime">{{ parseTime(scope.row.deliveryTime, '')}} 发货</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="合计" align="center" prop="totalAmount" width="220">
+        <template v-slot="scope">
+          <span>总数量:</span>
+          <span style="color: red;margin-right: 8px">1</span>
+          <span>总价:￥{{ scope.row.totalAmount }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="商品规格" align="center" prop="productList" width="180">
+        <template v-slot="scope">
+          <div v-for="item in scope.row.productList" class="product-container">
+            <el-popover
+              placement="right"
+              trigger="hover">
+              <el-image :src="item.pic" style="width: 350px;height: 350px"/>
+              <el-image slot="reference" class="small-img product-item" :src="item.pic" style="width: 40px;height: 40px"/>
+            </el-popover>
+            <div class="product-item">￥{{ item.salePrice }}</div>
+            <div class="product-item quantity">x{{ item.buyNum }}</div>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="订单状态" align="center" prop="status">
         <template v-slot="scope">
           <el-tag :type="getOrderTypeTag(scope.row.status)">
             {{ getOrderTypeText(scope.row.status) }}
           </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="订单金额" align="center" prop="totalAmount">
-        <template v-slot="scope">
-          <div>￥{{ scope.row.totalAmount }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="应付金额" align="center" prop="payAmount">
-        <template v-slot="scope">
-          <div>￥{{ scope.row.payAmount }}</div>
         </template>
       </el-table-column>
       <el-table-column label="支付方式" align="center" prop="payType">
@@ -69,47 +92,31 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="收件信息" align="center" prop="receiverName" width="180">
-        <template v-slot="scope">
-          <div>{{ scope.row.receiverName }} {{ scope.row.receiverPhone }}</div>
-          <div>{{ scope.row.receiverDetailAddress }}</div>
-        </template>
-      </el-table-column>
-<!--      <el-table-column label="省份/直辖市" align="center" prop="receiverProvince" />-->
-<!--      <el-table-column label="城市" align="center" prop="receiverCity" />-->
-<!--      <el-table-column label="区" align="center" prop="receiverDistrict" />-->
-<!--      <el-table-column label="省份/直辖市id" align="center" prop="receiverProvinceId" />-->
-<!--      <el-table-column label="城市id" align="center" prop="receiverCityId" />-->
-<!--      <el-table-column label="区id" align="center" prop="receiverDistrictId" />-->
-      <el-table-column label="支付时间" align="center" prop="payTime" width="180" >
-        <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.payTime, '')}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="发货时间" align="center" prop="deliveryTime" width="180" >
-        <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.deliveryTime, '')}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="确认收货时间" align="center" prop="receiveTime" width="180" >
-        <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.receiveTime, '')}}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="确认收货时间" align="center" prop="receiveTime" width="180" >-->
+<!--        <template slot-scope="scope">-->
+<!--            <span>{{ parseTime(scope.row.receiveTime, '')}}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="下单时间" align="center" prop="createTime" width="180" >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '')}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单备注" align="center" prop="note" width="180"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+      <el-table-column label="订单编号/操作" align="center" class-name="small-padding fixed-width" fixed="right" width="180">
         <template slot-scope="scope">
+          <div>{{ scope.row.id }}</div>
           <el-button
             size="mini"
             type="text"
             @click="goDetail(scope.row)"
             v-hasPermi="['oms:order:detail']"
           >详情</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="goDetail(scope.row)"
+            v-hasPermi="['oms:order:detail']"
+          >发货</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -401,8 +408,23 @@ export default {
       }
     },
     goDetail(row){
-      // this.$router.push()
+      const id = row.id
+      this.$router.push({path: '/order/detail', query: {id}})    }
     }
-  }
 };
 </script>
+<style lang="scss" scoped>
+.product-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 150px;
+  .product-item{
+    margin: auto;
+    width: 60px;
+  }
+  .quantity{
+    font-weight: bold;
+  }
+}
+</style>

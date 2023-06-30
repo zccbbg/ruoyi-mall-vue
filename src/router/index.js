@@ -175,6 +175,20 @@ export const dynamicRoutes = [
         meta: { title: '编辑商品' }
       }
     ]
+  },
+  {
+    path: '/order',
+    component: Layout,
+    hidden: true,
+    permissions: ['manager:oms:order:query'],
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/oms/order/detail'),
+        name: 'orderDetail',
+        meta: { title: '订单详情' }
+      }
+    ]
   }
 ]
 
