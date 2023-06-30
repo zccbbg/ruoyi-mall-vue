@@ -60,7 +60,7 @@
       <el-table-column label="合计" align="center" prop="totalAmount" width="220">
         <template v-slot="scope">
           <span>总数量:</span>
-          <span style="color: red;margin-right: 8px">1</span>
+          <span style="color: red;margin-right: 8px">{{ scope.row.buyNum }}</span>
           <span>总价:￥{{ scope.row.totalAmount }}</span>
         </template>
       </el-table-column>
@@ -71,7 +71,7 @@
               placement="right"
               trigger="hover">
               <el-image :src="item.pic" style="width: 350px;height: 350px"/>
-              <el-image slot="reference" class="small-img product-item" :src="item.pic" style="width: 40px;height: 40px"/>
+              <el-image slot="reference" class="small-img product-item" :src="item.pic" style="width: 35px;height: 35px"/>
             </el-popover>
             <div class="product-item">￥{{ item.salePrice }}</div>
             <div class="product-item quantity">x{{ item.buyNum }}</div>
