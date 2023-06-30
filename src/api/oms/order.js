@@ -52,3 +52,12 @@ export function exportOmsOrder(query) {
     params: query
   })
 }
+
+// 保存商家备注
+export function saveMerchantNote(data){
+  return request({
+    url: '/oms/order/merchantNote/add',
+    method: 'post',
+    data: data
+  })
+}
