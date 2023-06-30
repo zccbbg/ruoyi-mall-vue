@@ -101,7 +101,7 @@
       <el-table-column label="区" align="center" prop="district" />
       <el-table-column label="详细地址" align="center" prop="detailAddress" width="250">
         <template v-slot="scope">
-          <div>{{ replaceDetailAddress(scope.row.detailAddress.replaceAll((/[\d]+/g),'*')) }}</div>
+          <div>{{ getHiddenDetailAddress(scope.row.detailAddress) }}</div>
         </template>
       </el-table-column>
 <!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
@@ -178,7 +178,6 @@
 
 <script>
 import { listUmsMemberAddress, getUmsMemberAddress, delUmsMemberAddress, addUmsMemberAddress, updateUmsMemberAddress, exportUmsMemberAddress } from "@/api/ums/memberAddress";
-
 export default {
   name: "UmsMemberAddress",
   data() {
@@ -345,26 +344,6 @@ export default {
         this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
-    },
-    replaceDetailAddress(data){
-      if (!data || data.length === 0){
-        return ''
-      }
-      let result = ''
-      for(let i=0;i<data.length;i++){
-        if (this.chineseNumbers.includes(data[i])){
-          result += '*'
-        }else {
-          result += data[i]
-        }
-      }
-      return result
-    },
-    getHiddenName(name){
-      if (!name) return
-      const surname = name.substr(0, 1)
-      const star = '*'.repeat(name.length - 1)
-      return surname + star
     }
   }
 };
