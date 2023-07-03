@@ -128,6 +128,7 @@
               type="text"
               @click="handleDelivery(scope.row)"
               v-hasPermi="['oms:order:delivery']"
+              :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
             >编辑</el-button>
           </div>
           <div v-if="scope.row.deliverySn">物流单号：{{ scope.row.deliverySn}}
@@ -158,6 +159,7 @@
             type="text"
             @click="handleDelivery(scope.row)"
             v-hasPermi="['oms:order:delivery']"
+            :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
           >发货</el-button>
         </template>
       </el-table-column>
