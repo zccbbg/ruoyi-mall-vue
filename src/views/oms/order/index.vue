@@ -44,7 +44,7 @@
 
     <el-table v-loading="loading" :data="omsOrderList" border @selection-change="handleSelectionChange" cell-class-name="my-cell">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="收件信息" prop="receiverName" width="380">
+      <el-table-column label="收件信息" prop="receiverName" width="280">
         <template v-slot="scope">
           <div>
             <span>{{ getHiddenName(scope.row.receiverName) }} {{ scope.row.receiverPhone }}</span>
@@ -83,8 +83,8 @@
       </el-table-column>
       <el-table-column label="下单时间/支付时间"  prop="payTime" width="200" >
         <template slot-scope="scope">
-          <div v-if="scope.row.createTime">{{ parseTime(scope.row.createTime, '')}} 下单</div>
-          <div v-if="scope.row.payTime">{{ parseTime(scope.row.payTime, '')}} 支付</div>
+          <div v-if="scope.row.createTime">{{ parseTime(scope.row.createTime, '{mm}-{dd} {hh}:{ii}')}} 下单</div>
+          <div v-if="scope.row.payTime">{{ parseTime(scope.row.payTime, '{mm}-{dd} {hh}:{ii}')}} 支付</div>
         </template>
       </el-table-column>
       <el-table-column label="合计"  prop="totalAmount" width="140">
@@ -96,7 +96,7 @@
           <div>总价： ￥{{ scope.row.totalAmount }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="商品规格"  prop="productList" width="400">
+      <el-table-column label="商品规格"  prop="productList" width="340">
         <template v-slot="scope">
           <div v-for="item in scope.row.productList" class="product-container">
             <el-popover
@@ -131,7 +131,7 @@
             >编辑</el-button>
           </div>
           <div v-if="scope.row.deliverySn">物流单号：{{ scope.row.deliverySn}}
-            <el-link @click="copyOrderSn(scope.row.deliverySn)" :underline="false"><i class="el-icon-document-copy el-icon--right"></i> </el-link>
+            <el-link @click="copy(scope.row.deliverySn)" :underline="false"><i class="el-icon-document-copy el-icon--right"></i> </el-link>
           </div>
           <div v-if="scope.row.deliveryTime">发货时间：{{ parseTime(scope.row.deliveryTime, '')}}</div>
         </template>
@@ -145,7 +145,7 @@
 <!--              icon="el-icon-document-copy"-->
 <!--              @click="copyOrderSn(scope.row.orderSn)"-->
 <!--            ></el-link>-->
-            <el-link @click="copyOrderSn(scope.row.orderSn)" :underline="false"><i class="el-icon-document-copy el-icon--right"></i> </el-link>
+            <el-link @click="copy(scope.row.orderSn)" :underline="false"><i class="el-icon-document-copy el-icon--right"></i> </el-link>
           </div>
           <el-button
             size="mini"
@@ -173,7 +173,7 @@
 
     <!-- 发货对话框 -->
     <el-dialog :title="deliveryObj.title" :visible.sync="deliveryObj.open" width="500px" append-to-body>
-      <el-form ref="deliveryForm" :model="deliveryForm" :rules="rules" label-width="100px">
+      <el-form ref="deliveryForm" :model="deliveryObj.form" :rules="rules" label-width="100px">
         <el-form-item label="快递公司" prop="expressName">
           <el-select v-model="deliveryObj.form.expressName" placeholder="请选择快递公司" clearable size="small" filterable>
 <!--            <el-option v-for="(item, index) in experssList" :label="item.expressName" :value="item.expressCode"/>-->
@@ -187,10 +187,10 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-hasPermi="['manager:oms:order:delivery']" @click="handleDelivery('deliveryForm')">确
+        <el-button type="primary" @click="submitDelivery('deliveryForm')">确
           定
         </el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancelDelivery">取 消</el-button>
       </div>
     </el-dialog>
     <!--  保存商家备注对话框  -->
@@ -204,14 +204,14 @@
         <el-button type="primary" size="small" @click="submitNoteForm()">
           确认修改
         </el-button>
-        <el-button size="small" @click="this.noteObj.open = false">取 消</el-button>
+        <el-button size="small" @click="cancelNote">取 消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listOmsOrder, getOmsOrder, delOmsOrder, addOmsOrder, updateOmsOrder, exportOmsOrder, saveMerchantNote } from "@/api/oms/order";
+import { listOmsOrder, getOmsOrder, delOmsOrder, addOmsOrder, updateOmsOrder, exportOmsOrder, saveMerchantNote, deliverProduct } from "@/api/oms/order";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import dateUtil from '@/utils/DateUtil';
 
@@ -466,7 +466,7 @@ export default {
           return 'primary';
         case 3:
           return 'success';
-        case  4:
+        case 4:
           return 'warning';
         case 5:
           return 'danger';
@@ -479,9 +479,9 @@ export default {
         case 1:
           return '待发货';
         case 2:
-          return '待发货';
-        case 3:
           return '已发货';
+        case 3:
+          return '已完成';
         case  4:
           return '已关闭';
         case 5:
@@ -512,7 +512,7 @@ export default {
       const id = row.id
       this.$router.push({path: '/order/detail', query: {id}})
     },
-    copyOrderSn(data) {
+    copy(data) {
       let url = data;
       let oInput = document.createElement('input');
       oInput.value = url;
@@ -523,9 +523,22 @@ export default {
       this.$modal.msgSuccess('复制成功');
       oInput.remove()
     },
-    handleDelivery(id){
-      this.deliveryObj.form.orderId = id
+    handleDelivery(row){
+      this.deliveryObj.form.orderId = row.id
       this.deliveryObj.open = true
+    },
+    submitDelivery(){
+      deliverProduct(this.deliveryObj.form).then(resp => {
+        this.$modal.msgSuccess('发货成功')
+        this.cancelDelivery()
+        this.getList()
+      })
+    },
+    cancelDelivery(){
+      this.deliveryObj.open = false
+      this.deliveryObj.form.orderId = null
+      this.deliveryObj.form.expressName = null
+      this.deliveryObj.form.expressSn = null
     },
     handleSaveNote(row){
       const merchantNote = row.merchantNote
@@ -543,10 +556,15 @@ export default {
       saveMerchantNote(this.noteObj.form).then(resp => {
         if (resp > 0){
           this.$modal.msgSuccess('修改成功')
-          this.noteObj.open = false
+          this.cancelNote()
           this.getList()
         }
       })
+    },
+    cancelNote(){
+      this.noteObj.open = false
+      this.noteObj.form.id = null
+      this.noteObj.form.merchantNote = null
     }
   }
 
@@ -557,10 +575,10 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 400px;
+  width: 340px;
   .product-item{
     margin: auto;
-    width: 350px;
+    width: 290px;
     .sp-data{
       font-size: 13px;
     }

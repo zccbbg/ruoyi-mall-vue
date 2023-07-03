@@ -61,3 +61,12 @@ export function saveMerchantNote(data){
     data: data
   })
 }
+
+// 发货
+export function deliverProduct(data){
+  return request({
+    url: '/oms/order/deliverProduct',
+    method: 'post',
+    data: data
+  })
+}
