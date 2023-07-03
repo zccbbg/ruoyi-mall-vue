@@ -69,7 +69,7 @@
       <el-table-column label="备注留言"  prop="note" width="160">
         <template v-slot="scope">
           <div>
-            <span v-if="scope.row.merchantNote" class="note-title" style="margin-right: 10px">商家备注</span>
+            <span v-if="scope.row.merchantNote" class="note-title" style="margin-right: 10px">平台备注</span>
             <el-button
               size="mini"
               type="text"
@@ -81,14 +81,13 @@
           <div v-if="scope.row.note">{{ scope.row.note }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="下单时间/支付时间/发货时间"  prop="payTime" width="200" >
+      <el-table-column label="下单时间/支付时间"  prop="payTime" width="200" >
         <template slot-scope="scope">
           <div v-if="scope.row.createTime">{{ parseTime(scope.row.createTime, '')}} 下单</div>
           <div v-if="scope.row.payTime">{{ parseTime(scope.row.payTime, '')}} 支付</div>
-          <div v-if="scope.row.deliveryTime">{{ parseTime(scope.row.deliveryTime, '')}} 发货</div>
         </template>
       </el-table-column>
-      <el-table-column label="合计"  prop="totalAmount" width="200">
+      <el-table-column label="合计"  prop="totalAmount" width="140">
         <template v-slot="scope">
           <div>
             <span>总数： </span>
@@ -97,32 +96,44 @@
           <div>总价： ￥{{ scope.row.totalAmount }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="商品规格"  prop="productList">
+      <el-table-column label="商品规格"  prop="productList" width="400">
         <template v-slot="scope">
           <div v-for="item in scope.row.productList" class="product-container">
             <el-popover
               placement="right"
               trigger="hover">
               <el-image :src="item.pic" style="width: 350px;height: 350px"/>
-              <el-image slot="reference" class="small-img product-item" :src="item.pic" style="width: 35px;height: 35px"/>
+              <el-image slot="reference" class="small-img product-item" :src="item.pic" style="width: 40px;height: 40px"/>
             </el-popover>
-            <div class="product-item" style="margin-left: 5px">￥{{ item.salePrice }}</div>
-            <div class="product-item quantity">x{{ item.buyNum }}</div>
+            <div class="product-item" style="margin-left: 5px">
+              <div class="sp-data">
+                <span v-for="(value, key) in JSON.parse(item.spData)">{{ key }}：{{ value }}&nbsp;</span>
+              </div>
+              <div class="product-item quantity">
+                <span style="margin-right: 10px">￥{{ item.salePrice }}</span>
+                <span>x{{ item.buyNum }}</span>
+              </div>
+            </div>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="订单状态/支付方式"  prop="status" width="130">
+      <el-table-column label="订单状态"  prop="status" width="270">
         <template v-slot="scope">
           <div>
-            <el-tag :type="getOrderTypeTag(scope.row.status)">
+            <el-tag :type="getOrderTypeTag(scope.row.status)" style="margin-right: 10px">
               {{ getOrderTypeText(scope.row.status) }}
             </el-tag>
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleDelivery(scope.row)"
+              v-hasPermi="['oms:order:delivery']"
+            >编辑</el-button>
           </div>
-          <div style="margin-top: 6px">
-            <el-tag :type="getPayTypeTag(scope.row.payType)">
-              {{ getPayTypeText(scope.row.payType) }}
-            </el-tag>
+          <div v-if="scope.row.deliverySn">物流单号：{{ scope.row.deliverySn}}
+            <el-link @click="copyOrderSn(scope.row.deliverySn)" :underline="false"><i class="el-icon-document-copy el-icon--right"></i> </el-link>
           </div>
+          <div v-if="scope.row.deliveryTime">发货时间：{{ parseTime(scope.row.deliveryTime, '')}}</div>
         </template>
       </el-table-column>
       <el-table-column label="订单编号/操作"  class-name="small-padding fixed-width" width="220"  fixed="right">
@@ -134,7 +145,7 @@
 <!--              icon="el-icon-document-copy"-->
 <!--              @click="copyOrderSn(scope.row.orderSn)"-->
 <!--            ></el-link>-->
-            <i class="el-icon-document-copy" @click="copyOrderSn(scope.row.orderSn)" style="cursor: pointer;"></i>
+            <el-link @click="copyOrderSn(scope.row.orderSn)" :underline="false"><i class="el-icon-document-copy el-icon--right"></i> </el-link>
           </div>
           <el-button
             size="mini"
@@ -161,27 +172,27 @@
     />
 
     <!-- 发货对话框 -->
-<!--    <el-dialog :title="deliveryObj.title" :visible.sync="deliveryObj.open" width="500px" append-to-body>-->
-<!--      <el-form ref="deliveryForm" :model="deliveryForm" :rules="rules" label-width="100px">-->
-<!--        <el-form-item label="快递公司" prop="expressName">-->
-<!--          <el-select v-model="deliveryObj.form.expressName" placeholder="请选择快递公司" clearable size="small" filterable>-->
-<!--&lt;!&ndash;            <el-option v-for="(item, index) in experssList" :label="item.expressName" :value="item.expressCode"/>&ndash;&gt;-->
-<!--            <el-option label="顺丰速运" value="1"/>-->
-<!--            <el-option label="申通快递" value="2"/>-->
-<!--            <el-option label="圆通快递" value="2"/>-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="快递单号" prop="expressSn">-->
-<!--          <el-input v-model="deliveryObj.form.expressSn" placeholder="请输入快递单号" controls-position="right" :min="0"/>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
-<!--      <div slot="footer" class="dialog-footer">-->
-<!--        <el-button type="primary" v-hasPermi="['manager:oms:order:delivery']" @click="handleDelivery('deliveryForm')">确-->
-<!--          定-->
-<!--        </el-button>-->
-<!--        <el-button @click="cancel">取 消</el-button>-->
-<!--      </div>-->
-<!--    </el-dialog>-->
+    <el-dialog :title="deliveryObj.title" :visible.sync="deliveryObj.open" width="500px" append-to-body>
+      <el-form ref="deliveryForm" :model="deliveryForm" :rules="rules" label-width="100px">
+        <el-form-item label="快递公司" prop="expressName">
+          <el-select v-model="deliveryObj.form.expressName" placeholder="请选择快递公司" clearable size="small" filterable>
+<!--            <el-option v-for="(item, index) in experssList" :label="item.expressName" :value="item.expressCode"/>-->
+            <el-option label="顺丰速运" value="1"/>
+            <el-option label="申通快递" value="2"/>
+            <el-option label="圆通快递" value="2"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="快递单号" prop="expressSn">
+          <el-input v-model="deliveryObj.form.expressSn" placeholder="请输入快递单号" controls-position="right" :min="0"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-hasPermi="['manager:oms:order:delivery']" @click="handleDelivery('deliveryForm')">确
+          定
+        </el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
     <!--  保存商家备注对话框  -->
     <el-dialog :title="noteObj.title" :visible.sync="noteObj.open" width="500px" append-to-body>
       <el-form ref="noteForm" :model="noteObj.form" label-width="100px">
@@ -546,13 +557,17 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 150px;
+  width: 400px;
   .product-item{
     margin: auto;
-    width: 60px;
-  }
-  .quantity{
-    font-weight: bold;
+    width: 350px;
+    .sp-data{
+      font-size: 13px;
+    }
+    .quantity{
+      font-weight: bold;
+      font-size: 13px;
+    }
   }
 }
 .note-title{
@@ -561,5 +576,7 @@ export default {
 .el-table .my-cell {
   vertical-align: top
 }
-
+.el-link.el-link--default {
+  color: #409eff;
+}
 </style>
