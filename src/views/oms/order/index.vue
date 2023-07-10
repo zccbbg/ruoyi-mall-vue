@@ -126,7 +126,6 @@
             <el-button
               size="mini"
               type="text"
-              @click="handleDelivery(scope.row)"
               v-hasPermi="['oms:order:delivery']"
               :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
             >编辑</el-button>
@@ -158,7 +157,6 @@
             size="mini"
             type="text"
             @click="handleDelivery(scope.row)"
-            v-hasPermi="['oms:order:delivery']"
             :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
           >发货</el-button>
         </template>
@@ -175,7 +173,7 @@
 
     <!-- 发货对话框 -->
     <el-dialog :title="deliveryObj.title" :visible.sync="deliveryObj.open" width="500px" append-to-body>
-      <el-form ref="deliveryForm" :model="deliveryObj.form" :rules="rules" label-width="100px">
+      <el-form ref="deliveryForm" :model="deliveryObj.form" :rules="deliveryObj.rules" label-width="100px">
         <el-form-item label="快递公司" prop="expressName">
           <el-select v-model="deliveryObj.form.expressName" placeholder="请选择快递公司" clearable size="small" filterable>
 <!--            <el-option v-for="(item, index) in experssList" :label="item.expressName" :value="item.expressCode"/>-->
@@ -530,10 +528,14 @@ export default {
       this.deliveryObj.open = true
     },
     submitDelivery(){
-      deliverProduct(this.deliveryObj.form).then(resp => {
-        this.$modal.msgSuccess('发货成功')
-        this.cancelDelivery()
-        this.getList()
+      this.$refs['deliveryForm'].validate((valid) => {
+        if (valid){
+          deliverProduct(this.deliveryObj.form).then(resp => {
+            this.$modal.msgSuccess('发货成功')
+            this.cancelDelivery()
+            this.getList()
+          })
+        }
       })
     },
     cancelDelivery(){
