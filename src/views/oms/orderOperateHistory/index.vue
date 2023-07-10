@@ -10,18 +10,18 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="操作人：用户；系统；后台管理员" prop="operateMan">
-        <el-input
-          v-model="queryParams.operateMan"
-          placeholder="请输入操作人：用户；系统；后台管理员"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单" prop="orderStatus">
-        <el-select v-model="queryParams.orderStatus" placeholder="请选择订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
+<!--      <el-form-item label="操作人" prop="operateMan">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.operateMan"-->
+<!--          placeholder="请输入操作人"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+      <el-form-item label="订单状态" prop="orderStatus">
+        <el-select v-model="queryParams.orderStatus" placeholder="请选择订单状态" clearable size="small">
+          <el-option v-for="(item, index) in dict.type.oms_order_status" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item class="flex_one tr">
@@ -30,35 +30,32 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['oms:orderOperateHistory:add']"
-        >新增</el-button>
-      </el-col>
-      </el-col>
-    </el-row>
-
     <el-table v-loading="loading" :data="omsOrderOperateHistoryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="订单id" align="center" prop="orderId" />
-      <el-table-column label="操作人：用户；系统；后台管理员" align="center" prop="operateMan" />
-      <el-table-column label="订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单" align="center" prop="orderStatus" />
+<!--      <el-table-column label="操作人" align="center" prop="operateMan" />-->
+      <el-table-column label="订单状态" align="center" prop="orderStatus">
+        <template v-slot="scope">
+          <el-tag :type="getOrderTypeTag(scope.row.orderStatus)" style="margin-right: 10px">
+            {{ getOrderTypeText(scope.row.orderStatus) }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="note" />
+      <el-table-column label="操作时间" align="center" prop="createTime">
+        <template v-slot="scope">
+          <div>{{ parseTime(scope.row.createTime, '')}}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['oms:orderOperateHistory:edit']"
-          >修改</el-button>
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            type="text"-->
+<!--            icon="el-icon-edit"-->
+<!--            @click="handleUpdate(scope.row)"-->
+<!--            v-hasPermi="['oms:orderOperateHistory:edit']"-->
+<!--          >修改</el-button>-->
           <el-button
             size="mini"
             type="text"
@@ -69,7 +66,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -109,6 +106,7 @@ import { listOmsOrderOperateHistory, getOmsOrderOperateHistory, delOmsOrderOpera
 
 export default {
   name: "OmsOrderOperateHistory",
+  dicts: ["oms_order_status"],
   data() {
     return {
       // 遮罩层
@@ -256,6 +254,37 @@ export default {
         this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
+    },
+    getOrderTypeTag(status){
+      switch (status){
+        case 0:
+        case 1:
+          return 'info';
+        case 2:
+          return 'primary';
+        case 3:
+          return 'success';
+        case 4:
+          return 'warning';
+        case 5:
+          return 'danger';
+      }
+    },
+    getOrderTypeText(status){
+      switch (status){
+        case 0:
+          return '待付款';
+        case 1:
+          return '待发货';
+        case 2:
+          return '已发货';
+        case 3:
+          return '已完成';
+        case  4:
+          return '已关闭';
+        case 5:
+          return '无效订单';
+      }
     }
   }
 };
