@@ -126,7 +126,7 @@
             <el-button
               size="mini"
               type="text"
-              v-hasPermi="['oms:order:delivery']"
+              @click="handleDelivery(scope.row)"
               :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
             >编辑</el-button>
           </div>
