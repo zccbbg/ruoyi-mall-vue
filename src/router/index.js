@@ -180,7 +180,7 @@ export const dynamicRoutes = [
     path: '/order',
     component: Layout,
     hidden: true,
-    permissions: ['manager:oms:order:query'],
+    permissions: ['oms:order:query'],
     children: [
       {
         path: 'detail',
