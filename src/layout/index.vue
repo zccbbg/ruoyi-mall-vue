@@ -122,6 +122,6 @@ export default {
     box-shadow: -1px 0 12px 0 var(--gray-5);
     transition: all .28s;
     background-color: white;
-    z-index: 1;
+    z-index: 100;
   }
 </style>
