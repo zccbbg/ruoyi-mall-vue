@@ -46,7 +46,13 @@
               getAftersaleStatusText(scope.row) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="退款金额" align="center" prop="applyReturnAmount" />
+      <el-table-column label="用户信息" align="center" prop="nickName" width="120">
+        <template v-slot="scope">
+          <div>{{ scope.row.nickName }}</div>
+          <div>{{ scope.row.phone }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="退款金额" align="center" prop="applyReturnAmount" width="120"/>
       <el-table-column label="售后类型" align="center" prop="applyRefundType" width="80">
         <template v-slot="scope">
           <el-tag effect="plain" size="medium" :type="getAftersaleTypeTag(scope.row)">{{
@@ -58,16 +64,16 @@
             <span>{{ parseTime(scope.row.handleTime, '')}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="原因" align="center" prop="reason" />
-      <el-table-column label="处理备注" align="center" prop="handleNote" />
+      <el-table-column label="原因" align="center" prop="reason" width="220"/>
+      <el-table-column label="处理备注" align="center" prop="note" />
       <el-table-column label="处理人员" align="center" prop="handleMan" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="140">
         <template slot-scope="scope">
           <el-button size="mini" type="text" @click="handleDetail(scope.row)"
                      v-hasPermi="['manager:oms:aftersale:query']">详情</el-button>
-          <el-button size="mini" type="text"  @click="approve(scope.row, 1)"
+          <el-button size="mini" type="text"  @click="approve(scope.row.orderId, 1)"
                      v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">同意</el-button>
-          <el-button size="mini" type="text"  @click="handleOpen(scope.row, 2)"
+          <el-button size="mini" type="text"  @click="handleOpen(scope.row.orderId, 2)"
                      v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">拒绝</el-button>
         </template>
       </el-table-column>
@@ -81,57 +87,15 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改订单售后对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="MEMBER_ID" prop="memberId">
-          <el-input v-model="form.memberId" placeholder="请输入MEMBER_ID" />
-        </el-form-item>
-        <el-form-item label="订单id" prop="orderId">
-          <el-input v-model="form.orderId" placeholder="请输入订单id" />
-        </el-form-item>
-        <el-form-item label="退款金额" prop="returnAmount">
-          <el-input v-model="form.returnAmount" placeholder="请输入退款金额" />
-        </el-form-item>
-        <el-form-item label="售后类型：1：退款，2：退货退款" prop="type">
-          <el-select v-model="form.type" placeholder="请选择售后类型：1：退款，2：退货退款">
-            <el-option label="请选择字典生成" value="" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="申请状态：0->待处理；1->退货中；2->已完成；3->已拒绝">
-          <el-radio-group v-model="form.status">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="处理时间" prop="handleTime">
-          <el-date-picker clearable size="small"
-                        v-model="form.handleTime"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择处理时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="退货数量" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入退货数量" />
-        </el-form-item>
-        <el-form-item label="原因" prop="reason">
-          <el-input v-model="form.reason" placeholder="请输入原因" />
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="凭证图片，以逗号隔开" prop="proofPics">
-          <el-input v-model="form.proofPics" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="处理备注" prop="handleNote">
-          <el-input v-model="form.handleNote" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="处理人员" prop="handleMan">
-          <el-input v-model="form.handleMan" placeholder="请输入处理人员" />
+    <!-- 拒绝对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="updateForm" :model="updateOrderForm" label-width="100px" :rules="rules">
+        <el-form-item label="拒绝理由" prop="remark">
+          <el-input v-model="updateOrderForm.remark" placeholder="请输入拒绝理由" controls-position="right" :min="0" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitUpdate('updateForm')">确定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -139,7 +103,7 @@
 </template>
 
 <script>
-import { listOmsAftersale, getOmsAftersale, delOmsAftersale, addOmsAftersale, updateOmsAftersale, exportOmsAftersale } from "@/api/oms/aftersale";
+import { listOmsAftersale, getOmsAftersale, delOmsAftersale, addOmsAftersale, updateOmsAftersale, exportOmsAftersale, dealWithAftersale } from "@/api/oms/aftersale";
 import dateUtil from '@/utils/DateUtil';
 
 export default {
@@ -167,7 +131,7 @@ export default {
       // 订单售后表格数据
       omsAftersaleList: [],
       // 弹出层标题
-      title: "",
+      title: "拒绝售后",
       // 是否显示弹出层
       open: false,
       // 查询参数
@@ -184,13 +148,17 @@ export default {
       },
       // 表单参数
       form: {},
-      // 表单校验
-      rules: {
-        memberId: [
-          { required: true, message: "MEMBER_ID不能为空", trigger: "blur" }
-        ],
+      showMoreCondition: false,
+      updateOrderForm: {
+        orderId: null,
+        optType: null,
+        remark: null
       },
-      showMoreCondition: false
+      rules: {
+        remark: [
+          {required: true, message: '请输入拒绝理由', trigger: 'blur'}
+        ]
+      }
     };
   },
   created() {
@@ -213,11 +181,6 @@ export default {
         this.total = totalElements;
         this.loading = false;
       });
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
     },
     // 表单重置
     reset() {
@@ -320,12 +283,20 @@ export default {
 
     },
     /** 同意售后 */
-    approve(orderId){
-
+    approve(orderId, type){
+      this.updateOrderForm.orderId = orderId
+      this.updateOrderForm.optType = type
+      dealWithAftersale(this.updateOrderForm).then((response) => {
+        this.cancel()
+        this.$message.success('操作成功')
+        this.getList()
+      })
     },
     /** 拒绝 */
-    handleOpen(orderId){
-
+    handleOpen(orderId, type){
+      this.updateOrderForm.orderId = orderId
+      this.updateOrderForm.optType = type
+      this.open = true
     },
     getAftersaleStatusTag(row) {
       switch (row.aftersaleStatus) {
@@ -352,7 +323,7 @@ export default {
         case 3:
           return '已拒绝'
         case 4:
-          return '用户取消'
+          return '已关闭'
       }
     },
     getAftersaleTypeTag(row) {
@@ -370,6 +341,25 @@ export default {
         case 2:
           return '退货退款'
       }
+    },
+    cancel() {
+      this.open = false;
+      this.updateOrderForm = {
+        orderId: null,
+        optType: null,
+        remark: null
+      }
+    },
+    submitUpdate(formName){
+      this.$refs[formName].validate(valid => {
+        if(valid){
+          dealWithAftersale(this.updateOrderForm).then((response) => {
+            this.cancel()
+            this.$message.success('操作成功')
+            this.getList()
+          })
+        }
+      })
     }
   }
 };
