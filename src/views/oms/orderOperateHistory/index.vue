@@ -284,6 +284,14 @@ export default {
           return '已关闭';
         case 5:
           return '无效订单';
+        case 11:
+          return '售后待处理';
+        case 12:
+          return '退货中';
+        case 13:
+          return '售后已完成';
+        case 14:
+          return '售后已拒绝';
       }
     }
   }
