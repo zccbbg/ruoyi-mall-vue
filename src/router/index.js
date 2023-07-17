@@ -189,7 +189,21 @@ export const dynamicRoutes = [
         meta: { title: '订单详情' }
       }
     ]
-  }
+  },
+  {
+    path: '/aftersale',
+    component: Layout,
+    hidden: true,
+    permissions: ['oms:aftersale:query'],
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/oms/aftersale/detail'),
+        name: 'aftersaleOrderDetail',
+        meta: { title: '售后订单详情' }
+      }
+    ]
+  },
 ]
 
 // 防止连续点击多次路由报错

@@ -11,8 +11,8 @@
           <el-option v-for="(item, index) in dict.type.oms_aftersale_type" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item label="订单号" prop="orderId">
-        <el-input v-model.trim="queryParams.orderId" placeholder="请输入订单号" clearable size="small"
+      <el-form-item label="订单号" prop="orderSn">
+        <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单号" clearable size="small"
                   @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="售后单号" prop="id">
@@ -37,7 +37,7 @@
     </el-form>
 
     <el-table v-loading="loading" :data="omsAftersaleList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+<!--      <el-table-column type="selection" width="55" align="center" />-->
       <el-table-column label="订单号" align="center" prop="orderSn" width="200"/>
       <el-table-column label="售后单号" align="center" prop="id" width="160"/>
       <el-table-column label="申请状态" align="center" prop="aftersaleStatus" width="80">
@@ -69,8 +69,8 @@
       <el-table-column label="处理人员" align="center" prop="handleMan" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="140">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="handleDetail(scope.row)"
-                     v-hasPermi="['manager:oms:aftersale:query']">详情</el-button>
+          <el-button size="mini" type="text" @click="handleDetail(scope.row.orderId)"
+                     v-hasPermi="['oms:aftersale:query']">详情</el-button>
           <el-button size="mini" type="text"  @click="approve(scope.row.orderId, 1)"
                      v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">同意</el-button>
           <el-button size="mini" type="text"  @click="handleOpen(scope.row.orderId, 2)"
@@ -138,7 +138,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        orderId: null,
+        orderSn: null,
         type: null,
         status: null,
         userPhone: null,
@@ -280,7 +280,8 @@ export default {
     },
     /** 售后详情 */
     handleDetail(orderId){
-
+      const id = orderId
+      this.$router.push({ path: '/aftersale/detail', query: { id } })
     },
     /** 同意售后 */
     approve(orderId, type){
@@ -360,7 +361,13 @@ export default {
           })
         }
       })
-    }
+    },
+    handleChange(value) {
+      if (!value) {
+        this.queryParams.startTime = null;
+        this.queryParams.endTime = null;
+      }
+    },
   }
 };
 </script>
