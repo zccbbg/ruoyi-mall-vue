@@ -59,6 +59,11 @@
               getAftersaleTypeText(scope.row) }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="申请时间" align="center" prop="applyRefundTime" width="180" >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.applyRefundTime, '')}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="处理时间" align="center" prop="handleTime" width="180" >
         <template slot-scope="scope">
             <span>{{ parseTime(scope.row.handleTime, '')}}</span>

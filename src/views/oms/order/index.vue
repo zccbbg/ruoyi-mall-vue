@@ -3,7 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="订单状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择订单状态" clearable size="small">
-          <el-option v-for="(item, index) in dict.type.oms_order_status" :label="item.label" :value="item.value"/>
+          <el-option v-for="(item, index) in dict.type.oms_order_status" :label="item.label" :value="item.value" v-if="item.value < 11"/>
         </el-select>
       </el-form-item>
       <el-form-item label="订单编号" prop="orderSn">

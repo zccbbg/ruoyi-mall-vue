@@ -65,7 +65,7 @@
                     <el-descriptions-item label="收货人姓名">{{ addressInfo.name }}</el-descriptions-item>
                     <el-descriptions-item label="收货人手机号">{{ addressInfo.userPhone }}</el-descriptions-item>
                     <el-descriptions-item label="收货区域">{{ addressInfo.area }}</el-descriptions-item>
-                    <el-descriptions-item label="详细地址">{{ addressInfo.address }}</el-descriptions-item>
+                    <el-descriptions-item label="详细地址">{{ getHiddenDetailAddress(addressInfo.address) }}</el-descriptions-item>
                 </el-descriptions>
             </el-card>
             <el-card>
@@ -85,6 +85,15 @@
                   <el-table-column label="价格" prop="salePrice"></el-table-column>
                   <el-table-column label="购买数量" prop="buyNum"></el-table-column>
                 </el-table>
+            </el-card>
+            <el-card>
+              <el-descriptions title="物流信息" :column="3" border label-class-name="my-label" contentClassName="my-content">
+                <el-descriptions-item label="发货时间">{{ parseTime(orderDetail.deliveryTime, '')
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="快递单号">{{ orderDetail.expressNo }}</el-descriptions-item>
+                <el-descriptions-item label="物流公司">{{ orderDetail.expressNo ? '顺丰速运' : '' }}</el-descriptions-item>
+<!--                <el-descriptions-item label="物流公司">{{ orderDetail.expressName }}</el-descriptions-item>-->
+              </el-descriptions>
             </el-card>
             <!-- 售后详细信息 -->
             <el-dialog title="售后详细信息" :visible.sync="open" width="1100px" append-to-body>
