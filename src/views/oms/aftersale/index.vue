@@ -70,8 +70,8 @@
         </template>
       </el-table-column>
       <el-table-column label="原因" align="center" prop="reason" width="220"/>
-      <el-table-column label="处理备注" align="center" prop="note" />
-      <el-table-column label="处理人员" align="center" prop="handleMan" />
+      <el-table-column label="处理备注" align="center" prop="note" width="150"/>
+      <el-table-column label="处理人员" align="center" prop="handleMan" width="100"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="140">
         <template slot-scope="scope">
           <el-button size="mini" type="text" @click="handleDetail(scope.row.orderId)"
