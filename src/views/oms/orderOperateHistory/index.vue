@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="订单id" prop="orderId">
+      <el-form-item label="订单号" prop="orderId">
         <el-input
-          v-model="queryParams.orderId"
-          placeholder="请输入订单id"
+          v-model="queryParams.orderSn"
+          placeholder="请输入订单号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -31,9 +31,8 @@
     </el-form>
 
     <el-table v-loading="loading" :data="omsOrderOperateHistoryList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="订单id" align="center" prop="orderId" />
-<!--      <el-table-column label="操作人" align="center" prop="operateMan" />-->
+<!--      <el-table-column type="selection" width="55" align="center" />-->
+      <el-table-column label="订单号" align="center" prop="orderSn" />
       <el-table-column label="订单状态" align="center" prop="orderStatus">
         <template v-slot="scope">
           <el-tag :type="getOrderTypeTag(scope.row.orderStatus)" style="margin-right: 10px">
@@ -133,7 +132,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        orderId: null,
+        orderSn: null,
         operateMan: null,
         orderStatus: null,
         note: null,
@@ -284,6 +283,14 @@ export default {
           return '已关闭';
         case 5:
           return '无效订单';
+        case 11:
+          return '售后待处理';
+        case 12:
+          return '退货中';
+        case 13:
+          return '售后已完成';
+        case 14:
+          return '售后已拒绝';
       }
     }
   }

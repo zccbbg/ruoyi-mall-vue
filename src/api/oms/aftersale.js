@@ -52,3 +52,12 @@ export function exportOmsAftersale(query) {
     params: query
   })
 }
+
+// 售后订单操作
+export function dealWithAftersale(data){
+  return request({
+    url: '/oms/aftersale/dealWith',
+    method: 'post',
+    data: data
+  })
+}
