@@ -85,7 +85,7 @@
           <el-button
             size="mini"
             type="text"
-            @click="goCart(scope.row.decryptedPhone)"
+            @click="goCart(scope.row.phoneEncrypted)"
           >查看购物车</el-button>
         </template>
       </el-table-column>
