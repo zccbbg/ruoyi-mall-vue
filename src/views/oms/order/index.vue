@@ -304,6 +304,10 @@ export default {
     };
   },
   created() {
+    const { phone } = this.$route.query
+    if (phone){
+      this.queryParams.userPhone = phone
+    }
     this.getList();
   },
   methods: {

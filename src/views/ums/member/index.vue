@@ -15,14 +15,14 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="账号启用状态">
-        <el-select v-model="queryParams.status" placeholder="请选择" :clearable="true" size="small">
-          <el-option label="禁用" value="0">
-          </el-option>
-          <el-option label="启用" value="1">
-          </el-option>
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="账号启用状态">-->
+<!--        <el-select v-model="queryParams.status" placeholder="请选择" :clearable="true" size="small">-->
+<!--          <el-option label="禁用" value="0">-->
+<!--          </el-option>-->
+<!--          <el-option label="启用" value="1">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item label="昵称" prop="nickname">
         <el-input
           v-model.trim="queryParams.nickname"
@@ -47,52 +47,48 @@
     </el-form>
 
     <el-table v-loading="loading" :data="umsMemberList">
-      <el-table-column label="昵称" align="center" prop="nickname" />
-      <el-table-column label="手机号码" align="center" prop="phoneHidden" />
-      <el-table-column label="性别" align="center" prop="gender" >
-        <template v-slot="scope">
-          <div>{{ scope.row.gender === 0 ? '未知' : (scope.row.gender === 1 ? '男' : '女') }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="用户所在城市" align="center" prop="city" />
-      <el-table-column label="用户所在省份" align="center" prop="province" />
-      <el-table-column label="用户所在国家" align="center" prop="country" />
-      <el-table-column label="等级" align="center" prop="level" />
-      <el-table-column label="账号启用状态" align="center" prop="status">
-        <template v-slot="scope">
-          <el-switch
-            style="display: block"
-            v-model="scope.row.status"
-            :active-value="1"
-            :inactive-value="0"
-            active-color="#13ce66"
-            @change="changeStatus(scope.row)">
-          </el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="昵称" align="center" prop="nickname" width="150"/>
+      <el-table-column label="手机号码" align="center" prop="phoneHidden" width="150"/>
+<!--      <el-table-column label="性别" align="center" prop="gender" >-->
+<!--        <template v-slot="scope">-->
+<!--          <div>{{ scope.row.gender === 0 ? '未知' : (scope.row.gender === 1 ? '男' : '女') }}</div>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="用户所在城市" align="center" prop="city" />-->
+<!--      <el-table-column label="用户所在省份" align="center" prop="province" />-->
+<!--      <el-table-column label="用户所在国家" align="center" prop="country" />-->
+<!--      <el-table-column label="等级" align="center" prop="level" />-->
+<!--      <el-table-column label="账号启用状态" align="center" prop="status">-->
+<!--        <template v-slot="scope">-->
+<!--          <el-switch-->
+<!--            style="display: block"-->
+<!--            v-model="scope.row.status"-->
+<!--            :active-value="1"-->
+<!--            :inactive-value="0"-->
+<!--            active-color="#13ce66"-->
+<!--            @change="changeStatus(scope.row)">-->
+<!--          </el-switch>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+      <el-table-column label="创建时间" align="center" prop="createTime">
         <template v-slot="scope">
           <div>{{ parseTime(scope.row.createTime) }}</div>
         </template>
       </el-table-column>
-<!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button-->
-<!--            size="mini"-->
-<!--            type="text"-->
-<!--            icon="el-icon-edit"-->
-<!--            @click="handleUpdate(scope.row)"-->
-<!--            v-hasPermi="['ums:member:edit']"-->
-<!--          >修改</el-button>-->
-<!--          <el-button-->
-<!--            size="mini"-->
-<!--            type="text"-->
-<!--            icon="el-icon-delete"-->
-<!--            @click="handleDelete(scope.row)"-->
-<!--            v-hasPermi="['ums:member:remove']"-->
-<!--          >删除</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fix="right" width="200">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            @click="goOrder(scope.row.phoneEncrypted)"
+          >查看下单</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="goCart(scope.row.decryptedPhone)"
+          >查看购物车</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination
@@ -107,7 +103,7 @@
 </template>
 
 <script>
-import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember, exportUmsMember, changeAccountStatus } from "@/api/ums/member";
+import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember, exportUmsMember, changeAccountStatus, decryptedPhone } from "@/api/ums/member";
 import dateUtil from '@/utils/DateUtil';
 import moment from "moment";
 
@@ -297,6 +293,26 @@ export default {
           this.$modal.msgError('操作失败')
           this.getList()
         }
+      })
+    },
+    goOrder(phone){
+      decryptedPhone(phone).then(res => {
+        this.$router.push({
+          path: '/order/order',
+          query: {
+            phone: res
+          }
+        })
+      })
+    },
+    goCart(phone){
+      decryptedPhone(phone).then(res => {
+        this.$router.push({
+          path: '/member/shoppingCart',
+          query: {
+            phone: res
+          }
+        })
       })
     }
   }

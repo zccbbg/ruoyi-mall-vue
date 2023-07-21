@@ -62,4 +62,12 @@ export function changeAccountStatus(data) {
   })
 }
 
+// 获取解密手机号
+export function decryptedPhone(data) {
+  return request({
+    url: `/ums/member/phone/decrypt/` + data,
+    method: 'get'
+  })
+}
+
 
