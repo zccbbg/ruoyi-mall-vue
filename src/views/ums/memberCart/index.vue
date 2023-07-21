@@ -55,7 +55,6 @@
           <div>{{ scope.row.price.toFixed(2) }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="数量"  prop="quantity" />
       <el-table-column label="状态"  prop="skuIfExist">
         <template v-slot="scope">
           <el-tag effect="plain" size="medium" :type="scope.row.skuIfExist === 1 ? 'success' : 'error'">
