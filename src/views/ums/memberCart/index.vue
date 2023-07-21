@@ -50,11 +50,11 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="价格"  prop="price">
-        <template v-slot="scope">
-          <div>{{ scope.row.price.toFixed(2) }}</div>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="价格"  prop="price">-->
+<!--        <template v-slot="scope">-->
+<!--          <div>{{ scope.row.price.toFixed(2) }}</div>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="状态"  prop="skuIfExist">
         <template v-slot="scope">
           <el-tag effect="plain" size="medium" :type="scope.row.skuIfExist === 1 ? 'success' : 'error'">
