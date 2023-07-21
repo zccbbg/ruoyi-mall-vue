@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  props: ['radioData','size', 'value','showAll'],
+  props: ['radioData','size', 'value','showAll', 'filter'],
   data() {
     return {
       // value:this.value
@@ -32,7 +32,12 @@ export default {
     },
     dictList(){
       let list = [...this.radioData];
-      if(this.showAll === "all"){ 
+      if (this.filter) {
+        list = list.filter(it => {
+          return this.filter.indexOf(it.value) == -1
+        })
+      }
+      if(this.showAll === "all"){
         list.splice(0, 0, {label:"全部"})
       }
       return list

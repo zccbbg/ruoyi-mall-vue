@@ -10,19 +10,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="操作人" prop="operateMan">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.operateMan"-->
-<!--          placeholder="请输入操作人"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-      <el-form-item label="订单状态" prop="orderStatus">
-        <el-select v-model="queryParams.orderStatus" placeholder="请选择订单状态" clearable size="small">
-          <el-option v-for="(item, index) in dict.type.oms_order_status" :label="item.label" :value="item.value"/>
-        </el-select>
+      <el-form-item label="订单状态" prop="status">
+        <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_order_status" size="small" :show-all="'all'"></DictRadio>
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>

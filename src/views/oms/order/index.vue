@@ -2,19 +2,17 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="订单状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择订单状态" clearable size="small">
-          <el-option v-for="(item, index) in dict.type.oms_order_status" :label="item.label" :value="item.value" v-if="item.value < 11"/>
-        </el-select>
+        <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_order_status" size="small" :show-all="'all'" :filter="['11', '12', '13', '14']"></DictRadio>
       </el-form-item>
       <el-form-item label="订单编号" prop="orderSn">
         <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单编号" clearable size="small"
                   @keyup.enter.native="handleQuery"/>
       </el-form-item>
-      <el-form-item label="支付方式" prop="payType">
-        <el-select v-model="queryParams.payType" placeholder="请选择支付方式" clearable size="small">
-          <el-option v-for="(item, index) in dict.type.oms_pay_type" :label="item.label" :value="item.value"/>
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="支付方式" prop="payType">-->
+<!--        <el-select v-model="queryParams.payType" placeholder="请选择支付方式" clearable size="small">-->
+<!--          <el-option v-for="(item, index) in dict.type.oms_pay_type" :label="item.label" :value="item.value"/>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
 <!--      <el-form-item label="商品名称" prop="productName">-->
 <!--        <el-input v-model.trim="queryParams.productName" placeholder="请输入商品名称" clearable size="small"-->
 <!--                  @keyup.enter.native="handleQuery"/>-->
@@ -600,5 +598,8 @@ export default {
 }
 .el-link.el-link--default {
   color: #409eff;
+}
+.el-select{
+  width: 100%;
 }
 </style>
