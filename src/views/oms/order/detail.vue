@@ -1,11 +1,23 @@
 <template>
     <div class="order_detail_wrapper">
         <el-main v-loading="loading">
-            <el-card>
+            <el-card class="mt10">
+              <div slot="header" class="clearfix">
+                <span style="font-size: 16px;font-weight: bold">订单进程</span>
+                <el-button style="float: right;" size="small" @click="$router.back()">返回</el-button>
+              </div>
+              <el-steps :active="active" align-center>
+                <el-step title="买家下单" :description="parseTime(orderDetail.createTime, '')"></el-step>
+                <el-step title="买家付款" :description="parseTime(orderDetail.payTime, '')"></el-step>
+                <el-step title="商家发货" :description="parseTime(orderDetail.deliveryTime, '')"></el-step>
+                <el-step title="买家收货" :description="parseTime(orderDetail.receiveTime, '')"></el-step>
+              </el-steps>
+            </el-card>
+            <el-card class="mt10">
                 <el-descriptions title="订单信息" :column="2" border label-class-name="my-label" contentClassName="my-content">
-                    <template slot="extra">
-                        <el-button size="small" @click="$router.back()">返回</el-button>
-                    </template>
+<!--                    <template slot="extra">-->
+<!--                        <el-button size="small" @click="$router.back()">返回</el-button>-->
+<!--                    </template>-->
                     <el-descriptions-item label="订单编号">{{ orderDetail.orderSn }}</el-descriptions-item>
                     <el-descriptions-item label="用户名称">{{ orderDetail.userName }}</el-descriptions-item>
                     <el-descriptions-item label="用户手机号">{{ orderDetail.userPhone }}</el-descriptions-item>
@@ -16,7 +28,7 @@
                     <el-descriptions-item label="订单状态">{{ getOrderStatus(orderDetail) }}</el-descriptions-item>
                 </el-descriptions>
             </el-card>
-            <el-card>
+            <el-card class="mt10">
                 <el-descriptions title="收货信息" :column="2" border label-class-name="my-label" contentClassName="my-content">
                     <el-descriptions-item label="收货人姓名">{{ getHiddenName(addressInfo.name) }}</el-descriptions-item>
                     <el-descriptions-item label="收货人手机号">{{ addressInfo.userPhone }}</el-descriptions-item>
@@ -24,7 +36,7 @@
                     <el-descriptions-item label="详细地址">{{ getHiddenDetailAddress(addressInfo.address) }}</el-descriptions-item>
                 </el-descriptions>
             </el-card>
-            <el-card>
+            <el-card class="mt10">
                 <div slot="header" style="font-size: 16px;font-weight: bold;">商品信息</div>
                 <el-table :data="products">
                     <el-table-column label="商品图片" prop="pic">
@@ -46,7 +58,7 @@
                     </el-table-column>
                 </el-table>
             </el-card>
-            <el-card>
+            <el-card class="mt10">
                 <el-descriptions title="物流信息" :column="3" border label-class-name="my-label" contentClassName="my-content">
                     <el-descriptions-item label="发货时间">{{ parseTime(orderDetail.deliveryTime, '')
                     }}</el-descriptions-item>
@@ -82,7 +94,8 @@ export default {
             addressInfo: {},
             aliLogisticsInfoList: [],
             loading: false,
-            experssList: []
+            experssList: [],
+            active: 1
         }
     },
     created() {
@@ -121,6 +134,11 @@ export default {
                     // }
                     this.products = productInfo
                     this.addressInfo = addressInfo
+                    if (this.orderDetail.orderStatus <= 3){
+                      this.active = this.orderDetail.orderStatus + 1
+                    }else {
+                      this.active = 1
+                    }
                     this.loading = false
                 })
             )
