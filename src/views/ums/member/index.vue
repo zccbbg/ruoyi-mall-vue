@@ -49,34 +49,33 @@
     <el-table v-loading="loading" :data="umsMemberList">
       <el-table-column label="昵称" align="center" prop="nickname" width="150"/>
       <el-table-column label="手机号码" align="center" prop="phoneHidden" width="150"/>
-<!--      <el-table-column label="性别" align="center" prop="gender" >-->
-<!--        <template v-slot="scope">-->
-<!--          <div>{{ scope.row.gender === 0 ? '未知' : (scope.row.gender === 1 ? '男' : '女') }}</div>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="用户所在城市" align="center" prop="city" />-->
-<!--      <el-table-column label="用户所在省份" align="center" prop="province" />-->
-<!--      <el-table-column label="用户所在国家" align="center" prop="country" />-->
-<!--      <el-table-column label="等级" align="center" prop="level" />-->
-<!--      <el-table-column label="账号启用状态" align="center" prop="status">-->
-<!--        <template v-slot="scope">-->
-<!--          <el-switch-->
-<!--            style="display: block"-->
-<!--            v-model="scope.row.status"-->
-<!--            :active-value="1"-->
-<!--            :inactive-value="0"-->
-<!--            active-color="#13ce66"-->
-<!--            @change="changeStatus(scope.row)">-->
-<!--          </el-switch>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-      <el-table-column label="创建时间" align="center" prop="createTime">
+      <el-table-column label="佣金" align="center" width="120">
+        <template v-slot="scope">
+          <div>0.00</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="积分" align="center" width="120">
+        <template v-slot="scope">
+          <div>0.00</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="余额" align="center" width="120">
+        <template v-slot="scope">
+          <div>0.00</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="注册时间" align="center" prop="createTime">
         <template v-slot="scope">
           <div>{{ parseTime(scope.row.createTime) }}</div>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fix="right" width="200">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            @click="showStatistics(scope.row.id)"
+          >查看数据</el-button>
           <el-button
             size="mini"
             type="text"
@@ -90,7 +89,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <pagination
       v-show="total>0"
       :total="total"
@@ -98,12 +96,21 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+    <!--  统计  -->
+    <el-dialog :title="statisticsObj.title" :visible.sync="statisticsObj.open" width="500px" append-to-body>
+      <el-descriptions direction="vertical" :column="2" border>
+        <el-descriptions-item label="购物车数">{{ statisticsObj.data.cartCount }}</el-descriptions-item>
+        <el-descriptions-item label="订单数">{{ statisticsObj.data.orderCount }}</el-descriptions-item>
+        <el-descriptions-item label="下单金额">￥{{ statisticsObj.data.orderAmount.toFixed(2) }}</el-descriptions-item>
+        <el-descriptions-item label="售后数">{{ statisticsObj.data.aftersaleCount }}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember, exportUmsMember, changeAccountStatus, decryptedPhone } from "@/api/ums/member";
+import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember, exportUmsMember, changeAccountStatus, decryptedPhone, viewStatistics } from "@/api/ums/member";
 import dateUtil from '@/utils/DateUtil';
 import moment from "moment";
 
@@ -154,7 +161,17 @@ export default {
           { required: true, message: "用户剩余积分不能为空", trigger: "blur" }
         ],
       },
-      showMoreCondition: false
+      showMoreCondition: false,
+      statisticsObj: {
+        open: false,
+        data: {
+          cartCount: 0,
+          orderCount: 0,
+          orderAmount: 0.00,
+          aftersaleCount: 0
+        },
+        title: '用户数据统计'
+      }
     };
   },
   created() {
@@ -313,6 +330,12 @@ export default {
             phone: res
           }
         })
+      })
+    },
+    showStatistics(memberId){
+      viewStatistics(memberId).then((response) => {
+        this.statisticsObj.data = response
+        this.statisticsObj.open = true
       })
     }
   }

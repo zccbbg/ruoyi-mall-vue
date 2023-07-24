@@ -70,4 +70,12 @@ export function decryptedPhone(data) {
   })
 }
 
+// 查询会员统计数据
+export function viewStatistics(memberId){
+  return request({
+    url: `/ums/member/view/statistics/` + memberId,
+    method: 'get'
+  })
+}
+
 
