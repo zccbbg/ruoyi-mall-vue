@@ -8,13 +8,13 @@
       </div>
       <div class="first">
         <ul>
-          <li class="li" style="width: 33%">访客数
+          <li class="li" style="width: 33%">会员数
             <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
           </li>
-          <li class="li" style="width: 33%">支付买家数
+          <li class="li" style="width: 33%">加购数
             <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
           </li>
-          <li class="li" style="width: 33%">浏览量
+          <li class="li" style="width: 33%">分销商数
             <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
           </li>
         </ul>
@@ -64,13 +64,13 @@
               <li class="li">未发订单数
                 <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
               </li>
-              <li class="li">未揽件有退款
+              <li class="li">今日订单数
                 <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
               </li>
-              <li class="li">发货超时
+              <li class="li">今日成交额
                 <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
               </li>
-              <li class="li">物流预警
+              <li class="li">今日发货数
                 <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
               </li>
             </ul>
