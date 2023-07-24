@@ -64,7 +64,12 @@
           <div>0.00</div>
         </template>
       </el-table-column>
-      <el-table-column label="注册时间" align="center" prop="createTime">
+      <el-table-column label="注册时间" align="center" prop="createTime" width="180">
+        <template v-slot="scope">
+          <div>{{ parseTime(scope.row.createTime) }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="上次登录" align="center" prop="createTime">
         <template v-slot="scope">
           <div>{{ parseTime(scope.row.createTime) }}</div>
         </template>
@@ -75,6 +80,7 @@
             size="mini"
             type="text"
             @click="showStatistics(scope.row.id)"
+            v-hasPermi="['ums:member:statistics']"
           >查看数据</el-button>
           <el-button
             size="mini"
