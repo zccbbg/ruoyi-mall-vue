@@ -118,8 +118,8 @@
       <el-table-column label="订单状态"  prop="status" width="270">
         <template v-slot="scope">
           <div>
-            <el-tag :type="getOrderTypeTag(scope.row.status)" style="margin-right: 10px">
-              {{ getOrderTypeText(scope.row.status) }}
+            <el-tag :type="getOrderStatusTag(scope.row.status)" style="margin-right: 10px">
+              {{ getOrderStatusText(scope.row.status) }}
             </el-tag>
             <el-button
               size="mini"
@@ -151,6 +151,12 @@
             @click="goDetail(scope.row)"
             v-hasPermi="['oms:order:query']"
           >详情</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="showLog(scope.row.id)"
+            v-hasPermi="['oms:order:log']"
+          >日志</el-button>
           <el-button
             size="mini"
             type="text"
@@ -205,13 +211,33 @@
         <el-button size="small" @click="cancelNote">取 消</el-button>
       </div>
     </el-dialog>
+    <!--  日志  -->
+    <el-dialog :title="logObj.title" :visible.sync="logObj.open" width="1000px" append-to-body>
+      <el-table v-loading="logObj.loading" :data="logObj.logList">
+        <el-table-column label="最新状态" prop="orderStatus">
+          <template v-slot="scope">
+            <div>{{getLogEvent(scope.row.orderStatus)}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="备注" prop="note"/>
+        <el-table-column label="操作人" prop="operateMan"/>
+        <el-table-column label="时间" prop="createTime" width="180">
+          <template v-slot="scope">
+            <div>
+              {{ parseTime(scope.row.createTime, '')}}
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listOmsOrder, getOmsOrder, delOmsOrder, addOmsOrder, updateOmsOrder, exportOmsOrder, saveMerchantNote, deliverProduct } from "@/api/oms/order";
+import { listOmsOrder, getOmsOrder, delOmsOrder, addOmsOrder, updateOmsOrder, exportOmsOrder, saveMerchantNote, deliverProduct, viewLog } from "@/api/oms/order";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import dateUtil from '@/utils/DateUtil';
+import fa from "element-ui/src/locale/lang/fa";
 
 export default {
   name: "OmsOrder",
@@ -300,6 +326,12 @@ export default {
           merchantNote: null
         },
         open: false
+      },
+      logObj: {
+        title: '日志',
+        logList: null,
+        open: false,
+        loading: false
       }
     };
   },
@@ -459,7 +491,7 @@ export default {
         this.queryParams.endTime = null;
       }
     },
-    getOrderTypeTag(status){
+    getOrderStatusTag(status){
       switch (status){
         case 0:
         case 1:
@@ -474,7 +506,7 @@ export default {
           return 'danger';
       }
     },
-    getOrderTypeText(status){
+    getOrderStatusText(status){
       switch (status){
         case 0:
           return '待付款';
@@ -486,6 +518,22 @@ export default {
           return '已完成';
         case  4:
           return '已关闭';
+        case 5:
+          return '无效订单';
+      }
+    },
+    getLogEvent(status){
+      switch (status){
+        case 0:
+          return '用户下单';
+        case 1:
+          return '用户支付成功';
+        case 2:
+          return '平台发货';
+        case 3:
+          return '用户确认收货';
+        case  4:
+          return '取消订单';
         case 5:
           return '无效订单';
       }
@@ -571,6 +619,14 @@ export default {
       this.noteObj.open = false
       this.noteObj.form.id = null
       this.noteObj.form.merchantNote = null
+    },
+    showLog(orderId){
+      this.logObj.loading = true
+      viewLog(orderId).then((response) => {
+        this.logObj.logList = response
+        this.logObj.open = true
+        this.logObj.loading = false
+      })
     }
   }
 

@@ -72,6 +72,8 @@
         <template slot-scope="scope">
           <el-button size="mini" type="text" @click="handleDetail(scope.row.orderId)"
                      v-hasPermi="['oms:aftersale:query']">详情</el-button>
+          <el-button size="mini" type="text" @click="showLog(scope.row.orderId)"
+                     v-hasPermi="['oms:aftersale:log']">日志</el-button>
           <el-button size="mini" type="text"  @click="approve(scope.row.orderId, 1)"
                      v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">同意</el-button>
           <el-button size="mini" type="text"  @click="handleOpen(scope.row.orderId, 2)"
@@ -100,11 +102,30 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!--  日志  -->
+    <el-dialog :title="logObj.title" :visible.sync="logObj.open" width="1000px" append-to-body>
+      <el-table v-loading="logObj.loading" :data="logObj.logList">
+        <el-table-column label="最新状态" prop="orderStatus">
+          <template v-slot="scope">
+            <div>{{getLogEvent(scope.row.orderStatus)}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="备注" prop="note"/>
+        <el-table-column label="操作人" prop="operateMan"/>
+        <el-table-column label="时间" prop="createTime" width="180">
+          <template v-slot="scope">
+            <div>
+              {{ parseTime(scope.row.createTime, '')}}
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listOmsAftersale, getOmsAftersale, delOmsAftersale, addOmsAftersale, updateOmsAftersale, exportOmsAftersale, dealWithAftersale } from "@/api/oms/aftersale";
+import { listOmsAftersale, getOmsAftersale, delOmsAftersale, addOmsAftersale, updateOmsAftersale, exportOmsAftersale, dealWithAftersale, viewLog } from "@/api/oms/aftersale";
 import dateUtil from '@/utils/DateUtil';
 
 export default {
@@ -159,6 +180,12 @@ export default {
         remark: [
           {required: true, message: '请输入拒绝理由', trigger: 'blur'}
         ]
+      },
+      logObj: {
+        title: '日志',
+        logList: null,
+        open: false,
+        loading: false
       }
     };
   },
@@ -367,6 +394,26 @@ export default {
       if (!value) {
         this.queryParams.startTime = null;
         this.queryParams.endTime = null;
+      }
+    },
+    showLog(orderId){
+      this.logObj.loading = true
+      viewLog(orderId).then((response) => {
+        this.logObj.logList = response
+        this.logObj.open = true
+        this.logObj.loading = false
+      })
+    },
+    getLogEvent(status){
+      switch (status){
+        case 11:
+          return '用户申请售后';
+        case 12:
+          return '平台同意售后申请';
+        case 13:
+          return '售后完成';
+        case 14:
+          return '平台拒绝售后';
       }
     },
   }

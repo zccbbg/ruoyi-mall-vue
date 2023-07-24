@@ -70,3 +70,11 @@ export function deliverProduct(data){
     data: data
   })
 }
+
+// 查看订单操作日志
+export function viewLog(orderId){
+  return request({
+    url:`/oms/order/log/` + orderId,
+    method: 'get'
+  })
+}

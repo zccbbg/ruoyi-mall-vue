@@ -61,3 +61,10 @@ export function dealWithAftersale(data){
     data: data
   })
 }
+
+export function viewLog(orderId){
+  return request({
+    url: `/oms/aftersale/log/` + orderId,
+    method: 'get'
+  })
+}
