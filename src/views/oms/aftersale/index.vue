@@ -103,23 +103,18 @@
       </div>
     </el-dialog>
     <!--  日志  -->
-    <el-dialog :title="logObj.title" :visible.sync="logObj.open" width="1000px" append-to-body>
-      <el-table v-loading="logObj.loading" :data="logObj.logList">
-        <el-table-column label="最新状态" prop="orderStatus">
-          <template v-slot="scope">
-            <div>{{getLogEvent(scope.row.orderStatus)}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="备注" prop="note"/>
-        <el-table-column label="操作人" prop="operateMan"/>
-        <el-table-column label="时间" prop="createTime" width="180">
-          <template v-slot="scope">
-            <div>
-              {{ parseTime(scope.row.createTime, '')}}
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
+    <el-dialog :title="logObj.title" :visible.sync="logObj.open" width="500px" append-to-body>
+      <el-timeline>
+        <el-timeline-item v-for="item in logObj.logList" placement="top" :timestamp="parseTime(item.createTime, '')">
+          <el-card>
+            <h4>{{ getLogEvent(item.orderStatus) }}</h4>
+            <br>
+            <h4>操作人：{{ item.operateMan }}</h4>
+            <br>
+            <h4>备注：{{ item.note }}</h4>
+          </el-card>
+        </el-timeline-item>
+      </el-timeline>
     </el-dialog>
   </div>
 </template>
