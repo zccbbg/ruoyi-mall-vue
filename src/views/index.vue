@@ -12,8 +12,9 @@
           </li>
           <li class="li" style="width: 33%">加购数
           </li>
-          <li class="li" style="width: 33%">分销商数
-            <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
+          <li class="li" style="width: 33%">
+            分销商数
+            <el-popover class="ml5" content="功能暂未开发" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
           </li>
         </ul>
         <ul>
@@ -25,17 +26,23 @@
              <router-link to="/member/shoppingCart">{{ memberAndCartStatisticsObj.cartCount }}</router-link>
           </li>
           <li class="da" style="width: 33%">
-            <!-- <router-link to="/index">21,085</router-link> -->
-            21085
+            10
           </li>
         </ul>
       </div>
     </el-card>
     <el-row class="pl20 pr20" :gutter="10">
-      <el-col :span="8">
-        <el-card shadow="always" style="padding-bottom: 20px">
+      <el-col :span="3">
+        <el-image
+          style="height: 150px"
+          :src="require('@/assets/QRCode/h5.png')"
+          fit="fill"
+        ></el-image>
+      </el-col>
+      <el-col :span="7">
+        <el-card shadow="always" style="padding-bottom: 30px">
           <div slot="header"><span>售后</span></div>
-          <ul>
+          <ul style="margin-top: 10px">
             <li class="li" style="width: 50%">待处理
             </li>
             <li class="li" style="width: 50%">处理中
@@ -51,11 +58,11 @@
           </ul>
         </el-card>
       </el-col>
-      <el-col :span="16">
-        <el-card shadow="always" style="padding-bottom: 20px">
+      <el-col :span="14">
+        <el-card shadow="always" style="padding-bottom: 30px">
           <div slot="header"><span>订单</span></div>
           <div>
-            <ul>
+            <ul style="margin-top: 10px">
               <li class="li">未发订单数
               </li>
               <li class="li">今日订单数
