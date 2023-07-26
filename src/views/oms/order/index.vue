@@ -219,8 +219,8 @@
             <h4>{{ getLogEvent(item.orderStatus) }}</h4>
             <br>
             <h4>操作人：{{ item.operateMan }}</h4>
-            <br>
-            <h4>备注：{{ item.note }}</h4>
+            <br v-if="item.note">
+            <h4 v-if="item.note">备注：{{ item.note }}</h4>
           </el-card>
         </el-timeline-item>
       </el-timeline>
@@ -231,7 +231,7 @@
 <script>
 import { listOmsOrder, getOmsOrder, delOmsOrder, addOmsOrder, updateOmsOrder, exportOmsOrder, saveMerchantNote, deliverProduct, viewLog } from "@/api/oms/order";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
-import dateUtil from '@/utils/DateUtil';
+import dateUtil, {dateFormat} from '@/utils/DateUtil';
 import fa from "element-ui/src/locale/lang/fa";
 
 export default {
@@ -331,13 +331,25 @@ export default {
     };
   },
   created() {
-    const { phone } = this.$route.query
+    const { phone,status,today } = this.$route.query
     if (phone){
       this.queryParams.userPhone = phone
+    }
+    if (status){
+      this.queryParams.status = status
+    }
+    if (today){
+      this.setToday()
     }
     this.getList();
   },
   methods: {
+    /** 日期组件设置为今天 */
+    setToday(){
+      const temp = new Date();
+      this.queryParams.Time[0] = dateFormat(new Date(temp.setHours(0, 0, 0, 0)), "yyyy-MM-dd hh:mm:ss")
+      this.queryParams.Time[1] = dateFormat(new Date(temp.setHours(23, 59, 59, 0)), "yyyy-MM-dd hh:mm:ss")
+    },
     /** 查询订单表列表 */
     getList() {
       if (this.queryParams.Time) {

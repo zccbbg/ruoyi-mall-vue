@@ -110,8 +110,8 @@
             <h4>{{ getLogEvent(item.orderStatus) }}</h4>
             <br>
             <h4>操作人：{{ item.operateMan }}</h4>
-            <br>
-            <h4>备注：{{ item.note }}</h4>
+            <br v-if="item.note">
+            <h4 v-if="item.note">备注：{{ item.note }}</h4>
           </el-card>
         </el-timeline-item>
       </el-timeline>
@@ -185,6 +185,10 @@ export default {
     };
   },
   created() {
+    const { status } = this.$route.query
+    if (status){
+      this.queryParams.status = status
+    }
     this.getList();
   },
   methods: {

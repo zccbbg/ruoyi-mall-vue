@@ -9,10 +9,8 @@
       <div class="first">
         <ul>
           <li class="li" style="width: 33%">会员数
-            <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
           </li>
           <li class="li" style="width: 33%">加购数
-            <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
           </li>
           <li class="li" style="width: 33%">分销商数
             <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
@@ -20,12 +18,11 @@
         </ul>
         <ul>
           <li class="da" style="width: 33%">
-            <!-- <router-link to="/index">2,910</router-link> -->
-            2,910
+             <router-link to="/member/member">{{ memberAndCartStatisticsObj.memberCount }}</router-link>
+
           </li>
           <li class="da" style="width: 33%">
-            <!-- <router-link to="/index">56</router-link> -->
-            56
+             <router-link to="/member/shoppingCart">{{ memberAndCartStatisticsObj.cartCount }}</router-link>
           </li>
           <li class="da" style="width: 33%">
             <!-- <router-link to="/index">21,085</router-link> -->
@@ -40,18 +37,16 @@
           <div slot="header"><span>售后</span></div>
           <ul>
             <li class="li" style="width: 50%">待处理
-              <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
             </li>
             <li class="li" style="width: 50%">处理中
-              <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
             </li>
           </ul>
           <ul>
             <li class="da" style="width: 50%">
-              <router-link to="/order/aftersale">2</router-link>
+              <router-link :to="{path:'/order/aftersale', query:{status:0}}">{{ orderAndAftersaleStatisticsObj.pendingAftersaleCount }}</router-link>
             </li>
             <li class="da" style="width: 50%">
-              <router-link to="/order/aftersale">1</router-link>
+              <router-link :to="{path:'/order/aftersale', query:{status:1}}">{{ orderAndAftersaleStatisticsObj.processingAftersaleCount }}</router-link>
             </li>
           </ul>
         </el-card>
@@ -62,33 +57,26 @@
           <div>
             <ul>
               <li class="li">未发订单数
-                <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
               </li>
               <li class="li">今日订单数
-                <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
               </li>
               <li class="li">今日成交额
-                <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
               </li>
               <li class="li">今日发货数
-                <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
               </li>
             </ul>
             <ul>
               <li class="da">
-                <router-link to="/order/order">50</router-link>
+                <router-link :to="{path:'/order/order',query:{status:1}}">{{ orderAndAftersaleStatisticsObj.waitDeliveredCount }}</router-link>
               </li>
               <li class="da">
-                <!-- <router-link to="/relation/supplier">0</router-link> -->
-                0
+                 <router-link :to="{path:'/order/order',query:{today:true}}">{{ orderAndAftersaleStatisticsObj.todayOrderCount }}</router-link>
               </li>
               <li class="da">
-                <!-- <router-link to="/relation/carrier">4</router-link> -->
-                0
+                 <router-link :to="{path:'/order/order',query:{today:true,status:1}}">{{ orderAndAftersaleStatisticsObj.todayTransactionAmount }}</router-link>
               </li>
               <li class="da">
-                <!-- <router-link to="/item">3</router-link> -->
-                3
+                 <router-link :to="{path:'/order/order',query:{today:true, status: 2}}">{{ orderAndAftersaleStatisticsObj.todayHasDeliveredCount }}</router-link>
               </li>
             </ul>
           </div>
@@ -97,43 +85,10 @@
     </el-row>
     <el-row class="pl20 pr20" :gutter="10">
       <el-col :span="16">
-        <el-card style="margin: 20px 20px; font-size: 14px">
-          <div slot="header"><span>订单统计</span></div>
-          <el-row>
-            <el-col :span="4">
-              <div style="padding: 20px">
-                <div>
-                  <div style="color: #909399;font-size: 14px">本月订单总数</div>
-                  <div style="color: #606266;font-size: 24px;padding: 10px 0">10000</div>
-                  <div><span class="color-success" style="font-size: 14px">+10%</span><span style="color: #C0C4CC;font-size: 14px">同比上月</span></div>
-                </div>
-                <div style="margin-top: 20px;">
-                  <div style="color: #909399;font-size: 14px">本周订单总数</div>
-                  <div style="color: #606266;font-size: 24px;padding: 10px 0">1000</div>
-                  <div><span class="color-danger" style="font-size: 14px">-10%</span><span style="color: #C0C4CC;font-size: 14px">同比上周</span></div>
-                </div>
-                <div style="margin-top: 20px;">
-                  <div style="color: #909399;font-size: 14px">本月销售总额</div>
-                  <div style="color: #606266;font-size: 24px;padding: 10px 0">100000</div>
-                  <div><span class="color-success" style="font-size: 14px">+10%</span><span style="color: #C0C4CC;font-size: 14px">同比上月</span></div>
-                </div>
-                <div style="margin-top: 20px;">
-                  <div style="color: #909399;font-size: 14px">本周销售总额</div>
-                  <div style="color: #606266;font-size: 24px;padding: 10px 0">50000</div>
-                  <div><span class="color-danger" style="font-size: 14px">-10%</span><span style="color: #C0C4CC;font-size: 14px">同比上周</span></div>
-                </div>
-              </div>
-            </el-col>
-            <el-col :span="20">
-              <div style="padding: 10px;border-left:1px solid #DCDFE6">
-                <el-date-picker v-model="orderCountDate" align="right" end-placeholder="结束日期" :picker-options="pickerOptions" range-separator="至" size="small" start-placeholder="开始日期" style="float: right;z-index: 1" type="daterange" unlink-panels="unlink-panels" @change="handleDateChange"></el-date-picker>
-                <div>
-                  <ve-line :data-empty="dataEmpty" :data="chartData" :legend-visible="false" :loading="loading" :settings="chartSettings"></ve-line>
-                </div>
-              </div>
-            </el-col>
-          </el-row>
-        </el-card>
+        <order-line-chart></order-line-chart>
+        <div class="card transform">
+          <top-product></top-product>
+        </div>
       </el-col>
       <el-col :span="8">
         <el-card style="margin: 20px 20px; font-size: 14px">
@@ -174,6 +129,10 @@
 import {str2Date} from '@/utils/date';
 import PanelGroup from '@/views/components/PanelGroup'
 import { mapGetters } from 'vuex'
+import OrderLineChart from "@/views/dashboard/OrderLineChart.vue";
+import TopProduct from "@/views/components/IndexOrderPanelGroup/TopProduct.vue";
+import {memberAndCartStatistics, orderAndAftersaleStatistics} from "@/api/statistics";
+
 const DATA_FROM_BACKEND = {
     columns: ['date', 'orderCount','orderAmount'],
     rows: [
@@ -197,7 +156,9 @@ const DATA_FROM_BACKEND = {
 
 export default {
   components: {
-    PanelGroup
+    PanelGroup,
+    OrderLineChart,
+    TopProduct
   },
   data() {
     return {
@@ -239,7 +200,19 @@ export default {
       loading: false,
       dataEmpty: false,
       nowTime: '',
-      hello: ''
+      hello: '',
+      memberAndCartStatisticsObj: {
+        memberCount: 0,
+        cartCount: 0
+      },
+      orderAndAftersaleStatisticsObj: {
+        pendingAftersaleCount: 0,
+        processingAftersaleCount: 0,
+        waitDeliveredCount: 0,
+        todayHasDeliveredCount: 0,
+        todayOrderCount: 0,
+        todayTransactionAmount: 0
+      }
     }
   },
   computed: {
@@ -248,6 +221,8 @@ export default {
   created() {
     this.showTimes()
     this.helloTimes()
+    this.memberAndCartStat()
+    this.orderAndAftersaleStat()
     this.initOrderCountDate()
     this.getData()
   },
@@ -329,6 +304,16 @@ export default {
       } else {
         this.hello = '晚上好'
       }
+    },
+    memberAndCartStat(){
+      memberAndCartStatistics().then((response) => {
+        this.memberAndCartStatisticsObj = response
+      })
+    },
+    orderAndAftersaleStat(){
+      orderAndAftersaleStatistics().then((response) => {
+        this.orderAndAftersaleStatisticsObj = response
+      })
     }
   }
 }
