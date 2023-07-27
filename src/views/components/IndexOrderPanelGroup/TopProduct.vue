@@ -7,8 +7,8 @@
           <el-col :span="6">
             <div style="font-size: large">
               <el-radio-group v-model="params.statType" size="small" @change="getData">
-                <el-radio-button label="1">商品规格销量榜</el-radio-button>
                 <el-radio-button label="2">商品销量榜</el-radio-button>
+                <el-radio-button label="1">规格销量榜</el-radio-button>
               </el-radio-group>
             </div>
           </el-col>
