@@ -2,23 +2,17 @@
   <el-card style="margin: 20px 20px; font-size: 14px;">
     <div slot="header" class="clearfix">
       <el-row>
-        <el-col :span="12">
-          <div style="text-align: left">
-            <el-radio-group v-model="params.type" size="small" @change="OnRadioChange">
-              <el-radio-button label="0">订单数</el-radio-button>
-              <el-radio-button label="30">支付金额</el-radio-button>
+        <el-col :span="6">
+          <div style="font-weight: bold;font-size: 16px">订单统计</div>
+        </el-col>
+        <el-col :span="18">
+          <div style="text-align: right">
+            <el-radio-group  v-model="params.type" size="small" @change="orderStat">
+              <el-radio-button label="2">近一个月</el-radio-button>
+              <el-radio-button label="1">近七日</el-radio-button>
             </el-radio-group>
           </div>
         </el-col>
-<!--        <el-col :span="12">-->
-<!--          <div style="border-left:1px solid #DCDFE6">-->
-<!--            <el-date-picker v-model="orderCountDate" align="right" end-placeholder="结束日期"-->
-<!--                            :picker-options="pickerOptions" range-separator="至" size="small"-->
-<!--                            start-placeholder="开始日期" style="float: right;z-index: 1" type="daterange"-->
-<!--                            unlink-panels="unlink-panels" @change="handleDateChange"></el-date-picker>-->
-<!--          </div>-->
-<!--        </el-col>-->
-
       </el-row>
     </div>
     <div :style="{minHeight:height,minWidth:width}">
@@ -44,7 +38,7 @@ export default {
     },
     height: {
       type: String,
-      default: '350px'
+      default: '440px'
     },
     autoResize: {
       type: Boolean,
@@ -80,7 +74,7 @@ export default {
       },
       orderCountDate: '',
       params: {
-        type: 0
+        type: 2
       },
       chartData: {},
     }
@@ -98,51 +92,41 @@ export default {
     this.chart = null
   },
   created() {
-    orderStatistics().then(res => {
-      const orderAmount = res.map(it => {
-        return it.orderAmount
-      })
-      const orderCount = res.map(it => {
-        return it.orderCount
-      })
-      const dateList = res.map(it => {
-        return it.date
-      })
-      console.log(dateList, 'date')
-      this.chartData = {dateList, orderAmount, orderCount}
-      this.initChart()
-    })
+    this.orderStat()
   },
   methods: {
-    OnRadioChange(type) {
-      this.initChart(type)
-
-    },
-    initChart(type = 0) {
+    initChart() {
       this.chart = echarts.init(this.$refs.chart, 'macarons')
-      if (type == 0) {
-        this.setOptions(this.chartData)
-      } else {
-        this.setAmountOptions(this.chartData)
-      }
-
+      this.setOptions(this.chartData)
     },
     setOptions({dateList, orderAmount, orderCount} = {}) {
       this.chart.setOption({
+        title: {
+          text: '订单量趋势',
+          textStyle: {
+            fontSize: 14,
+            fontWeight: 'bolder',
+            color: '#000000'          // 主标题文字颜色
+          },
+        },
         xAxis: {
           data: dateList,
           type: 'category',
           boundaryGap: false,
+          axisLabel: {
+            rotate: 40
+          },
+          textStyle: {
+            fontSize: 12,
+          },
           axisTick: {
             show: false
-          }
-        },
-        grid: {
-          left: 10,
-          right: 10,
-          bottom: 20,
-          top: 30,
-          containLabel: true
+          },
+          axisLine: {
+            lineStyle: {
+              color: "#000000"
+            }
+          },
         },
         tooltip: {
           trigger: 'axis',
@@ -151,109 +135,96 @@ export default {
           },
           padding: [5, 10]
         },
-        yAxis: {
-          axisTick: {
-            show: false
+        yAxis: [
+          {
+            type: 'value',
+            name: '金额',
+            position: 'left',
+            alignTicks: true,
+            splitLine:{
+              show: false
+            },
+            axisTick:{
+              show: false
+            },
+            axisLine: {
+              show: false,
+              lineStyle: {
+                color: "#000000"
+              }
+            },
+          },
+          {
+            type: 'value',
+            name: '数量',
+            minInterval:1,
+            position: 'right',
+            splitLine:{
+              show: false
+            },
+            axisTick:{
+              show: false
+            },
+            axisLine: {
+              show: false,
+              lineStyle: {
+                color: "#000000"
+              }
+            },
           }
-        },
+        ],
         legend: {
-          data: ['订单数', '支付订单']
+          data: ['订单金额', '订单数']
         },
         series: [
-          //   {
-          //   name: '订单数', itemStyle: {
-          //     normal: {
-          //       color: '#FF005A',
-          //       lineStyle: {
-          //         color: '#FF005A',
-          //         width: 2
-          //       }
-          //     }
-          //   },
-          //   smooth: true,
-          //   type: 'line',
-          //   data: orderAmount,
-          //   animationDuration: 2800,
-          //   animationEasing: 'cubicInOut'
-          // },
           {
-            name: '支付订单',
-            smooth: true,
-            type: 'line',
+            name: '订单金额',
             itemStyle: {
               normal: {
-                color: '#3888fa',
-                lineStyle: {
-                  color: '#3888fa',
-                  width: 2
-                },
-                areaStyle: {
-                  color: '#f3f8ff'
-                }
+                color: '#5b8ff9',
               }
             },
-            data: orderCount,
-            animationDuration: 2800,
-            animationEasing: 'quadraticOut'
-          }]
-      })
-    }
-    , setAmountOptions({dateList, orderAmount, orderCount} = {}) {
-      this.chart.setOption({
-        xAxis: {
-          data: dateList,
-          type: 'category',
-          boundaryGap: false,
-          axisTick: {
-            show: false
-          }
-        },
-        grid: {
-          left: 10,
-          right: 10,
-          bottom: 20,
-          top: 30,
-          containLabel: true
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross'
-          },
-          padding: [5, 10]
-        },
-        yAxis: {
-          axisTick: {
-            show: false
-          }
-        },
-        legend: {
-          data: ['支付金额']
-        },
-        series: [
-          {
-            name: '支付金额', itemStyle: {
-              normal: {
-                color: '#FF005A',
-                lineStyle: {
-                  color: '#FF005A',
-                  width: 2
-                }
-              }
-            },
-            smooth: true,
-            type: 'line',
+            type: 'bar',
+            barMaxWidth: 20,
             data: orderAmount,
             animationDuration: 2800,
             animationEasing: 'cubicInOut'
           },
-        ]
+          {
+            name: '订单数',
+            smooth: true,
+            type: 'line',
+            itemStyle: {
+              normal: {
+                color: '#5ccfd9',
+              }
+            },
+            yAxisIndex: 1,
+            data: orderCount,
+            animationDuration: 2800,
+            animationEasing: 'quadraticOut'
+          }
+          ]
       })
     },
     handleDateChange() {
       this.getData();
+    },
+    orderStat(){
+      orderStatistics(this.params).then(res => {
+        const orderAmount = res.map(it => {
+          return it.orderAmount
+        })
+        const orderCount = res.map(it => {
+          return it.orderCount
+        })
+        const dateList = res.map(it => {
+          return it.date.substr(5)
+        })
+        this.chartData = {dateList, orderAmount, orderCount}
+        this.initChart()
+      })
     }
-    ,
   }
 
 }

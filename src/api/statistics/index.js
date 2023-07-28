@@ -26,7 +26,7 @@ export function orderAndAftersaleStatistics() {
 export function orderStatistics(query) {
   return request({
     url: '/dev/statistics/index/orderStatistics',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: query
   })
 }
