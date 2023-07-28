@@ -15,9 +15,9 @@
           <el-col :span="18">
             <div style="text-align: right">
               <el-radio-group  v-model="params.type" size="small" @change="getData">
-                <el-radio-button label="0">当日</el-radio-button>
+                <el-radio-button label="0">今日</el-radio-button>
                 <el-radio-button label="7">近七日</el-radio-button>
-                <el-radio-button label="30">近一个月</el-radio-button>
+                <el-radio-button label="30">近三十日</el-radio-button>
               </el-radio-group>
             </div>
           </el-col>

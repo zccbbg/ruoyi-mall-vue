@@ -8,8 +8,8 @@
         <el-col :span="18">
           <div style="text-align: right">
             <el-radio-group  v-model="params.type" size="small" @change="orderStat">
-              <el-radio-button label="2">近一个月</el-radio-button>
               <el-radio-button label="1">近七日</el-radio-button>
+              <el-radio-button label="2">近三十日</el-radio-button>
             </el-radio-group>
           </div>
         </el-col>
