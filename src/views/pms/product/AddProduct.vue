@@ -72,7 +72,7 @@
           <oss-image-upload v-model="albumPics" :limit="5"></oss-image-upload>
         </el-form-item>
       </el-card>
-      
+
       <el-card style="margin: 20px 20px; font-size: 14px">
         <div slot="header">
           <span>产品规格</span>
@@ -107,7 +107,7 @@
             </el-table-column>
             <el-table-column label="销售价格" >
               <template v-slot="{ row,$index }">
-                <el-form-item 
+                <el-form-item
                   :rules="{ required: true, message: '请填写价格', trigger: 'blur' }"
                   :prop="'skuList['+$index+'].price'">
                   <el-input v-model="row.price"></el-input>
@@ -135,9 +135,9 @@
         <el-form-item label="PC端" prop="detailHtml">
           <Editor v-model="form.detailHtml" placeholder="请输入内容" type=""></Editor>
         </el-form-item>
-        
+
       </el-card>
-      
+
       <div class="tc">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -159,7 +159,7 @@ export default {
     return {
        rules: {
           name: [
-            { required: true, message: '请输入商品名称', trigger: 'blur' }, 
+            { required: true, message: '请输入商品名称', trigger: 'blur' },
           ],
        },
       form: {},
@@ -228,7 +228,7 @@ export default {
           it.price = null;
           it.pic = null;
         }
-        
+
       })
       this.form.productAttr = JSON.stringify(this.productAttr)
       this.form.skuList= skus
@@ -240,7 +240,7 @@ export default {
       }else{
         this.form.productCategoryName=null
       }
-      
+
     },
     onBrandChange(value){
       this.form.brandName = value

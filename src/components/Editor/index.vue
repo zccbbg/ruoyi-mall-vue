@@ -137,6 +137,10 @@ export default {
           }
         });
       }
+      this.Quill.enable(false);
+      setTimeout(()=>{
+        this.Quill.enable(true);
+      }, 1000);
       this.Quill.pasteHTML(this.currentValue);
       this.Quill.on("text-change", (delta, oldDelta, source) => {
         const html = this.$refs.editor.children[0].innerHTML;
