@@ -162,7 +162,10 @@ export default {
             { required: true, message: '请输入商品名称', trigger: 'blur' },
           ],
        },
-      form: {},
+      form: {
+         publishStatus: 0,
+         sort: 1000
+      },
       skuAttr:[],
       albumPics:null,
       productAttr: [
@@ -181,9 +184,6 @@ export default {
     const {id} = this.$route.query
     if (id) {
       this.getInfo(id);
-    }else{
-      this.form.sort=1000
-      this.form.publishStatus=0
     }
   },
   methods: {
