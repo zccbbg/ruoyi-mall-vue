@@ -268,6 +268,10 @@ export default {
           if(this.form.categoryId && Array.isArray(this.form.categoryId)){
             this.form.categoryId = this.form.categoryId.pop()
           }
+          //商品价格没填时取sku的最低价
+          if (!this.form.price){
+            this.form.price = Math.min.apply(Math, this.form.skuList.map(it => it.price))
+          }
           if (this.form.id != null) {
             updatePmsProduct(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
