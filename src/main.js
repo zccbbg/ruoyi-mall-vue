@@ -19,7 +19,7 @@ import './assets/icons' // icon
 import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
-import { parseTime, resetForm, addDateRange, addDateRange2, selectDictLabel, selectDictLabels, handleTree } from "@/utils/ruoyi";
+import { parseTime, resetForm, addDateRange, addDateRange2, addDateRange3, selectDictLabel, selectDictLabels, handleTree } from "@/utils/ruoyi";
 import { getHiddenName, getHiddenDetailAddress } from '@/utils/DataHidden'
 // 分页组件
 import Pagination from "@/components/Pagination";
@@ -56,6 +56,7 @@ Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
 Vue.prototype.addDateRange2 = addDateRange2
+Vue.prototype.addDateRange3 = addDateRange3
 Vue.prototype.getHiddenName = getHiddenName
 Vue.prototype.getHiddenDetailAddress = getHiddenDetailAddress
 
