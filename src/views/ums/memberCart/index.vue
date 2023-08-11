@@ -27,7 +27,13 @@
 
     <el-table v-loading="loading" :data="umsMemberCartList" @selection-change="handleSelectionChange" border cell-class-name="my-cell">
 <!--      <el-table-column type="selection" width="55"  />-->
-      <el-table-column label="用户手机号"  prop="phoneHidden" width="100"/>
+      <el-table-column label="用户信息"  prop="phoneHidden">
+        <template v-slot="scope">
+          <p>{{scope.row.phoneHidden}}</p>
+          <p>{{scope.row.nickname}}</p>
+        </template>
+      </el-table-column>
+      <el-table-column label="用户备注"  prop="mark" />
       <el-table-column label="商品名称"  prop="productName" />
       <el-table-column label="商品规格"  prop="spData">
         <template v-slot="scope">

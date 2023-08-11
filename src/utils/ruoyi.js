@@ -81,6 +81,19 @@ export function addDateRange2(params, dateRange, addDay=true) {
   return search;
 }
 
+export function addDateRange3(params, dateRange, addDay=true) {
+  let search = params;
+  dateRange = Array.isArray(dateRange) ? dateRange : [];
+  if (addDay) {
+    search['beginTime'] = dateRange[0] + ' 00:00:00';
+    search['endTime'] = moment(dateRange[1]).add(1,"days").format('yyyy-MM-DD')+ ' 00:00:00';
+  } else {
+    search['beginTime'] = dateRange[0]+ ' 00:00:00';
+    search['endTime'] = dateRange[1]+ ' 00:00:00';
+  }
+  return search;
+}
+
 // 回显数据字典
 export function selectDictLabel(datas, value) {
   if (value === undefined) {

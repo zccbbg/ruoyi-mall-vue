@@ -46,6 +46,7 @@
         <template v-slot="scope">
           <div>{{ scope.row.nickName }}</div>
           <div>{{ scope.row.phone }}</div>
+          <div>{{scope.row.mark}}</div>
         </template>
       </el-table-column>
       <el-table-column label="退款金额" align="center" prop="applyReturnAmount" width="120"/>

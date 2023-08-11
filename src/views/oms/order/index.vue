@@ -64,6 +64,12 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column label="客户信息" prop="receiverName" width="160">
+        <template v-slot="scope">
+          <p>{{scope.row.nickName}}</p>
+          <p>{{scope.row.mark}}</p>
+        </template>
+      </el-table-column>
       <el-table-column label="备注留言"  prop="note" width="160">
         <template v-slot="scope">
           <div>
@@ -79,7 +85,7 @@
           <div v-if="scope.row.note">{{ scope.row.note }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="下单时间/支付时间"  prop="payTime" width="200" >
+      <el-table-column label="下单时间/支付时间"  prop="payTime" width="140" >
         <template slot-scope="scope">
           <div v-if="scope.row.createTime">{{ parseTime(scope.row.createTime, '{mm}-{dd} {hh}:{ii}')}} 下单</div>
           <div v-if="scope.row.payTime">{{ parseTime(scope.row.payTime, '{mm}-{dd} {hh}:{ii}')}} 支付</div>
@@ -94,7 +100,7 @@
           <div>总价： ￥{{ scope.row.totalAmount }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="商品规格"  prop="productList" width="340">
+      <el-table-column label="商品规格"  prop="productList" width="280">
         <template v-slot="scope">
           <div v-for="item in scope.row.productList" class="product-container">
             <el-popover
@@ -115,7 +121,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="订单状态"  prop="status" width="270">
+      <el-table-column label="订单状态"  prop="status" width="160">
         <template v-slot="scope">
           <div>
             <el-tag :type="getOrderStatusTag(scope.row.status)" style="margin-right: 10px">

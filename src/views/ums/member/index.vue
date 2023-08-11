@@ -39,6 +39,12 @@
           size="small"
         />
       </el-form-item>
+      <el-form-item label="备注" prop="mark">
+        <el-select v-model="queryParams.hasMark" clearable size="small">
+          <el-option value="1" label="有备注" />
+          <el-option value="0" label="无备注" />
+        </el-select>
+      </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -72,6 +78,12 @@
       <el-table-column label="上次登录" align="center" prop="createTime">
         <template v-slot="scope">
           <div>{{ parseTime(scope.row.createTime) }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注">
+        <template v-slot="scope">
+          <span class="mr10">{{scope.row.mark}}</span>
+          <i class="el-icon-edit pointer" @click="showUpdateMark(scope.row)"></i>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fix="right" width="200">
@@ -111,12 +123,18 @@
         <el-descriptions-item label="售后数">{{ statisticsObj.data.aftersaleCount }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
-
+    <el-dialog title="修改备注" :visible.sync="remarkModal.visible" width="30%" append-to-body>
+      <el-input type='textarea' :rows='3' placeholder='请输入内容' v-model='remarkModal.mark'/>
+      <span class="dialog-footer" slot="footer">
+        <el-button @click="remarkModal.visible = false">取 消</el-button>
+        <el-button type='primary' @click='updateRemark'>确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember, exportUmsMember, changeAccountStatus, decryptedPhone, viewStatistics } from "@/api/ums/member";
+import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember,updateUmsMemberMark, exportUmsMember, changeAccountStatus, decryptedPhone, viewStatistics } from "@/api/ums/member";
 import dateUtil from '@/utils/DateUtil';
 import moment from "moment";
 
@@ -126,6 +144,11 @@ export default {
     return {
       pickerOptions: {
         shortcuts: dateUtil.getTimeShort()
+      },
+      remarkModal: {
+        visible: false,
+        mark: null,
+        memberId: null,
       },
       // 遮罩层
       loading: true,
@@ -153,7 +176,8 @@ export default {
         pageSize: 10,
         nickname: null,
         phone: null,
-        status: undefined
+        status: undefined,
+        hasMark: undefined
       },
       dateRange:[],
       // 表单参数
@@ -184,6 +208,26 @@ export default {
     this.getList();
   },
   methods: {
+    showUpdateMark(record){
+      this.remarkModal = {
+        visible: true,
+        mark: record.mark,
+        memberId: record.id
+      }
+    },
+    updateRemark(){
+      updateUmsMemberMark({id:this.remarkModal.memberId,mark:this.remarkModal.mark})
+        .then(res=>{
+          if (res > 0) {
+            this.$message.success('修改成功');
+            this.remarkModal.visible = false;
+            const obj = this.umsMemberList.filter(it=>it.id === this.remarkModal.memberId)[0]
+            obj.mark = this.remarkModal.mark;
+          } else {
+            this.$message.success('修改失败');
+          }
+        })
+    },
     /** 查询会员信息列表 */
     getList() {
       this.loading = true;
