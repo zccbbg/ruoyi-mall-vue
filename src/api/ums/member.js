@@ -35,6 +35,13 @@ export function updateUmsMember(data) {
     data: data
   })
 }
+export function updateUmsMemberMark(data) {
+  return request({
+    url: '/ums/member/mark/update',
+    method: 'post',
+    data: data
+  })
+}
 
 // 删除会员信息
 export function delUmsMember(id) {
