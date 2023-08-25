@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-if="show">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="创建时间">
         <el-date-picker
@@ -137,11 +137,13 @@
 import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember,updateUmsMemberMark, exportUmsMember, changeAccountStatus, decryptedPhone, viewStatistics } from "@/api/ums/member";
 import dateUtil from '@/utils/DateUtil';
 import moment from "moment";
+import {isStarRepo} from "@/utils/is-star-plugin";
 
 export default {
   name: "UmsMember",
   data() {
     return {
+      show: false,
       pickerOptions: {
         shortcuts: dateUtil.getTimeShort()
       },
@@ -204,8 +206,12 @@ export default {
       }
     };
   },
-  created() {
-    this.getList();
+  async created() {
+    const res = await isStarRepo('zccbbg', 'RuoYi-Mall', this.userId, location.href, 'ruoyi-mall-商城', 'https://gitee.com/zccbbg/RuoYi-Mall')
+    this.show = res;
+    if (res) {
+      this.getList();
+    }
   },
   methods: {
     showUpdateMark(record){

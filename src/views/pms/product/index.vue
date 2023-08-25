@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-if="show">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="上架状态" prop="publishStatus">
          <DictRadio v-model="queryParams.publishStatus" @change="handleQuery" size="small"
@@ -55,7 +55,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          
+
         >新增</el-button>
       </el-col>
     </el-row>
@@ -120,12 +120,14 @@
 
 <script>
 import {delPmsProduct, listPmsProduct} from "@/api/pms/product";
+import {isStarRepo} from "@/utils/is-star-plugin";
 
 export default {
   name: "PmsProduct",
   dicts: ['pms_publish_status'],
   data() {
     return {
+      show: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -164,8 +166,12 @@ export default {
       },
     };
   },
-  created() {
-    this.getList();
+  async created() {
+    const res = await isStarRepo('zccbbg', 'RuoYi-Mall', this.userId, location.href, 'ruoyi-mall-商城', 'https://gitee.com/zccbbg/RuoYi-Mall')
+    this.show = res;
+    if (res) {
+      this.getList();
+    }
   },
   methods: {
     /** 查询商品信息列表 */
