@@ -138,6 +138,7 @@ import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMembe
 import dateUtil from '@/utils/DateUtil';
 import moment from "moment";
 import {isStarRepo} from "@/utils/is-star-plugin";
+import {mapGetters} from "vuex";
 
 export default {
   name: "UmsMember",
@@ -212,6 +213,9 @@ export default {
     if (res) {
       this.getList();
     }
+  },
+  computed:{
+    ...mapGetters(['userId']),
   },
   methods: {
     showUpdateMark(record){

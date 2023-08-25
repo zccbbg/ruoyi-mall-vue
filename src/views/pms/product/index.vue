@@ -121,6 +121,7 @@
 <script>
 import {delPmsProduct, listPmsProduct} from "@/api/pms/product";
 import {isStarRepo} from "@/utils/is-star-plugin";
+import {mapGetters} from "vuex";
 
 export default {
   name: "PmsProduct",
@@ -172,6 +173,9 @@ export default {
     if (res) {
       this.getList();
     }
+  },
+  computed:{
+    ...mapGetters(['userId']),
   },
   methods: {
     /** 查询商品信息列表 */

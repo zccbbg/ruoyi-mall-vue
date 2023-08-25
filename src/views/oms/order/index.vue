@@ -264,8 +264,12 @@ import {
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import dateUtil, {dateFormat} from '@/utils/DateUtil';
 import {isStarRepo} from "@/utils/is-star-plugin"
+import {mapGetters} from "vuex";
 
 export default {
+  computed:{
+    ...mapGetters(['userId']),
+  },
   name: "OmsOrder",
   dicts: ["oms_order_status", "oms_pay_type"],
   components: {

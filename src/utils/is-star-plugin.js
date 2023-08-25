@@ -20,6 +20,7 @@ const allowDisparity = 1000 * 60 * 60 * 24 * 7
  */
 export function isStarRepo(owner, repo, userId, redirectUrl,productName,productLink) {
   const key = userId + '_' + owner + '_' + repo
+  console.log(key)
   // 判断是否近期已经判断过了
   try {
     if (typeof window !== 'undefined') {

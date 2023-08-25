@@ -7,10 +7,14 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    userId: null,
   },
 
   mutations: {
+    SET_USERID: (state, userId) => {
+      state.userId = userId
+    },
     SET_TOKEN: (state, token) => {
       state.token = token
     },
@@ -59,6 +63,7 @@ const user = {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }
           commit('SET_NAME', user.userName)
+          commit('SET_USERID', user.userId)
           commit('SET_AVATAR', avatar)
           resolve(res)
         }).catch(error => {
