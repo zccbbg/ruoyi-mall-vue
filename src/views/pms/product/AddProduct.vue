@@ -114,6 +114,11 @@
                 </el-form-item>
               </template>
             </el-table-column>
+            <el-table-column label="库存">
+              <template v-slot="{ row, $index }">
+                <el-input v-model="row.stock" type="number"></el-input>
+              </template>
+            </el-table-column>
             <el-table-column label="编码">
               <template v-slot="{ row }">
                 <el-form-item>
@@ -223,10 +228,14 @@ export default {
           it.outSkuId = sku.outSkuId;
           it.price = sku.price;
           it.pic = sku.pic;
+          it.stock = sku.stock;
+          it.id = sku.id
         }else{
           it.outSkuId = null;
           it.price = null;
           it.pic = null;
+          it.stock = null;
+          it.id = null
         }
 
       })
