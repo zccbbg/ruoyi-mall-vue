@@ -20,11 +20,11 @@ npm run build:stage
 # 构建生产环境
 npm run build:prod
 ```
-## 后端开源项目地址
-### gitee
-https://gitee.com/zccbbg/ruoyi-mall
-### github
-https://github.com/zccbbg/ruoyi-mall
+## 项目地址
+|           | gitee                                      | github                                       |
+|:---------:|:-------------------------------------------|:---------------------------------------------|
+|  service  | https://gitee.com/zccbbg/RuoYi-Mall        | https://github.com/zccbbg/ruoyi-mall    |
+| h5 uniapp | https://gitee.com/zccbbg/ruoyi-mall-uniapp | https://github.com/zccbbg/ruoyi-mall-uniapp  |
 
 ## 在线体验
 ### 管理后台演示地址
