@@ -46,8 +46,15 @@
           fit="fill"
         ></el-image>
       </el-col>
+      <el-col :span="3">
+        <el-image
+          style="height: 150px"
+          :src="require('@/assets/QRCode/express.jpg')"
+          fit="fill"
+        ></el-image>
+      </el-col>
 
-      <el-col :span="6">
+      <el-col :span="5">
         <el-card shadow="always" style="padding-bottom: 30px">
           <div slot="header"><span>售后</span></div>
           <ul style="margin-top: 10px">
@@ -66,7 +73,7 @@
           </ul>
         </el-card>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="10">
         <el-card shadow="always" style="padding-bottom: 30px">
           <div slot="header"><span>订单</span></div>
           <div>
