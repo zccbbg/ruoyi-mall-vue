@@ -14,6 +14,16 @@
     >
     </el-upload>
     <div class="editor" ref="editor" :style="styles"></div>
+    <el-dialog
+      title="输入框"
+      :visible.sync="inputDialogVisible"
+      width="30%">
+      <el-input type="textarea" v-model="inputContent" placeholder="请输入内容"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="inputDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmInputContent">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -60,6 +70,8 @@ export default {
   },
   data() {
     return {
+      inputDialogVisible: false,
+      inputContent: null,
       uploadUrl: process.env.VUE_APP_BASE_API + "/oss/upload", // 上传的图片服务器地址
       headers: {
         Authorization: "Bearer " + getToken()
@@ -82,11 +94,12 @@ export default {
             [{ color: [] }, { background: [] }],             // 字体颜色、字体背景颜色
             [{ align: [] }],                                 // 对齐方式
             ["clean"],                                       // 清除文本格式
-            ["link", "image", "video"]                       // 链接、图片、视频
-          ],
+            ["link", "image", "video"],                       // 链接、图片、视频
+            ["inputDialog"]
+          ]
         },
         placeholder: "请输入内容",
-        readOnly: this.readOnly,
+        readOnly: this.readOnly
       },
     };
   },
@@ -117,6 +130,7 @@ export default {
   },
   mounted() {
     this.init();
+    this.initButton();
   },
   beforeDestroy() {
     this.Quill = null;
@@ -159,6 +173,27 @@ export default {
       this.Quill.on("editor-change", (eventName, ...args) => {
         this.$emit("on-editor-change", eventName, ...args);
       });
+    },
+    // 自定义按钮内容初始化
+    initButton () {
+      const editorButton = document.querySelector('.ql-inputDialog')
+      editorButton.innerHTML = '<i class="el-icon-edit" style="font-size: 18px;color: black"></i>'
+      let self = this
+      editorButton.addEventListener('click', function () {
+        self.showInputDialog()
+      })
+    },
+    showInputDialog() {
+      this.inputDialogVisible = true
+    },
+    confirmInputContent() {
+      if (this.inputContent) {
+        const range = this.Quill.getSelection(true);
+        const index = range ? range.index : 0;
+        this.Quill.clipboard.dangerouslyPasteHTML(index, this.inputContent);
+      }
+      this.inputDialogVisible = false
+      this.inputContent = null
     },
     // 上传前校检格式和大小
     handleBeforeUpload(file) {
