@@ -171,7 +171,7 @@ export const dynamicRoutes = [
       {
         path: 'edit',
         component: () => import('@/views/pms/product/AddProduct'),
-        name: 'AddProduct',
+        name: 'addProduct',
         meta: { title: '编辑商品' }
       }
     ]
