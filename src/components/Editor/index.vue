@@ -195,6 +195,9 @@ export default {
 </script>
 
 <style>
+.ql-editor{
+  line-height: 0;
+}
 .editor, .ql-toolbar {
   white-space: pre-wrap !important;
   line-height: normal !important;
