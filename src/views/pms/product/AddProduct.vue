@@ -138,7 +138,7 @@
           <Editor v-model="form.detailMobileHtml" placeholder="请输入内容" type="url"></Editor>
         </el-form-item>
         <el-form-item label="PC端" prop="detailHtml">
-          <Editor v-model="form.detailHtml" placeholder="请输入内容" type=""></Editor>
+          <Editor v-model="form.detailHtml" placeholder="请输入内容" type="url"></Editor>
         </el-form-item>
 
       </el-card>
