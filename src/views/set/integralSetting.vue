@@ -4,7 +4,7 @@
       <div slot="header" class="clearfix">
         <div class="flex-center">
           <h2>积分获取规则</h2>
-          <el-button class="ml-auto" type="primary" @click="saveData" v-hasPermi="['sys:integral:save']">保存
+          <el-button class="ml-auto" type="primary" @click="saveData">保存
           </el-button>
         </div>
       </div>

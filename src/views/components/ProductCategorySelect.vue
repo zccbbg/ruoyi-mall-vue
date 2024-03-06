@@ -36,10 +36,12 @@ export default {
     }
   },
   methods: {
-    handleMallCatergoryChange () {
-      if (this.value1 && this.value1.length != 0) {       
+    handleMallCatergoryChange (e) {
+      if (e.length > 0) {
         let arr = this.$refs['cascaderMallCatergory'].getCheckedNodes()[0].pathLabels
         this.$emit('change', arr);
+      } else {
+        this.$emit('change', '');
       }
     },
     recurs(list){

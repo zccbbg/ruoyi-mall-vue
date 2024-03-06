@@ -2,10 +2,10 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="申请状态" prop="status">
-        <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_aftersale_status" size="small" :show-all="'all'"></DictRadio>
+        <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_aftersale_status" size="small" :show-all="'all'" @change="handleQuery"></DictRadio>
       </el-form-item>
       <el-form-item label="售后类型" prop="type">
-        <DictRadio v-model="queryParams.type" :radioData="dict.type.oms_aftersale_type" size="small" :show-all="'all'"></DictRadio>
+        <DictRadio v-model="queryParams.type" :radioData="dict.type.oms_aftersale_type" size="small" :show-all="'all'" @change="handleQuery"></DictRadio>
       </el-form-item>
       <el-form-item label="订单号" prop="orderSn">
         <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单号" clearable size="small"
