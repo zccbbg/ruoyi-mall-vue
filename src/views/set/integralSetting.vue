@@ -86,7 +86,7 @@ export default {
             configValue: JSON.stringify(this.incomeVal),
             configKey: key,
             configType: 'N',
-            configName: '业务员礼金上限设置',
+            configName: '积分获取规则',
             configId: null
           }
         }
