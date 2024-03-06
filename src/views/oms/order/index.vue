@@ -4,21 +4,12 @@
              class="ry_form">
       <el-form-item label="订单状态" prop="status">
         <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_order_status" size="small" :show-all="'all'"
-                   :filter="['11', '12', '13', '14']"></DictRadio>
+                   :filter="['11', '12', '13', '14']" @change="handleQuery"></DictRadio>
       </el-form-item>
       <el-form-item label="订单编号" prop="orderSn">
         <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单编号" clearable size="small"
                   @keyup.enter.native="handleQuery"/>
       </el-form-item>
-      <!--      <el-form-item label="支付方式" prop="payType">-->
-      <!--        <el-select v-model="queryParams.payType" placeholder="请选择支付方式" clearable size="small">-->
-      <!--          <el-option v-for="(item, index) in dict.type.oms_pay_type" :label="item.label" :value="item.value"/>-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="商品名称" prop="productName">-->
-      <!--        <el-input v-model.trim="queryParams.productName" placeholder="请输入商品名称" clearable size="small"-->
-      <!--                  @keyup.enter.native="handleQuery"/>-->
-      <!--      </el-form-item>-->
       <el-form-item label="会员手机号" prop="userPhone">
         <el-input v-model.trim="queryParams.userPhone" placeholder="请输入会员手机号" clearable size="small"
                   @keyup.enter.native="handleQuery"/>
@@ -38,7 +29,6 @@
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <!--        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>-->
       </el-form-item>
     </el-form>
 
