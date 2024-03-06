@@ -26,11 +26,13 @@ export default {
   },
   methods:{
     handleBrandChange (id) {
-      if (this.value1) {       
+      if (id) {
         let brand=this.brandList.find(item=>{
           return item.id==id
         })
         this.$emit('change', brand.name);
+      } else {
+        this.$emit('change', null);
       }
     },
   },
