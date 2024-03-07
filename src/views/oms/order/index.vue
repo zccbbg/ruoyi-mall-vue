@@ -42,7 +42,7 @@
             <el-button
               size="mini"
               type="text"
-              @click="handleWatch()"
+              @click="handleWatch(scope.row.id)"
               style="margin-left: 10px"
             >查看
             </el-button>
@@ -244,13 +244,14 @@ import {
   listOmsOrder,
   getOmsOrder,
   delOmsOrder,
+  getDecryptPhone,
   addOmsOrder,
   updateOmsOrder,
   exportOmsOrder,
   saveMerchantNote,
   deliverProduct,
   viewLog
-} from "@/api/oms/order";
+} from '@/api/oms/order'
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import dateUtil, {dateFormat} from '@/utils/DateUtil';
 import {isStarRepo} from "@/utils/is-star-plugin"
@@ -477,8 +478,10 @@ export default {
     handleUpdate() {
       this.$modal.msgError("无操作权限");
     },
-    handleWatch() {
-      this.$modal.msgError("无操作权限");
+    handleWatch(id) {
+      getDecryptPhone(id).then(response =>{
+        this.$modal.msgSuccess(response);
+      })
     },
     /** 提交按钮 */
     submitForm() {

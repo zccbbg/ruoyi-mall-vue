@@ -17,7 +17,13 @@ export function getOmsOrder(id) {
     method: 'get'
   })
 }
-
+// 查询订单手机号密文
+export function getDecryptPhone(id) {
+  return request({
+    url: '/oms/order/decryptPhone/' + id,
+    method: 'get'
+  })
+}
 // 新增订单表
 export function addOmsOrder(data) {
   return request({
