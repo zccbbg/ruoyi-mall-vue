@@ -38,11 +38,11 @@
       <el-table-column label="收件信息" prop="receiverName" width="280">
         <template v-slot="scope">
           <div>
-            <span>{{ getHiddenName(scope.row.receiverName) }} {{ scope.row.receiverPhone }}</span>
+            <span>{{ scope.row.decrypt?scope.row.receiverName:getHiddenName(scope.row.receiverName) }} {{ scope.row.receiverPhone }}</span>
             <el-button
               size="mini"
               type="text"
-              @click="handleWatch(scope.row.id)"
+              @click="handleWatch(scope.row)"
               style="margin-left: 10px"
             >查看
             </el-button>
@@ -55,7 +55,7 @@
           </div>
           <div>
             <span>{{ scope.row.receiverProvince }}{{ scope.row.receiverCity }}{{ scope.row.receiverDistrict }}</span>
-            <span>{{ getHiddenDetailAddress(scope.row.receiverDetailAddress) }}</span>
+            <span>{{ scope.row.decrypt?scope.row.receiverDetailAddress:getHiddenDetailAddress(scope.row.receiverDetailAddress) }}</span>
           </div>
         </template>
       </el-table-column>
@@ -478,9 +478,10 @@ export default {
     handleUpdate() {
       this.$modal.msgError("无操作权限");
     },
-    handleWatch(id) {
-      getDecryptPhone(id).then(response =>{
-        this.$modal.msgSuccess(response);
+    handleWatch(row) {
+      getDecryptPhone(row.id).then(response =>{
+        row.receiverPhone=response;
+        row.decrypt=true;
       })
     },
     /** 提交按钮 */
