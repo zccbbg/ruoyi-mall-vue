@@ -1,7 +1,7 @@
 <template>
   <div class="home-wrapper">
     <el-card style="margin: 20px 20px; font-size: 14px">
-      <div slot="header"><span>讲解视频：</span><a href="https://www.bilibili.com/video/BV16N4y1d7MM/" target="_blank">https://www.bilibili.com/video/BV16N4y1d7MM/</a></div>
+      <div slot="header"><span>管理后台</span></div>
       <div class="first"><img alt="" :src="avatar" style="width: 50px; height: 50px; float:left; margin-right:10px;border-radius:50%" />
         <p style="font-size:16px;margin-bottom:8px">{{name}}，{{hello}}</p>
         <p style="font-size:12px;color:rgb(185, 181, 189)">今天是：{{nowTime}}</p>
@@ -26,35 +26,13 @@
              <router-link to="/member/shoppingCart">{{ memberAndCartStatisticsObj.cartCount }}</router-link>
           </li>
           <li class="da" style="width: 33%">
-            10
+            0
           </li>
         </ul>
       </div>
     </el-card>
     <el-row class="pl20 pr20" :gutter="10">
-      <el-col :span="3">
-        <el-image
-          style="height: 150px"
-          :src="require('@/assets/QRCode/h5.png')"
-          fit="fill"
-        ></el-image>
-      </el-col>
-      <el-col :span="3">
-        <el-image
-          style="height: 150px"
-          :src="require('@/assets/QRCode/wechat_mini.jpg')"
-          fit="fill"
-        ></el-image>
-      </el-col>
-      <el-col :span="3">
-        <el-image
-          style="height: 150px"
-          :src="require('@/assets/QRCode/express.jpg')"
-          fit="fill"
-        ></el-image>
-      </el-col>
-
-      <el-col :span="5">
+      <el-col :span="8">
         <el-card shadow="always" style="padding-bottom: 30px">
           <div slot="header"><span>售后</span></div>
           <ul style="margin-top: 10px">
@@ -73,7 +51,7 @@
           </ul>
         </el-card>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="16">
         <el-card shadow="always" style="padding-bottom: 30px">
           <div slot="header"><span>订单</span></div>
           <div>
@@ -106,48 +84,11 @@
       </el-col>
     </el-row>
     <el-row class="pl20 pr20" :gutter="10">
-      <el-col :span="16">
+      <el-col :span="24">
         <order-line-chart></order-line-chart>
         <div class="card transform">
           <top-product></top-product>
         </div>
-      </el-col>
-      <el-col :span="8">
-        <el-card style="margin: 20px 20px; font-size: 14px">
-          <div slot="header"><span>发展历程</span></div>
-          <el-timeline>
-            <el-timeline-item placement="top" timestamp="2018年">
-              <el-card>
-                <h4>参与京东服务市场商品分析应用开发，参与京东服务市场会员积分应用开发</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2019年">
-              <el-card>
-                <h4>参与京东服务市场商品搬家应用开发，参与拼多多服务市场订单应用开发</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2020年">
-              <el-card>
-                <h4>所参与开发的拼多多订单应用排名服务市场类目第一，开始快手服务市场订单应用开发</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2021年">
-              <el-card>
-                <h4>日处理拼多多订单200万条，开始美团、饿了么应用市场应用开发</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2022年">
-              <el-card>
-                <h4>累计服务10万+电商平台店铺、5万+外卖店铺。开始抖音、淘宝服务市场订单应用开发，开源ruoyi-wms</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2023年">
-              <el-card>
-                <h4>B站播放量破万，开源ruoyi-mall，公众号粉丝破万，wms-saas火热研发中</h4>
-              </el-card>
-            </el-timeline-item>
-          </el-timeline>
-        </el-card>
       </el-col>
     </el-row>
   </div>
