@@ -87,13 +87,19 @@
           <div v-if="scope.row.payTime">{{ parseTime(scope.row.payTime, '{mm}-{dd} {hh}:{ii}') }} 支付</div>
         </template>
       </el-table-column>
+      <el-table-column label="优惠券" prop="couponAmount" width="80">
+        <template v-slot="scope">
+          <div v-if="scope.row.couponAmount">￥{{ scope.row.couponAmount }}</div>
+          <div v-else>无</div>
+        </template>
+      </el-table-column>
       <el-table-column label="合计" prop="totalAmount" width="140">
         <template v-slot="scope">
           <div>
             <span>总数： </span>
             <span style="color: red;">{{ scope.row.buyNum }}</span>
           </div>
-          <div>总价： ￥{{ scope.row.totalAmount }}</div>
+          <div>实付： ￥{{ scope.row.payAmount }}</div>
         </template>
       </el-table-column>
       <el-table-column label="商品规格" prop="productList" width="280">
