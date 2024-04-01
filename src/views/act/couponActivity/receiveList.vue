@@ -27,12 +27,12 @@
       </el-table-column>
       <el-table-column label="有效期" align="center" width="180" >
         <template slot-scope="scope">
-          <p>{{ scope.row.startTime}}</p>
+          <p>{{ scope.row.beginTime}}</p>
           <p> ~ </p>
           <p>{{ scope.row.endTime}}</p>
         </template>
       </el-table-column>
-      <el-table-column label="订单号" align="center" prop="itemId" />
+      <el-table-column label="订单号" align="center" prop="orderId" />
       <el-table-column label="使用时间" align="center" prop="useTime" width="180" />
     </el-table>
 
