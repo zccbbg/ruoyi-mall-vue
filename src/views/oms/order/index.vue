@@ -15,7 +15,7 @@
                   @keyup.enter.native="handleQuery"/>
       </el-form-item>
       <el-form-item label="省市区" prop="provinces">
-        <address-selector v-model="queryParams.provinces"></address-selector>
+        <address-selector v-model="queryParams.provinces" size="small"></address-selector>
       </el-form-item>
       <el-form-item label="下单时间" prop="Time">
         <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
@@ -49,7 +49,7 @@
             <el-button
               size="mini"
               type="text"
-              @click="handleUpdate()"
+              @click="handleUpdate(scope.row)"
             >修改
             </el-button>
           </div>
@@ -242,20 +242,45 @@
         </el-timeline-item>
       </el-timeline>
     </el-dialog>
+
+    <el-dialog title="修改收件信息" :visible.sync="modifyReceiverInfo.open" width="500px" append-to-body
+               :close-on-click-modal="false">
+      <el-form ref="modifyReceiverInfoForm" :model="modifyReceiverInfo.form" label-width="100px"
+               :rules="modifyReceiverInfo.rules">
+        <el-form-item label="收件人姓名" prop="receiverName">
+          <el-input v-model="modifyReceiverInfo.form.receiverName"/>
+        </el-form-item>
+        <el-form-item label="收件人电话" prop="receiverPhone">
+          <el-input v-model="modifyReceiverInfo.form.receiverPhone"/>
+        </el-form-item>
+        <el-form-item label="省市区" prop="fullArea">
+          <AddressSelector v-model="modifyReceiverInfo.form.fullArea" style="width: 100%"/>
+        </el-form-item>
+        <el-form-item label="详细地址" prop="receiverDetailAddress">
+          <el-input v-model="modifyReceiverInfo.form.receiverDetailAddress"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="asyncOk">
+          确认修改
+        </el-button>
+        <el-button size="small" @click="modifyReceiverInfo.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  listOmsOrder,
-  getOmsOrder,
-  delOmsOrder,
-  getDecryptPhone,
   addOmsOrder,
-  updateOmsOrder,
-  exportOmsOrder,
-  saveMerchantNote,
   deliverProduct,
+  delOmsOrder,
+  exportOmsOrder,
+  getDecryptPhone,
+  listOmsOrder,
+  saveMerchantNote,
+  updateOmsOrder,
+  updateReceiverAddress,
   viewLog
 } from '@/api/oms/order'
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
@@ -273,6 +298,14 @@ export default {
     AddressSelector
   },
   data() {
+    const validArea = (rule, value, callback) => {
+      const fullArea = this.modifyReceiverInfo.form.fullArea
+      if (fullArea.length < 3) {
+        callback(new Error("请选择省市区"));
+      } else {
+        callback();
+      }
+    };
     return {
       show: false,
       // 遮罩层
@@ -306,9 +339,9 @@ export default {
         status: null,
         Time: [],
         provinces: [],
-        receiverProvinceId: null,
-        receiverCityId: null,
-        receiverDistrictId: null,
+        receiverProvince: null,
+        receiverCity: null,
+        receiverDistrict: null,
         orderSn: null,
         productName: null,
         userPhone: null,
@@ -360,6 +393,22 @@ export default {
         logList: null,
         open: false,
         loading: false
+      },
+      modifyReceiverInfo: {
+        open: false,
+        form: {},
+        rules: {
+          receiverName: [
+            {required: true, message: "收件人姓名不能为空", trigger: "blur"}
+          ],
+          receiverPhone: [
+            {required: true, message: "收件人电话不能为空", trigger: "blur"}
+          ], fullArea: [
+            {required: true, validator: validArea, trigger: "change"}
+          ], receiverDetailAddress: [
+            {required: true, message: "详细地址不能为空", trigger: "blur"}
+          ],
+        }
       }
     };
   },
@@ -397,14 +446,14 @@ export default {
       const {pageNum, pageSize} = this.queryParams;
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       if (query.provinces) {
-        const [receiverProvinceId, receiverCityId, receiverDistrictId] = query.provinces
-        query.receiverProvinceId = receiverProvinceId
-        query.receiverCityId = receiverCityId
-        query.receiverDistrictId = receiverDistrictId
+        const [receiverProvince, receiverCity, receiverDistrict] = query.provinces
+        query.receiverProvince = receiverProvince
+        query.receiverCity = receiverCity
+        query.receiverDistrict = receiverDistrict
       } else {
-        query.receiverProvinceId = null
-        query.receiverCityId = null
-        query.receiverDistrictId = null
+        query.receiverProvince = null
+        query.receiverCity = null
+        query.receiverDistrict = null
       }
       const pageReq = {page: pageNum - 1, size: pageSize};
       listOmsOrder(query, pageReq).then(response => {
@@ -441,9 +490,6 @@ export default {
         receiverProvince: null,
         receiverCity: null,
         receiverDistrict: null,
-        receiverProvinceId: null,
-        receiverCityId: null,
-        receiverDistrictId: null,
         receiverDetailAddress: null,
         note: null,
         confirmStatus: 0,
@@ -481,8 +527,12 @@ export default {
       this.title = "添加订单表";
     },
     /** 修改按钮操作 */
-    handleUpdate() {
-      this.$modal.msgError("无操作权限");
+    async handleUpdate(row) {
+      await this.handleWatch(row)
+      const {receiverCity, receiverDistrict, receiverProvince} = row
+      row.fullArea = [receiverProvince, receiverCity, receiverDistrict]
+      this.modifyReceiverInfo.form = row
+      this.modifyReceiverInfo.open = true
     },
     handleWatch(row) {
       getDecryptPhone(row.id).then(response =>{
@@ -676,8 +726,30 @@ export default {
         this.logObj.open = true
         this.logObj.loading = false
       })
+    },
+    asyncOk() {
+      this.$refs['modifyReceiverInfoForm'].validate((valid) => {
+        if (valid) {
+          const {id, receiverName, fullArea, receiverPhone, receiverDetailAddress} = this.modifyReceiverInfo.form
+          const [receiverProvince, receiverCity, receiverDistrict] = fullArea
+          updateReceiverAddress({
+            id,
+            receiverCity,
+            receiverDetailAddress,
+            receiverDistrict,
+            receiverName,
+            receiverPhone,
+            receiverProvince
+          }).then(resp => {
+            this.$modal.msgSuccess('修改成功')
+            this.getList()
+            this.modifyReceiverInfo.open = false
+          })
+        }
+      })
     }
-  }
+  },
+
 
 };
 </script>

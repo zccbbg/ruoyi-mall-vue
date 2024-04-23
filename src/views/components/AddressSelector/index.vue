@@ -8,7 +8,7 @@
       v-bind="$props"
       clearable
       placeholder="请选择..."
-      size="small"
+      :size="size"
     />
   </div>
 </template>
@@ -20,7 +20,7 @@ import {mapGetters} from "vuex";
 export default {
   name: 'AddressSelector',
   // register the component
-  props: ['value', 'props'],
+  props: ['value', 'props', 'size'],
   computed: {
     ...mapGetters(['areaSelect']),
     tempValue: {
@@ -47,7 +47,7 @@ export default {
     recurs(list) {
       list.forEach(it => {
         it.label = it.name
-        it.value = it.id
+        it.value = it.name
         if (it.children) {
           this.recurs(it.children)
         }

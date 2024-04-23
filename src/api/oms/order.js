@@ -77,6 +77,14 @@ export function deliverProduct(data){
   })
 }
 
+export function updateReceiverAddress(data){
+  return request({
+    url: '/oms/order/receiver/update',
+    method: 'post',
+    data: data
+  })
+}
+
 // 查看订单操作日志
 export function viewLog(orderId){
   return request({
