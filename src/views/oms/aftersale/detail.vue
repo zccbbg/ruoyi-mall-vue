@@ -39,19 +39,19 @@
                         </template>
                     </el-table-column>
                     <el-table-column label="申请原因" prop="reason"></el-table-column>
-<!--                    <el-table-column label="凭证" prop="proofPics">-->
-<!--                        <template slot-scope="{row}">-->
-<!--                            <el-image class="small-img circle-img" :src="row.proofPics"-->
-<!--                                :preview-src-list="[row.proofPics]" />-->
-<!--                        </template>-->
-<!--                    </el-table-column>-->
+                    <el-table-column label="凭证" prop="proofPics">
+                        <template slot-scope="{row}">
+                            <el-image class="small-img circle-img" :src="row.proofPics"
+                                :preview-src-list="[row.proofPics]" />
+                        </template>
+                    </el-table-column>
                     <el-table-column label="申请状态" prop="refundStatus" width="110">
                         <template slot-scope="{row}">
                             <span>{{ getAftersaleStatus(row) }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column label="平台拒绝理由" prop="remark"></el-table-column>
-<!--                    <el-table-column label="退货快递号" prop="expressNo"></el-table-column>-->
+                    <el-table-column label="退货快递号" prop="refundWaybillCode"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button size="mini" type="text" icon="el-icon-edit"
@@ -103,15 +103,25 @@
                     <el-descriptions-item label="申请售后时间">{{ parseTime(refundInfoDetail.applyRefundTime,'') }}</el-descriptions-item>
                     <el-descriptions-item label="退款金额">￥{{ refundInfoDetail.refundAmount }}</el-descriptions-item>
                     <el-descriptions-item label="申请原因">{{ refundInfoDetail.reason }}</el-descriptions-item>
-<!--                    <el-descriptions-item label="凭证">-->
-<!--                        <el-image class="small-img circle-img" :src="refundInfoDetail.proofPics"-->
-<!--                                :preview-src-list="[refundInfoDetail.proofPics]" />-->
-<!--                    </el-descriptions-item>-->
+                    <el-descriptions-item label="具体描述">{{ refundInfoDetail.description }}</el-descriptions-item>
+                    <el-descriptions-item label="凭证">
+                      <el-image class="small-img circle-img" :src="refundInfoDetail.proofPics"
+                                :preview-src-list="[refundInfoDetail.proofPics]" />
+                    </el-descriptions-item>
                     <el-descriptions-item label="申请状态">{{ getAftersaleStatus(refundInfoDetail) }}</el-descriptions-item>
                     <el-descriptions-item label="平台拒绝理由">{{ refundInfoDetail.remark }}</el-descriptions-item>
-                    <el-descriptions-item label="退货快递号">{{ refundInfoDetail.expressNo }}</el-descriptions-item>
-                    <el-descriptions-item label="物流公司">{{ getExpressName(refundInfoDetail) }}</el-descriptions-item>
-                </el-descriptions>
+                    <el-descriptions-item label="退货快递号">{{ refundInfoDetail.refundWaybillCode }}</el-descriptions-item>
+                    <el-descriptions-item label="物流公司">{{ getExpressName(refundInfoDetail.refundWpCode) }}</el-descriptions-item>
+                    <el-descriptions-item label="物流进度">
+                      <el-popover placement="left" width="300" trigger="hover" popper-class="popperOptions">
+                        <el-timeline-item v-for="(activity, index) in aliLogisticsInfoList" :key="index"
+                                          :timestamp="activity.time">
+                          {{ activity.context }}
+                        </el-timeline-item>
+                        <span slot="reference">{{ refundInfoDetail.logistics }}</span>
+                      </el-popover>
+                    </el-descriptions-item>
+                  </el-descriptions>
             </el-dialog>
         </el-main>
     </div>
@@ -119,6 +129,7 @@
 
 <script>
 import { getOmsAftersale } from "@/api/oms/aftersale";
+import {getConfigKey2} from "@/api/system/config";
 
 export default {
     name: "OmsAftersaleDetail",
@@ -138,6 +149,7 @@ export default {
         }
     },
     created() {
+        this.getExpressData()
         const { id } = this.$route.query
         this.queryDetail(id).then((expressNo) => {
             // this.getLogistic(expressNo)
@@ -166,11 +178,19 @@ export default {
         },
         expressMap() {
             let obj = this.experssList.map(item => [item.expressCode, item.expressName])
-            let map = new Map(obj)
-            return map
+            return new Map(obj)
         }
     },
     methods: {
+      getExpressData() {
+        getConfigKey2('express-set-key').then(res => {
+          if (res.data && res.data.configValue) {
+            this.experssList = JSON.parse(res.data.configValue)
+          } else {
+            this.experssList = []
+          }
+        })
+      },
         queryDetail(id) {
             this.loading = true
             return new Promise(resolve =>
@@ -196,14 +216,14 @@ export default {
         getAftersaleStatus(row) {
             return this.aftersaleStatusMap.get(row.refundStatus + '')
         },
-        getExpressName(row) {
-            return this.expressMap.get(row.expressName + '')
+        getExpressName(name) {
+            return this.expressMap.get(name)
         },
         handleWatch(row) {
             this.refundInfoDetail = row
-            // if(this.refundInfoDetail.allLogistics){
-            //     this.aliLogisticsInfoList = JSON.parse(refundInfoDetail.allLogistics)
-            // }
+            if(this.refundInfoDetail.allLogistics){
+                this.aliLogisticsInfoList = JSON.parse(refundInfoDetail.allLogistics)
+            }
             this.open = true
         },
         cancel() {
