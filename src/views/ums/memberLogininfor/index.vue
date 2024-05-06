@@ -65,20 +65,20 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="umsMemberLogininforList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="会员手机号" align="center" prop="phone" />
-      <el-table-column label="会员id" align="center" prop="memberId" />
-      <el-table-column label="登录IP地址" align="center" prop="ipaddr" />
-      <el-table-column label="登录地点" align="center" prop="loginLocation" />
-      <el-table-column label="浏览器类型" align="center" prop="browser" />
-      <el-table-column label="操作系统" align="center" prop="os" />
-      <el-table-column label="登陆时间" align="center" prop="loginTime" width="180" >
+    <el-table v-loading="loading" :data="umsMemberLogininforList" @selection-change="handleSelectionChange" border>
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="会员手机号" prop="phone"/>
+      <el-table-column label="会员id" prop="memberId"/>
+      <el-table-column label="登录IP地址" prop="ipaddr"/>
+      <el-table-column label="登录地点" prop="loginLocation"/>
+      <el-table-column label="浏览器类型" prop="browser"/>
+      <el-table-column label="操作系统" prop="os"/>
+      <el-table-column label="登陆时间" prop="loginTime" width="180">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.loginTime, '')}}</span>
+          <span>{{ parseTime(scope.row.loginTime, '') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -86,23 +86,32 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ums:memberLogininfor:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
   </div>
 </template>
 
 <script>
-import { listUmsMemberLogininfor, getUmsMemberLogininfor, delUmsMemberLogininfor, addUmsMemberLogininfor, updateUmsMemberLogininfor, exportUmsMemberLogininfor } from "@/api/ums/memberLogininfor";
+import {
+  addUmsMemberLogininfor,
+  delUmsMemberLogininfor,
+  exportUmsMemberLogininfor,
+  getUmsMemberLogininfor,
+  listUmsMemberLogininfor,
+  updateUmsMemberLogininfor
+} from "@/api/ums/memberLogininfor";
 import dateUtil from '@/utils/DateUtil';
 
 export default {

@@ -3,7 +3,8 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="统计日期" prop="date">
         <el-date-picker v-model="dateRange" style="width: 240px" value-format="yyyy-MM-dd" type="daterange"
-                        :clearable="true" :picker-options='pickerOptions' range-separator="-" start-placeholder="开始日期"
+                        :clearable="true" :picker-options='pickerOptions' range-separator="-"
+                        start-placeholder="开始日期"
                         end-placeholder="结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item class="flex_one tr">
@@ -12,45 +13,53 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="awsSystemStatisticsList" @selection-change="handleSelectionChange">
-      <el-table-column label="统计日期" align="center" prop="date" width="180" >
+    <el-table v-loading="loading" :data="awsSystemStatisticsList" @selection-change="handleSelectionChange" border>
+      <el-table-column label="统计日期" prop="date" width="180">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}')}}</span>
+          <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="登录用户数" align="center" prop="loginMemberCount" />
-      <el-table-column label="注册用户数" align="center" prop="registerMemberCount" />
-      <el-table-column label="加购用户数" align="center" prop="addCartMemberCount" />
-      <el-table-column label="下单用户数" align="center" prop="createOrderMemberCount" />
-      <el-table-column label="成交用户数" align="center" prop="dealMemberCount" />
-      <el-table-column label="下单数" align="center" prop="orderCount" />
-      <el-table-column label="成交数" align="center" prop="dealCount" />
-      <el-table-column label="成交金额" align="center" prop="dealAmount">
+      <el-table-column label="登录用户数" prop="loginMemberCount"/>
+      <el-table-column label="注册用户数" prop="registerMemberCount"/>
+      <el-table-column label="加购用户数" prop="addCartMemberCount"/>
+      <el-table-column label="下单用户数" prop="createOrderMemberCount"/>
+      <el-table-column label="成交用户数" prop="dealMemberCount"/>
+      <el-table-column label="下单数" prop="orderCount"/>
+      <el-table-column label="成交数" prop="dealCount"/>
+      <el-table-column label="成交金额" prop="dealAmount">
         <template v-slot="scope">
           ￥{{ scope.row.dealAmount.toFixed(2) }}
         </template>
       </el-table-column>
-      <el-table-column label="售后数" align="center" prop="aftersaleCount" />
-      <el-table-column label="售后金额" align="center" prop="aftersaleAmount">
+      <el-table-column label="售后数" prop="aftersaleCount"/>
+      <el-table-column label="售后金额" prop="aftersaleAmount">
         <template v-slot="scope">
           ￥{{ scope.row.aftersaleAmount.toFixed(2) }}
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
 
   </div>
 </template>
 
 <script>
-import { listAwsSystemStatistics, getAwsSystemStatistics, delAwsSystemStatistics, addAwsSystemStatistics, updateAwsSystemStatistics, exportAwsSystemStatistics } from "@/api/aws/systemStatistics";
+import {
+  addAwsSystemStatistics,
+  delAwsSystemStatistics,
+  exportAwsSystemStatistics,
+  getAwsSystemStatistics,
+  listAwsSystemStatistics,
+  updateAwsSystemStatistics
+} from "@/api/aws/systemStatistics";
 import dateUtil from "@/utils/DateUtil";
 
 export default {

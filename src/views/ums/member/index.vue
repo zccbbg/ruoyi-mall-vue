@@ -42,40 +42,40 @@
       <el-form-item label="备注" prop="mark">
         <el-select v-model="queryParams.hasMark" clearable size="small">
           <el-option value="1" label="有备注" />
-          <el-option value="0" label="无备注" />
+          <el-option value="0" label="无备注"/>
         </el-select>
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-<!--        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>-->
+        <!--        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>-->
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="umsMemberList">
-      <el-table-column label="昵称" align="center" prop="nickname" width="150"/>
-      <el-table-column label="手机号码" align="center" prop="phoneHidden" width="150"/>
-      <el-table-column label="佣金" align="center" width="120">
+    <el-table v-loading="loading" :data="umsMemberList" border>
+      <el-table-column label="昵称" prop="nickname" width="150"/>
+      <el-table-column label="手机号码" prop="phoneHidden" width="150"/>
+      <el-table-column label="佣金" width="120">
         <template v-slot="scope">
           <div>0.00</div>
         </template>
       </el-table-column>
-      <el-table-column label="积分" align="center" width="120">
+      <el-table-column label="积分" width="120">
         <template v-slot="scope">
           <div>0.00</div>
         </template>
       </el-table-column>
-      <el-table-column label="余额" align="center" width="120">
+      <el-table-column label="余额" width="120">
         <template v-slot="scope">
           <div>0.00</div>
         </template>
       </el-table-column>
-      <el-table-column label="注册时间" align="center" prop="createTime" width="180">
+      <el-table-column label="注册时间" prop="createTime" width="180">
         <template v-slot="scope">
           <div>{{ parseTime(scope.row.createTime) }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="上次登录" align="center" prop="createTime">
+      <el-table-column label="上次登录" prop="createTime">
         <template v-slot="scope">
           <div>{{ parseTime(scope.row.createTime) }}</div>
         </template>
@@ -86,14 +86,15 @@
           <i class="el-icon-edit pointer" @click="showUpdateMark(scope.row)"></i>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fix="right" width="200">
+      <el-table-column label="操作" class-name="small-padding fixed-width" fix="right" width="200">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             @click="showStatistics(scope.row.id)"
             v-hasPermi="['ums:member:statistics']"
-          >查看数据</el-button>
+          >查看数据
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -107,13 +108,14 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
     <!--  统计  -->
     <el-dialog :title="statisticsObj.title" :visible.sync="statisticsObj.open" width="500px" append-to-body>
       <el-descriptions direction="vertical" :column="2" border>
@@ -134,9 +136,19 @@
 </template>
 
 <script>
-import { listUmsMember, getUmsMember, delUmsMember, addUmsMember, updateUmsMember,updateUmsMemberMark, exportUmsMember, changeAccountStatus, decryptedPhone, viewStatistics } from "@/api/ums/member";
+import {
+  addUmsMember,
+  changeAccountStatus,
+  decryptedPhone,
+  delUmsMember,
+  exportUmsMember,
+  getUmsMember,
+  listUmsMember,
+  updateUmsMember,
+  updateUmsMemberMark,
+  viewStatistics
+} from "@/api/ums/member";
 import dateUtil from '@/utils/DateUtil';
-import moment from "moment";
 import {isStarRepo} from "@/utils/is-star-plugin";
 import {mapGetters} from "vuex";
 

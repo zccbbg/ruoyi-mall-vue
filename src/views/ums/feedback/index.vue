@@ -26,20 +26,20 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="feedbackList">
+    <el-table v-loading="loading" :data="feedbackList" border>
       <el-table-column label="反馈人" align="left" prop="nickname" width="150">
         <template v-slot="scope">
-          <p>用户ID：{{scope.row.createBy}}</p>
-          <p>{{scope.row.phone}}</p>
+          <p>用户ID：{{ scope.row.createBy }}</p>
+          <p>{{ scope.row.phone }}</p>
         </template>
       </el-table-column>
-      <el-table-column label="反馈时间" align="center" prop="createTime" width="180">
+      <el-table-column label="反馈时间" prop="createTime" width="180">
         <template v-slot="scope">
           <div>{{ parseTime(scope.row.createTime) }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="反馈类型" align="center" prop="type"/>
-      <el-table-column label="具体内容" align="center" prop="content" show-overflow-tooltip/>
+      <el-table-column label="反馈类型" prop="type"/>
+      <el-table-column label="具体内容" prop="content" show-overflow-tooltip/>
       <el-table-column label="图片">
         <template v-slot="scope">
           <el-image
@@ -51,11 +51,12 @@
           </el-image>
         </template>
       </el-table-column>
-      <el-table-column label="处理状态/时间" align="center">
+      <el-table-column label="处理状态/时间">
         <template v-slot="scope">
           <div v-if="scope.row.handleStatus === 1">已处理</div>
-          <el-switch v-else v-model="scope.row.handleStatus" active-value="1" inactive-value="0" @change="changeStatus(scope.row)"/>
-          <div>{{ scope.row.handleTime ? parseTime(scope.row.handleTime) : ''}}</div>
+          <el-switch v-else v-model="scope.row.handleStatus" active-value="1" inactive-value="0"
+                     @change="changeStatus(scope.row)"/>
+          <div>{{ scope.row.handleTime ? parseTime(scope.row.handleTime) : '' }}</div>
         </template>
       </el-table-column>
       <el-table-column label="备注">
@@ -65,13 +66,14 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
     <el-dialog title="修改备注" :visible.sync="remarkModal.visible" width="30%" append-to-body>
       <el-input type='textarea' :rows='3' placeholder='请输入内容' v-model='remarkModal.remark'/>
       <span class="dialog-footer" slot="footer">
@@ -83,11 +85,7 @@
 </template>
 
 <script>
-import {
-  listFeedbacks,
-  updateMark,
-  changeHandleStatus
-} from "@/api/ums/feedback";
+import {changeHandleStatus, listFeedbacks, updateMark} from "@/api/ums/feedback";
 import dateUtil from '@/utils/DateUtil';
 import {mapGetters} from "vuex";
 

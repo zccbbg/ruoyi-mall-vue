@@ -93,19 +93,27 @@
 <!--      </el-table-column>-->
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
 
   </div>
 </template>
 
 <script>
-import { listUmsMemberCart, getUmsMemberCart, delUmsMemberCart, addUmsMemberCart, updateUmsMemberCart, exportUmsMemberCart } from "@/api/ums/memberCart";
+import {
+  addUmsMemberCart,
+  delUmsMemberCart,
+  exportUmsMemberCart,
+  getUmsMemberCart,
+  listUmsMemberCart,
+  updateUmsMemberCart
+} from "@/api/ums/memberCart";
 
 export default {
   name: "UmsMemberCart",

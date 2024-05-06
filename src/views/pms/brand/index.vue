@@ -32,28 +32,29 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="pmsBrandList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="品牌logo" align="center" prop="logo">
+    <el-table v-loading="loading" :data="pmsBrandList" @selection-change="handleSelectionChange" border>
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="品牌logo" prop="logo">
         <template slot-scope="{ row }">
           <el-image v-if="row.logo" :src="row.logo" :preview-src-list="[row.logo]" class="small-img circle-img"/>
         </template>
       </el-table-column>
-      <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="排序" align="center" prop="sort" />
-      <el-table-column label="状态" align="center" prop="showStatus">
+      <el-table-column label="名称" prop="name"/>
+      <el-table-column label="排序" prop="sort"/>
+      <el-table-column label="状态" prop="showStatus">
         <template slot-scope="{ row }">
-          <dict-tag :value="row.showStatus" prop-name="sys_normal_disable" />
+          <dict-tag :value="row.showStatus" prop-name="sys_normal_disable"/>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -64,13 +65,14 @@
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
 
     <!-- 添加或修改品牌管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
@@ -98,7 +100,7 @@
 </template>
 
 <script>
-import { listPmsBrand, getPmsBrand, delPmsBrand, addPmsBrand, updatePmsBrand, exportPmsBrand } from "@/api/pms/brand";
+import {addPmsBrand, delPmsBrand, exportPmsBrand, getPmsBrand, listPmsBrand, updatePmsBrand} from "@/api/pms/brand";
 
 export default {
   name: "PmsBrand",

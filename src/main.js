@@ -45,6 +45,7 @@ import DictRadio from '@/components/DictRadio'
 
 import DictSelect from '@/components/DictSelect'
 
+import InBody from '@/components/InBody/InBody.vue'
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -72,6 +73,7 @@ Vue.component('OssImageUpload', OssImageUpload)
 Vue.component('ImagePreview', ImagePreview)
 Vue.component('DictRadio',DictRadio)
 Vue.component('DictSelect',DictSelect)
+Vue.component('InBody', InBody)
 
 Vue.use(directive)
 Vue.use(plugins)

@@ -6,9 +6,9 @@
                    :radioData="dict.type.activity_coupon_status" :showAll="'all'"/>
       </el-form-item>
     </el-form>
-    <el-table v-loading="loading" :data="tableList">
-      <el-table-column label="券ID" align="center" prop="id" />
-      <el-table-column label="用户信息 " align="center">
+    <el-table v-loading="loading" :data="tableList" border>
+      <el-table-column label="券ID"  prop="id" />
+      <el-table-column label="用户信息 " >
         <template slot-scope="scope">
           <div class="flex-center">
             <el-avatar :src="scope.row.avatar"></el-avatar>
@@ -19,21 +19,21 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="领取时间" align="center" prop="createTime" width="180" />
-      <el-table-column label="使用状态" align="center">
+      <el-table-column label="领取时间"  prop="createTime" width="180" />
+      <el-table-column label="使用状态" >
         <template slot-scope="scope">
           <dict-tag :value="scope.row.useStatus" prop-name="activity_coupon_status"/>
         </template>
       </el-table-column>
-      <el-table-column label="有效期" align="center" width="180" >
+      <el-table-column label="有效期"  width="180" >
         <template slot-scope="scope">
           <p>{{ scope.row.beginTime}}</p>
           <p> ~ </p>
           <p>{{ scope.row.endTime}}</p>
         </template>
       </el-table-column>
-      <el-table-column label="订单号" align="center" prop="orderId" />
-      <el-table-column label="使用时间" align="center" prop="useTime" width="180" />
+      <el-table-column label="订单号"  prop="orderId" />
+      <el-table-column label="使用时间"  prop="useTime" width="180" />
     </el-table>
 
     <pagination

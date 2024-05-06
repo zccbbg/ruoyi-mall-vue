@@ -145,35 +145,35 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="MemberCouponList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="活动id" align="center" prop="couponActivityId" />
-      <el-table-column label="用户id" align="center" prop="memberId" />
-      <el-table-column label="活动名称" align="center" prop="title" />
-      <el-table-column label="使用范围  1全场通用 2指定商品可用 3指定商品不可用" align="center" prop="useScope" />
-      <el-table-column label="商品id集合，逗号分隔" align="center" prop="productIds" />
-      <el-table-column label="优惠券金额" align="center" prop="couponAmount" />
-      <el-table-column label="最低消费金额" align="center" prop="minAmount" />
-      <el-table-column label="要兑换的积分" align="center" prop="useIntegral" />
-      <el-table-column label="1免费兑换  2积分兑换" align="center" prop="couponType" />
-      <el-table-column label="券开始时间" align="center" prop="beginTime" width="180" >
+    <el-table v-loading="loading" :data="MemberCouponList" @selection-change="handleSelectionChange" border>
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="活动id" prop="couponActivityId"/>
+      <el-table-column label="用户id" prop="memberId"/>
+      <el-table-column label="活动名称" prop="title"/>
+      <el-table-column label="使用范围  1全场通用 2指定商品可用 3指定商品不可用" prop="useScope"/>
+      <el-table-column label="商品id集合，逗号分隔" prop="productIds"/>
+      <el-table-column label="优惠券金额" prop="couponAmount"/>
+      <el-table-column label="最低消费金额" prop="minAmount"/>
+      <el-table-column label="要兑换的积分" prop="useIntegral"/>
+      <el-table-column label="1免费兑换  2积分兑换" prop="couponType"/>
+      <el-table-column label="券开始时间" prop="beginTime" width="180">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.beginTime, '')}}</span>
+          <span>{{ parseTime(scope.row.beginTime, '') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="券结束时间" align="center" prop="endTime" width="180" >
+      <el-table-column label="券结束时间" prop="endTime" width="180">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.endTime, '')}}</span>
+          <span>{{ parseTime(scope.row.endTime, '') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="0未使用  1已使用" align="center" prop="useStatus" />
-      <el-table-column label="订单id" align="center" prop="orderId" />
-      <el-table-column label="使用时间" align="center" prop="useTime" width="180" >
+      <el-table-column label="0未使用  1已使用" prop="useStatus"/>
+      <el-table-column label="订单id" prop="orderId"/>
+      <el-table-column label="使用时间" prop="useTime" width="180">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.useTime, '')}}</span>
+          <span>{{ parseTime(scope.row.useTime, '') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -181,25 +181,28 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['act:memberCoupon:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['act:memberCoupon:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
 
     <!-- 添加或修改用户领券记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
@@ -275,7 +278,14 @@
 </template>
 
 <script>
-import { listMemberCoupon, getMemberCoupon, delMemberCoupon, addMemberCoupon, updateMemberCoupon, exportMemberCoupon } from "@/api/act/memberCoupon";
+import {
+  addMemberCoupon,
+  delMemberCoupon,
+  exportMemberCoupon,
+  getMemberCoupon,
+  listMemberCoupon,
+  updateMemberCoupon
+} from "@/api/act/memberCoupon";
 
 export default {
   name: "MemberCoupon",

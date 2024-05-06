@@ -58,12 +58,13 @@
     <el-table
       v-loading="loading"
       :data="pmsProductCategoryList"
+      border
       :tree-props="{ hasChildren: 'hasChildren', children: 'children' }"
       @selection-change="handleSelectionChange"
       row-key="id"
     >
-      <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="图片" align="center" prop="icon">
+      <el-table-column label="名称"  prop="name" />
+      <el-table-column label="图片"  prop="icon">
         <template slot-scope="{ row }">
           <el-image
             v-if="row.icon"
@@ -73,8 +74,8 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="排序" align="center" prop="sort" />
-      <el-table-column label="状态" align="center" prop="showStatus">
+      <el-table-column label="排序"  prop="sort" />
+      <el-table-column label="状态"  prop="showStatus">
         <template v-slot="{ row }">
           <dict-tag
             :value="row.showStatus"
@@ -84,7 +85,6 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        align="center"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">

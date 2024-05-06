@@ -36,37 +36,37 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="CouponActivityList">
-      <el-table-column label="活动名称" align="center" prop="title"/>
-      <el-table-column label="使用范围" align="center" prop="useScope">
+    <el-table v-loading="loading" :data="CouponActivityList" border>
+      <el-table-column label="活动名称" prop="title"/>
+      <el-table-column label="使用范围" prop="useScope">
         <template slot-scope="scope">
           <dict-tag :value="scope.row.useScope" prop-name="coupon_use_scope"/>
         </template>
       </el-table-column>
-      <el-table-column label="优惠内容" align="center">
+      <el-table-column label="优惠内容">
         <template slot-scope="scope">
           <span v-if="scope.row.minAmount">满{{ scope.row.minAmount }}元，优惠{{ scope.row.couponAmount }}元</span>
           <span v-else>无门槛，优惠{{ scope.row.couponAmount }}元</span>
         </template>
       </el-table-column>
-      <el-table-column label="发行总数" align="center" prop="totalCount"/>
-      <el-table-column label="剩余总数" align="center" prop="leftCount"/>
-      <el-table-column label="已使用" align="center" prop="useCount"/>
-      <el-table-column label="每人限领" align="center" prop="userLimit"/>
-      <el-table-column label="兑换类型" align="center" prop="couponType">
+      <el-table-column label="发行总数" prop="totalCount"/>
+      <el-table-column label="剩余总数" prop="leftCount"/>
+      <el-table-column label="已使用" prop="useCount"/>
+      <el-table-column label="每人限领" prop="userLimit"/>
+      <el-table-column label="兑换类型" prop="couponType">
         <template slot-scope="scope">
           <dict-tag :value="scope.row.couponType" prop-name="coupon_exchange_type"/>
         </template>
       </el-table-column>
-      <el-table-column label="要兑换的积分" align="center" prop="useIntegral"/>
-      <el-table-column label="活动时间" align="center" prop="beginTime" width="180">
+      <el-table-column label="要兑换的积分" prop="useIntegral"/>
+      <el-table-column label="活动时间" prop="beginTime" width="180">
         <template slot-scope="scope">
           <p>{{ scope.row.beginTime }}</p>
           <p> ~ </p>
           <p>{{ scope.row.endTime }}</p>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -93,14 +93,14 @@
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
-
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
     <!-- 添加或修改优惠券活动表对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px">
@@ -162,7 +162,7 @@
         </el-form-item>
         <el-form-item label="商品列表" prop="productIds" v-if="[2,3].includes(form.useScope)">
           <el-button @click="chooseSku" size="small">选择商品</el-button>
-          <el-table :data="productList" class="mt10" max-height="300px">
+          <el-table :data="productList" class="mt10" max-height="300px" border>
             <el-table-column label="菜品信息">
               <template v-slot="{row}">
                 <div class="flex-center">
@@ -171,7 +171,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="操作" align="center">
+            <el-table-column label="操作">
               <template v-slot="{row}">
                 <span class="red ml5 pointer" @click="delProduct(row)">删除</span>
               </template>
@@ -191,11 +191,11 @@
 
 <script>
 import {
-  listCouponActivity,
-  delCouponActivity,
   addCouponActivity,
-  updateCouponActivity,
-  exportCouponActivity
+  delCouponActivity,
+  exportCouponActivity,
+  listCouponActivity,
+  updateCouponActivity
 } from "@/api/act/couponActivity";
 import ProductSelect from "@/views/pms/product/productSelect.vue";
 import receiveList from "@/views/act/couponActivity/receiveList.vue";

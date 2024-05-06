@@ -21,8 +21,10 @@
       </el-form-item>
       <el-form-item label="创建时间" prop="Time">
         <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
-                        range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
-                        start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']" align="right"
+                        range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']"
+                        align="right"
                         @change="handleChange">
         </el-date-picker>
       </el-form-item>
@@ -32,66 +34,81 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="omsAftersaleList" @selection-change="handleSelectionChange">
-<!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="订单号" align="center" prop="orderSn" width="200"/>
-      <el-table-column label="售后单号" align="center" prop="id" width="160"/>
-      <el-table-column label="申请状态" align="center" prop="aftersaleStatus" width="80">
+    <el-table v-loading="loading" :data="omsAftersaleList" @selection-change="handleSelectionChange" border>
+      <!--      <el-table-column type="selection" width="55" align="center" />-->
+      <el-table-column label="售后单号" prop="id" width="160"/>
+      <el-table-column label="申请状态" prop="aftersaleStatus" width="80">
         <template v-slot="scope">
           <el-tag effect="plain" size="medium" :type="getAftersaleStatusTag(scope.row)">{{
-              getAftersaleStatusText(scope.row) }}</el-tag>
+              getAftersaleStatusText(scope.row)
+            }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="用户信息" align="center" prop="nickName" width="120">
+      <el-table-column label="用户信息" prop="nickName" width="120">
         <template v-slot="scope">
           <div>{{ scope.row.nickName }}</div>
           <div>{{ scope.row.phone }}</div>
-          <div>{{scope.row.mark}}</div>
+          <div>{{ scope.row.mark }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="退款金额" align="center" prop="applyReturnAmount" width="120"/>
-      <el-table-column label="售后类型" align="center" prop="applyRefundType" width="80">
+      <el-table-column label="退款金额" prop="applyReturnAmount" width="120"/>
+      <el-table-column label="售后类型" prop="applyRefundType" width="80">
         <template v-slot="scope">
           <el-tag effect="plain" size="medium" :type="getAftersaleTypeTag(scope.row)">{{
-              getAftersaleTypeText(scope.row) }}</el-tag>
+              getAftersaleTypeText(scope.row)
+            }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="申请时间" align="center" prop="applyRefundTime" width="180" >
+      <el-table-column label="申请时间" prop="applyRefundTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.applyRefundTime, '')}}</span>
+          <span>{{ parseTime(scope.row.applyRefundTime, '') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="处理时间" align="center" prop="handleTime" width="180" >
+      <el-table-column label="处理时间" prop="handleTime" width="180">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.handleTime, '')}}</span>
+          <span>{{ parseTime(scope.row.handleTime, '') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="原因" align="center" prop="reason" width="220"/>
-      <el-table-column label="处理备注" align="center" prop="note" width="150"/>
-      <el-table-column label="处理人员" align="center" prop="handleMan" width="100"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="140">
+      <el-table-column label="原因" prop="reason" width="220"/>
+      <el-table-column label="处理备注" prop="note" width="150"/>
+      <el-table-column label="处理人员" prop="handleMan" width="100"/>
+      <el-table-column label="订单编号/操作" class-name="small-padding fixed-width" width="220" fixed="right">
         <template slot-scope="scope">
+          <div>
+            {{ scope.row.orderSn }}
+            <el-link @click="copy(scope.row.orderSn)" :underline="false"><i
+              class="el-icon-document-copy el-icon--right"></i></el-link>
+          </div>
           <el-button size="mini" type="text" @click="handleDetail(scope.row.orderId)"
-                     v-hasPermi="['oms:aftersale:query']">详情</el-button>
+                     v-hasPermi="['oms:aftersale:query']">详情
+          </el-button>
           <el-button size="mini" type="text" @click="showLog(scope.row.orderId)"
-                     v-hasPermi="['oms:aftersale:log']">日志</el-button>
-          <el-button size="mini" type="text"  @click="approve(scope.row.orderId, 1)"
-                     v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">同意</el-button>
-          <el-button size="mini" type="text"  @click="handleOpen(scope.row.orderId, 2)"
-                     v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">拒绝</el-button>
-          <el-button size="mini" type="text"  @click="confirmReceive(scope.row.orderId, 3)"
-                     v-if="scope.row.aftersaleStatus == 1 && scope.row.applyRefundType == 2" v-hasPermi="['manager:oms:aftersale:update']">确认收货</el-button>
+                     v-hasPermi="['oms:aftersale:log']">日志
+          </el-button>
+          <el-button size="mini" type="text" @click="approve(scope.row, 1)"
+                     v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">同意
+          </el-button>
+          <el-button size="mini" type="text" @click="handleOpen(scope.row, 2)" class="red"
+                     v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">拒绝
+          </el-button>
+          <el-button size="mini" type="text" @click="confirmReceive(scope.row, 3)"
+                     v-if="scope.row.aftersaleStatus == 1 && scope.row.applyRefundType == 2"
+                     v-hasPermi="['manager:oms:aftersale:update']">确认收货
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
 
     <!-- 拒绝对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -123,7 +140,16 @@
 </template>
 
 <script>
-import { listOmsAftersale, getOmsAftersale, delOmsAftersale, addOmsAftersale, updateOmsAftersale, exportOmsAftersale, dealWithAftersale, viewLog } from "@/api/oms/aftersale";
+import {
+  addOmsAftersale,
+  dealWithAftersale,
+  delOmsAftersale,
+  exportOmsAftersale,
+  getOmsAftersale,
+  listOmsAftersale,
+  updateOmsAftersale,
+  viewLog
+} from "@/api/oms/aftersale";
 import dateUtil from '@/utils/DateUtil';
 
 export default {
@@ -172,7 +198,8 @@ export default {
       updateOrderForm: {
         orderId: null,
         optType: null,
-        remark: null
+        remark: null,
+        id: null,
       },
       rules: {
         remark: [
@@ -195,9 +222,20 @@ export default {
     this.getList();
   },
   methods: {
+    copy(data) {
+      let url = data;
+      let oInput = document.createElement('input');
+      oInput.value = url;
+      document.body.appendChild(oInput);
+      oInput.select(); // 选择对象;
+      console.log(oInput.value)
+      document.execCommand("Copy"); // 执行浏览器复制命令
+      this.$modal.msgSuccess('复制成功');
+      oInput.remove()
+    },
     /** 查询订单售后列表 */
     getList() {
-      if (this.queryParams.Time){
+      if (this.queryParams.Time) {
         this.queryParams.startTime = this.queryParams.Time[0]
         this.queryParams.endTime = this.queryParams.Time[1]
       }
@@ -314,29 +352,37 @@ export default {
       this.$router.push({ path: '/aftersale/detail', query: { id } })
     },
     /** 同意售后 */
-    approve(orderId, type){
-      this.updateOrderForm.orderId = orderId
-      this.updateOrderForm.optType = type
-      dealWithAftersale(this.updateOrderForm).then((response) => {
-        this.cancel()
-        this.$message.success('操作成功')
-        this.getList()
-      })
+    approve(order, type) {
+      this.$confirm(`您确定要同意售后单号为【${order.id}】的售后申请吗？`, '温馨提示', {type: 'warning'}).then(
+        () => {
+          this.updateOrderForm.orderId = order.orderId
+          this.updateOrderForm.optType = type
+          dealWithAftersale(this.updateOrderForm).then((response) => {
+            this.cancel()
+            this.$message.success('操作成功')
+            this.getList()
+          })
+        }
+      )
     },
     /** 拒绝 */
-    handleOpen(orderId, type){
-      this.updateOrderForm.orderId = orderId
+    handleOpen(order, type) {
+      this.updateOrderForm.orderId = order.orderId
       this.updateOrderForm.optType = type
+      this.updateOrderForm.id = order.id
       this.open = true
     },
-    confirmReceive(orderId, type){
-      this.updateOrderForm.orderId = orderId
-      this.updateOrderForm.optType = type
-      dealWithAftersale(this.updateOrderForm).then((response) => {
-        this.cancel()
-        this.$message.success('操作成功')
-        this.getList()
-      })
+    confirmReceive(orderId, type) {
+      this.$confirm(`您确认收到售后单号为【${order.id}】的货物了吗？`, '温馨提示', {type: 'warning'}).then(
+        () => {
+          this.updateOrderForm.orderId = orderId
+          this.updateOrderForm.optType = type
+          dealWithAftersale(this.updateOrderForm).then((response) => {
+            this.cancel()
+            this.$message.success('操作成功')
+            this.getList()
+          })
+        })
     },
     getAftersaleStatusTag(row) {
       switch (row.aftersaleStatus) {
@@ -387,17 +433,21 @@ export default {
       this.updateOrderForm = {
         orderId: null,
         optType: null,
-        remark: null
+        remark: null,
+        id: null,
       }
     },
     submitUpdate(formName){
       this.$refs[formName].validate(valid => {
-        if(valid){
-          dealWithAftersale(this.updateOrderForm).then((response) => {
-            this.cancel()
-            this.$message.success('操作成功')
-            this.getList()
-          })
+        if (valid) {
+          this.$confirm(`您确定要拒绝售后单号为【${this.updateOrderForm.id}】的售后申请了吗？`, '温馨提示', {type: 'warning'}).then(
+            () => {
+              dealWithAftersale(this.updateOrderForm).then((response) => {
+                this.cancel()
+                this.$message.success('操作成功')
+                this.getList()
+              })
+            })
         }
       })
     },

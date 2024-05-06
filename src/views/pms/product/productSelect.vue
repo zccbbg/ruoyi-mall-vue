@@ -16,10 +16,10 @@
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getSkuList">搜索</el-button>
       </el-form-item>
     </el-form>
-    <el-table class="mt20" :data="chooseSkuObj.list" ref="table" v-loading="chooseSkuObj.loading" max-height="500"
+    <el-table class="mt20" :data="chooseSkuObj.list" ref="table" v-loading="chooseSkuObj.loading" max-height="500" border
               row-key="id" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" :reserve-selection="true"/>
-      <el-table-column label="菜品名称" align="center" prop="name">
+      <el-table-column label="菜品名称"  prop="name">
         <template v-slot="{row}">
           <div class="flex-center">
             <el-image v-if="row.pic" :src="row.pic" :preview-src-list="[row.pic]" class="small-img circle-img"/>
@@ -27,8 +27,8 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="销量" align="center" prop="sales"/>
-      <el-table-column label="创建时间" align="center" prop="createTime"/>
+      <el-table-column label="销量"  prop="sales"/>
+      <el-table-column label="创建时间"  prop="createTime"/>
     </el-table>
     <pagination
       v-show="chooseSkuObj.total>0"
