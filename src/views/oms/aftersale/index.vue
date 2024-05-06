@@ -79,6 +79,8 @@
                      v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">同意</el-button>
           <el-button size="mini" type="text"  @click="handleOpen(scope.row.orderId, 2)"
                      v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">拒绝</el-button>
+          <el-button size="mini" type="text"  @click="confirmReceive(scope.row.orderId, 3)"
+                     v-if="scope.row.aftersaleStatus == 1 && scope.row.applyRefundType == 2" v-hasPermi="['manager:oms:aftersale:update']">确认收货</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -326,6 +328,15 @@ export default {
       this.updateOrderForm.orderId = orderId
       this.updateOrderForm.optType = type
       this.open = true
+    },
+    confirmReceive(orderId, type){
+      this.updateOrderForm.orderId = orderId
+      this.updateOrderForm.optType = type
+      dealWithAftersale(this.updateOrderForm).then((response) => {
+        this.cancel()
+        this.$message.success('操作成功')
+        this.getList()
+      })
     },
     getAftersaleStatusTag(row) {
       switch (row.aftersaleStatus) {
