@@ -130,13 +130,6 @@
             <el-tag :type="getOrderStatusTag(scope.row.status)" style="margin-right: 10px">
               {{ getOrderStatusText(scope.row.status) }}
             </el-tag>
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleDelivery(scope.row)"
-              :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
-            >编辑
-            </el-button>
           </div>
           <div v-if="scope.row.deliverySn">物流单号：{{ scope.row.deliverySn }}
             <el-link @click="copy(scope.row.deliverySn)" :underline="false"><i
@@ -145,9 +138,9 @@
           <div v-if="scope.row.deliveryTime">发货时间：{{ parseTime(scope.row.deliveryTime, '') }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="订单编号/操作" class-name="small-padding fixed-width" width="220" fixed="right">
-        <template slot-scope="scope">
-          <div>
+      <el-table-column label="订单编号/操作" class-name="small-padding fixed-width" width="220" fixed="right" >
+        <template slot-scope="scope" >
+          <div style="float: right">
             {{ scope.row.orderSn }}
             <!--            <el-link-->
             <!--              size="mini"-->
@@ -157,27 +150,30 @@
             <el-link @click="copy(scope.row.orderSn)" :underline="false"><i
               class="el-icon-document-copy el-icon--right"></i></el-link>
           </div>
-          <el-button
-            size="mini"
-            type="text"
-            @click="goDetail(scope.row)"
-            v-hasPermi="['oms:order:query']"
-          >详情
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            @click="showLog(scope.row.id)"
-            v-hasPermi="['oms:order:log']"
-          >日志
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleDelivery(scope.row)"
-            :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
-          >发货
-          </el-button>
+          <div style="float: right">
+            <el-button
+              size="mini"
+              type="text"
+              @click="goDetail(scope.row)"
+              v-hasPermi="['oms:order:query']"
+            >详情
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              @click="showLog(scope.row.id)"
+              v-hasPermi="['oms:order:log']"
+            >日志
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleDelivery(scope.row)"
+              :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
+            >发货
+            </el-button>
+          </div>
+
         </template>
       </el-table-column>
     </el-table>
