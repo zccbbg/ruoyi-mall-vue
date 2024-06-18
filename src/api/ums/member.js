@@ -85,4 +85,11 @@ export function viewStatistics(memberId){
   })
 }
 
+export function getMiniWechatImg(){
+  return request({
+    url: `/ums/member/wechat/code`,
+    method: 'get'
+  })
+}
+
 

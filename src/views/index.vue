@@ -42,7 +42,7 @@
       <el-col :span="3">
         <el-image
           style="height: 150px"
-          :src="require('@/assets/QRCode/wechat_mini.jpg')"
+          :src="'data:image/png;base64,'+ miniImg"
           fit="fill"
         ></el-image>
       </el-col>
@@ -148,10 +148,11 @@
 <script>
 import {str2Date} from '@/utils/date';
 import PanelGroup from '@/views/components/PanelGroup'
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import OrderLineChart from "@/views/dashboard/OrderLineChart.vue";
 import TopProduct from "@/views/components/IndexOrderPanelGroup/TopProduct.vue";
 import {memberAndCartStatistics, orderAndAftersaleStatistics} from "@/api/statistics";
+import {getMiniWechatImg} from '@/api/ums/member';
 
 const DATA_FROM_BACKEND = {
     columns: ['date', 'orderCount','orderAmount'],
@@ -182,6 +183,7 @@ export default {
   },
   data() {
     return {
+      miniImg: '',
       pickerOptions: {
           shortcuts: [{
             text: '最近一周',
@@ -245,18 +247,24 @@ export default {
     this.orderAndAftersaleStat()
     this.initOrderCountDate()
     this.getData()
+    this.initMiniWechatImg()
   },
   methods: {
-    handleDateChange(){
-        this.getData();
-      },
-      initOrderCountDate(){
-        let start = new Date();
-        start.setFullYear(2018, 10, 1);
-        const end = new Date();
-        end.setTime(start.getTime() + 1000 * 60 * 60 * 24 * 7);
-        this.orderCountDate=[start,end];
-      },
+    initMiniWechatImg() {
+      getMiniWechatImg().then(res => {
+        this.miniImg = res.data
+      })
+    },
+    handleDateChange() {
+      this.getData();
+    },
+    initOrderCountDate() {
+      let start = new Date();
+      start.setFullYear(2018, 10, 1);
+      const end = new Date();
+      end.setTime(start.getTime() + 1000 * 60 * 60 * 24 * 7);
+      this.orderCountDate = [start, end];
+    },
       getData(){
         setTimeout(() => {
           this.chartData = {
