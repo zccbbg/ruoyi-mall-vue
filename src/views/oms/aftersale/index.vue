@@ -1,114 +1,115 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="申请状态" prop="status">
-        <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_aftersale_status" size="small" :show-all="'all'" @change="handleQuery"></DictRadio>
-      </el-form-item>
-      <el-form-item label="售后类型" prop="type">
-        <DictRadio v-model="queryParams.type" :radioData="dict.type.oms_aftersale_type" size="small" :show-all="'all'" @change="handleQuery"></DictRadio>
-      </el-form-item>
-      <el-form-item label="订单号" prop="orderSn">
-        <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单号" clearable size="small"
-                  @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="售后单号" prop="id">
-        <el-input v-model.trim="queryParams.id" placeholder="请输入售后单号" clearable size="small"
-                  @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="会员手机号" prop="userPhone">
-        <el-input v-model.trim="queryParams.userPhone" placeholder="请输入会员手机号" clearable size="small"
-                  @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="Time">
-        <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
-                        range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']"
-                        align="right"
-                        @change="handleChange">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item class="flex_one tr">
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-table v-loading="loading" :data="omsAftersaleList" @selection-change="handleSelectionChange" border>
-      <!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="售后单号" prop="id" width="160"/>
-      <el-table-column label="申请状态" prop="aftersaleStatus" width="80">
-        <template v-slot="scope">
-          <el-tag effect="plain" size="medium" :type="getAftersaleStatusTag(scope.row)">{{
-              getAftersaleStatusText(scope.row)
-            }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="用户信息" prop="nickName" width="120">
-        <template v-slot="scope">
-          <div>{{ scope.row.nickName }}</div>
-          <div>{{ scope.row.phone }}</div>
-          <div>{{ scope.row.mark }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="退款金额" prop="applyReturnAmount" width="120"/>
-      <el-table-column label="售后类型" prop="applyRefundType" width="80">
-        <template v-slot="scope">
-          <el-tag effect="plain" size="medium" :type="getAftersaleTypeTag(scope.row)">{{
-              getAftersaleTypeText(scope.row)
-            }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="申请时间" prop="applyRefundTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.applyRefundTime, '') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="处理时间" prop="handleTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.handleTime, '') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="原因" prop="reason" width="220"/>
-      <el-table-column label="处理备注" prop="note" width="150"/>
-      <el-table-column label="处理人员" prop="handleMan" width="100"/>
-      <el-table-column label="订单编号/操作" class-name="small-padding fixed-width" width="220" fixed="right">
-        <template slot-scope="scope">
-          <div>
-            {{ scope.row.orderSn }}
-            <el-link @click="copy(scope.row.orderSn)" :underline="false"><i
-              class="el-icon-document-copy el-icon--right"></i></el-link>
-          </div>
-          <el-button size="mini" type="text" @click="handleDetail(scope.row.orderId)"
-                     v-hasPermi="['oms:aftersale:query']">详情
-          </el-button>
-          <el-button size="mini" type="text" @click="showLog(scope.row.orderId)"
-                     v-hasPermi="['oms:aftersale:log']">日志
-          </el-button>
-          <el-button size="mini" type="text" @click="approve(scope.row, 1)"
-                     v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">同意
-          </el-button>
-          <el-button size="mini" type="text" @click="handleOpen(scope.row, 2)" class="red"
-                     v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">拒绝
-          </el-button>
-          <el-button size="mini" type="text" @click="confirmReceive(scope.row, 3)"
-                     v-if="scope.row.aftersaleStatus == 1 && scope.row.applyRefundType == 2"
-                     v-hasPermi="['manager:oms:aftersale:update']">确认收货
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <InBody v-show="total>0">
-      <pagination
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList"
-      />
-    </InBody>
+    <div v-show="show">
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+        <el-form-item label="申请状态" prop="status">
+          <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_aftersale_status" size="small" :show-all="'all'" @change="handleQuery"></DictRadio>
+        </el-form-item>
+        <el-form-item label="售后类型" prop="type">
+          <DictRadio v-model="queryParams.type" :radioData="dict.type.oms_aftersale_type" size="small" :show-all="'all'" @change="handleQuery"></DictRadio>
+        </el-form-item>
+        <el-form-item label="订单号" prop="orderSn">
+          <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单号" clearable size="small"
+                    @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item label="售后单号" prop="id">
+          <el-input v-model.trim="queryParams.id" placeholder="请输入售后单号" clearable size="small"
+                    @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item label="会员手机号" prop="userPhone">
+          <el-input v-model.trim="queryParams.userPhone" placeholder="请输入会员手机号" clearable size="small"
+                    @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item label="创建时间" prop="Time">
+          <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
+                          range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss"
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']"
+                          align="right"
+                          @change="handleChange">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item class="flex_one tr">
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table v-loading="loading" :data="omsAftersaleList" @selection-change="handleSelectionChange" border>
+        <!--      <el-table-column type="selection" width="55" align="center" />-->
+        <el-table-column label="售后单号" prop="id" width="160"/>
+        <el-table-column label="申请状态" prop="aftersaleStatus" width="80">
+          <template v-slot="scope">
+            <el-tag effect="plain" size="medium" :type="getAftersaleStatusTag(scope.row)">{{
+                getAftersaleStatusText(scope.row)
+              }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="用户信息" prop="nickName" width="120">
+          <template v-slot="scope">
+            <div>{{ scope.row.nickName }}</div>
+            <div>{{ scope.row.phone }}</div>
+            <div>{{ scope.row.mark }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="退款金额" prop="applyReturnAmount" width="120"/>
+        <el-table-column label="售后类型" prop="applyRefundType" width="80">
+          <template v-slot="scope">
+            <el-tag effect="plain" size="medium" :type="getAftersaleTypeTag(scope.row)">{{
+                getAftersaleTypeText(scope.row)
+              }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="申请时间" prop="applyRefundTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.applyRefundTime, '') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="处理时间" prop="handleTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.handleTime, '') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="原因" prop="reason" width="220"/>
+        <el-table-column label="处理备注" prop="note" width="150"/>
+        <el-table-column label="处理人员" prop="handleMan" width="100"/>
+        <el-table-column label="订单编号/操作" class-name="small-padding fixed-width" width="220" fixed="right">
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.orderSn }}
+              <el-link @click="copy(scope.row.orderSn)" :underline="false"><i
+                class="el-icon-document-copy el-icon--right"></i></el-link>
+            </div>
+            <el-button size="mini" type="text" @click="handleDetail(scope.row.orderId)"
+                       v-hasPermi="['oms:aftersale:query']">详情
+            </el-button>
+            <el-button size="mini" type="text" @click="showLog(scope.row.orderId)"
+                       v-hasPermi="['oms:aftersale:log']">日志
+            </el-button>
+            <el-button size="mini" type="text" @click="approve(scope.row, 1)"
+                       v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">同意
+            </el-button>
+            <el-button size="mini" type="text" @click="handleOpen(scope.row, 2)" class="red"
+                       v-if="scope.row.aftersaleStatus == 0" v-hasPermi="['manager:oms:aftersale:update']">拒绝
+            </el-button>
+            <el-button size="mini" type="text" @click="confirmReceive(scope.row, 3)"
+                       v-if="scope.row.aftersaleStatus == 1 && scope.row.applyRefundType == 2"
+                       v-hasPermi="['manager:oms:aftersale:update']">确认收货
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <InBody v-show="total>0">
+        <pagination
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getList"
+        />
+      </InBody>
+    </div>
+    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>
 
     <!-- 拒绝对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -151,12 +152,15 @@ import {
   viewLog
 } from "@/api/oms/aftersale";
 import dateUtil from '@/utils/DateUtil';
+import SeeAdsComponent from "@/components/SeeAdsComponent.vue";
 
 export default {
   name: "OmsAftersale",
+  components: {SeeAdsComponent},
   dicts: ["oms_aftersale_type", "oms_aftersale_status"],
   data() {
     return {
+      show: false,
       pickerOptions: {
         shortcuts: dateUtil.getTimeShort2()
       },
@@ -219,9 +223,17 @@ export default {
     if (status){
       this.queryParams.status = status
     }
-    this.getList();
+    this.$nextTick(()=>{
+      this.$refs.seeAdsComponentRef.show()
+    })
   },
   methods: {
+    confirmOk(success) {
+      if (success) {
+        this.show = true
+        this.getList();
+      }
+    },
     copy(data) {
       let url = data;
       let oInput = document.createElement('input');

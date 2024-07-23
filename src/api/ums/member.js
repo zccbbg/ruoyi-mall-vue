@@ -85,10 +85,19 @@ export function viewStatistics(memberId){
   })
 }
 
-export function getMiniWechatImg(){
+export function getMiniWechatImg(params){
   return request({
     url: `/ums/member/wechat/code`,
-    method: 'get'
+    method: 'get',
+    params
+  })
+}
+
+export function judgeQrCode(params){
+  return request({
+    url: `/no-auth/verified/code`,
+    method: 'get',
+    params
   })
 }
 

@@ -251,7 +251,7 @@ export default {
   },
   methods: {
     initMiniWechatImg() {
-      getMiniWechatImg().then(res => {
+      getMiniWechatImg({scene: 1}).then(res => {
         this.miniImg = res.data
       })
     },

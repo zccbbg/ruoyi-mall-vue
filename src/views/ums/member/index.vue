@@ -1,114 +1,115 @@
 <template>
-  <div class="app-container" v-if="show">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="创建时间">
-        <el-date-picker
-          size="small"
-          v-model="dateRange"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          :clearable="true"
-          :picker-options='pickerOptions'
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </el-form-item>
-<!--      <el-form-item label="账号启用状态">-->
-<!--        <el-select v-model="queryParams.status" placeholder="请选择" :clearable="true" size="small">-->
-<!--          <el-option label="禁用" value="0">-->
-<!--          </el-option>-->
-<!--          <el-option label="启用" value="1">-->
-<!--          </el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-      <el-form-item label="昵称" prop="nickname">
-        <el-input
-          v-model.trim="queryParams.nickname"
-          placeholder="请输入昵称"
-          clearable
-          size="small"
-        />
-      </el-form-item>
-      <el-form-item label="手机号码" prop="phone">
-        <el-input
-          v-model.trim="queryParams.phone"
-          placeholder="请输入手机号码"
-          clearable
-          size="small"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="mark">
-        <el-select v-model="queryParams.hasMark" clearable size="small">
-          <el-option value="1" label="有备注" />
-          <el-option value="0" label="无备注"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item class="flex_one tr">
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <!--        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>-->
-      </el-form-item>
-    </el-form>
+  <div class="app-container">
+    <div v-show="show">
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+        <el-form-item label="创建时间">
+          <el-date-picker
+            size="small"
+            v-model="dateRange"
+            style="width: 240px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            :clearable="true"
+            :picker-options='pickerOptions'
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-form-item>
+  <!--      <el-form-item label="账号启用状态">-->
+  <!--        <el-select v-model="queryParams.status" placeholder="请选择" :clearable="true" size="small">-->
+  <!--          <el-option label="禁用" value="0">-->
+  <!--          </el-option>-->
+  <!--          <el-option label="启用" value="1">-->
+  <!--          </el-option>-->
+  <!--        </el-select>-->
+  <!--      </el-form-item>-->
+        <el-form-item label="昵称" prop="nickname">
+          <el-input
+            v-model.trim="queryParams.nickname"
+            placeholder="请输入昵称"
+            clearable
+            size="small"
+          />
+        </el-form-item>
+        <el-form-item label="手机号码" prop="phone">
+          <el-input
+            v-model.trim="queryParams.phone"
+            placeholder="请输入手机号码"
+            clearable
+            size="small"
+          />
+        </el-form-item>
+        <el-form-item label="备注" prop="mark">
+          <el-select v-model="queryParams.hasMark" clearable size="small">
+            <el-option value="1" label="有备注" />
+            <el-option value="0" label="无备注"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="flex_one tr">
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          <!--        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>-->
+        </el-form-item>
+      </el-form>
 
-    <el-table v-loading="loading" :data="umsMemberList" border>
-      <el-table-column label="昵称" prop="nickname" width="150"/>
-      <el-table-column label="手机号码" prop="phoneHidden" width="150"/>
-      <el-table-column label="佣金" width="120">
-        <template v-slot="scope">
-          <div>0.00</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="积分" width="120">
-        <template v-slot="scope">
-          <div>0.00</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="余额" width="120">
-        <template v-slot="scope">
-          <div>0.00</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="注册时间" prop="createTime" width="180">
-        <template v-slot="scope">
-          <div>{{ parseTime(scope.row.createTime) }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="上次登录" prop="createTime">
-        <template v-slot="scope">
-          <div>{{ parseTime(scope.row.createTime) }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="备注">
-        <template v-slot="scope">
-          <span class="mr10">{{scope.row.mark}}</span>
-          <i class="el-icon-edit pointer" @click="showUpdateMark(scope.row)"></i>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" class-name="small-padding fixed-width" fix="right" width="200">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            @click="showStatistics(scope.row.id)"
-            v-hasPermi="['ums:member:statistics']"
-          >查看数据
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            @click="goOrder(scope.row.phoneEncrypted)"
-          >查看下单</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            @click="goCart(scope.row.phoneEncrypted)"
-          >查看购物车</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <InBody v-show="total>0">
+      <el-table v-loading="loading" :data="umsMemberList" border>
+        <el-table-column label="昵称" prop="nickname" width="150"/>
+        <el-table-column label="手机号码" prop="phoneHidden" width="150"/>
+        <el-table-column label="佣金" width="120">
+          <template v-slot="scope">
+            <div>0.00</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="积分" width="120">
+          <template v-slot="scope">
+            <div>0.00</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="余额" width="120">
+          <template v-slot="scope">
+            <div>0.00</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="注册时间" prop="createTime" width="180">
+          <template v-slot="scope">
+            <div>{{ parseTime(scope.row.createTime) }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="上次登录" prop="createTime">
+          <template v-slot="scope">
+            <div>{{ parseTime(scope.row.createTime) }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="备注">
+          <template v-slot="scope">
+            <span class="mr10">{{scope.row.mark}}</span>
+            <i class="el-icon-edit pointer" @click="showUpdateMark(scope.row)"></i>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" class-name="small-padding fixed-width" fix="right" width="200">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              @click="showStatistics(scope.row.id)"
+              v-hasPermi="['ums:member:statistics']"
+            >查看数据
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              @click="goOrder(scope.row.phoneEncrypted)"
+            >查看下单</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              @click="goCart(scope.row.phoneEncrypted)"
+            >查看购物车</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <InBody v-show="total>0">
       <pagination
         :total="total"
         :page.sync="queryParams.pageNum"
@@ -116,6 +117,8 @@
         @pagination="getList"
       />
     </InBody>
+    </div>
+    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>
     <!--  统计  -->
     <el-dialog :title="statisticsObj.title" :visible.sync="statisticsObj.open" width="500px" append-to-body>
       <el-descriptions direction="vertical" :column="2" border>
@@ -151,9 +154,11 @@ import {
 import dateUtil from '@/utils/DateUtil';
 import {isStarRepo} from "@/utils/is-star-plugin";
 import {mapGetters} from "vuex";
+import SeeAdsComponent from "@/components/SeeAdsComponent.vue";
 
 export default {
   name: "UmsMember",
+  components: {SeeAdsComponent},
   data() {
     return {
       show: false,
@@ -220,16 +225,23 @@ export default {
     };
   },
   async created() {
-    const res = await isStarRepo('zccbbg', 'RuoYi-Mall', this.userId, 'https://mall.ichengle.top/member/member', 'ruoyi-mall-商城', 'https://gitee.com/zccbbg/RuoYi-Mall')
-    this.show = res;
-    if (res) {
-      this.getList();
-    }
+    this.$nextTick(()=>{
+      this.$refs.seeAdsComponentRef.show()
+    })
   },
   computed:{
     ...mapGetters(['userId']),
   },
   methods: {
+    async confirmOk(success) {
+      if (success) {
+        const res = await isStarRepo('zccbbg', 'RuoYi-Mall', this.userId, 'https://mall.ichengle.top/member/member', 'ruoyi-mall-商城', 'https://gitee.com/zccbbg/RuoYi-Mall')
+        this.show = res;
+        if (res) {
+          this.getList();
+        }
+      }
+    },
     showUpdateMark(record){
       this.remarkModal = {
         visible: true,
