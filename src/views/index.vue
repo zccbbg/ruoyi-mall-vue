@@ -42,7 +42,7 @@
       <el-col :span="3">
         <el-image
           style="height: 150px"
-          :src="'data:image/png;base64,'+ miniImg"
+          :src="require('@/assets/QRCode/wechat_mini.jpg')"
           fit="fill"
         ></el-image>
       </el-col>
@@ -152,7 +152,6 @@ import {mapGetters} from 'vuex'
 import OrderLineChart from "@/views/dashboard/OrderLineChart.vue";
 import TopProduct from "@/views/components/IndexOrderPanelGroup/TopProduct.vue";
 import {memberAndCartStatistics, orderAndAftersaleStatistics} from "@/api/statistics";
-import {getMiniWechatImg} from '@/api/ums/member';
 
 const DATA_FROM_BACKEND = {
     columns: ['date', 'orderCount','orderAmount'],
@@ -183,7 +182,6 @@ export default {
   },
   data() {
     return {
-      miniImg: '',
       pickerOptions: {
           shortcuts: [{
             text: '最近一周',
@@ -247,14 +245,8 @@ export default {
     this.orderAndAftersaleStat()
     this.initOrderCountDate()
     this.getData()
-    this.initMiniWechatImg()
   },
   methods: {
-    initMiniWechatImg() {
-      getMiniWechatImg({scene: 1}).then(res => {
-        this.miniImg = res.data
-      })
-    },
     handleDateChange() {
       this.getData();
     },
