@@ -119,7 +119,7 @@
         />
       </InBody>
     </div>
-    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>
+<!--    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>-->
 
   </div>
 </template>
@@ -136,7 +136,7 @@ export default {
   dicts: ['pms_publish_status'],
   data() {
     return {
-      show: false,
+      show: true,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -176,9 +176,7 @@ export default {
     };
   },
   created() {
-    this.$nextTick(()=>{
-      this.$refs.seeAdsComponentRef.show()
-    })
+    this.getList();
   },
   computed:{
     ...mapGetters(['userId']),

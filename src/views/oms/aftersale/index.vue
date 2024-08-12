@@ -109,7 +109,7 @@
         />
       </InBody>
     </div>
-    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>
+<!--    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>-->
 
     <!-- 拒绝对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -160,7 +160,7 @@ export default {
   dicts: ["oms_aftersale_type", "oms_aftersale_status"],
   data() {
     return {
-      show: false,
+      show: true,
       pickerOptions: {
         shortcuts: dateUtil.getTimeShort2()
       },
@@ -223,9 +223,7 @@ export default {
     if (status){
       this.queryParams.status = status
     }
-    this.$nextTick(()=>{
-      this.$refs.seeAdsComponentRef.show()
-    })
+    this.getList();
   },
   methods: {
     confirmOk(success) {

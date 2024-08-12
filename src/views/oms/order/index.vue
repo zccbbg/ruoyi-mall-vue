@@ -1,192 +1,193 @@
 <template>
-  <div class="app-container">
-    <div v-show="show">
-      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
-               class="ry_form">
-        <el-form-item label="订单状态" prop="status">
-          <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_order_status" size="small" :show-all="'all'"
-                     :filter="['11', '12', '13', '14']" @change="handleQuery"></DictRadio>
-        </el-form-item>
-        <el-form-item label="订单编号" prop="orderSn">
-          <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单编号" clearable size="small"
-                    @keyup.enter.native="handleQuery"/>
-        </el-form-item>
-        <el-form-item label="会员手机号" prop="userPhone">
-          <el-input v-model.trim="queryParams.userPhone" placeholder="请输入会员手机号" clearable size="small"
-                    @keyup.enter.native="handleQuery"/>
-        </el-form-item>
-        <el-form-item label="省市区" prop="provinces">
-          <address-selector v-model="queryParams.provinces" size="small"></address-selector>
-        </el-form-item>
-        <el-form-item label="下单时间" prop="Time">
-          <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
-                          range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss"
-                          value-format="yyyy-MM-dd HH:mm:ss"
-                          start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']"
-                          align="right"
-                          @change="handleChange">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item class="flex_one tr">
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table v-loading="loading" :data="omsOrderList" border @selection-change="handleSelectionChange"
-                cell-class-name="my-cell">
-        <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column label="收件信息" prop="receiverName" width="280">
-          <template v-slot="scope">
-            <div>
-              <span>{{ scope.row.decrypt?scope.row.receiverName:getHiddenName(scope.row.receiverName) }} {{ scope.row.receiverPhone }}</span>
-              <el-button
-                size="mini"
-                type="text"
-                @click="handleWatch(scope.row)"
-                style="margin-left: 10px"
-              >查看
-              </el-button>
-              <el-button
-                size="mini"
-                type="text"
-                @click="handleUpdate(scope.row)"
-              >修改
-              </el-button>
-            </div>
-            <div>
-              <span>{{ scope.row.receiverProvince }}{{ scope.row.receiverCity }}{{ scope.row.receiverDistrict }}</span>
-              <span>{{ scope.row.decrypt?scope.row.receiverDetailAddress:getHiddenDetailAddress(scope.row.receiverDetailAddress) }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="客户信息" prop="receiverName" width="160">
-          <template v-slot="scope">
-            <p>{{ scope.row.nickName }}</p>
-            <p>{{ scope.row.mark }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column label="备注留言" prop="note" width="160">
-          <template v-slot="scope">
-            <div>
-              <span v-if="scope.row.merchantNote" class="note-title" style="margin-right: 10px">平台备注</span>
-              <el-button
-                size="mini"
-                type="text"
-                @click="handleSaveNote(scope.row)"
-              >{{ scope.row.merchantNote ? '修改' : '添加平台备注' }}
-              </el-button>
-            </div>
-            <div v-if="scope.row.merchantNote">{{ scope.row.merchantNote }}</div>
-            <div v-if="scope.row.note" class="note-title">买家备注</div>
-            <div v-if="scope.row.note">{{ scope.row.note }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="下单时间/支付时间" prop="payTime" width="140">
-          <template slot-scope="scope">
-            <div v-if="scope.row.createTime">{{ parseTime(scope.row.createTime, '{mm}-{dd} {hh}:{ii}') }} 下单</div>
-            <div v-if="scope.row.payTime">{{ parseTime(scope.row.payTime, '{mm}-{dd} {hh}:{ii}') }} 支付</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="优惠券" prop="couponAmount" width="80">
-          <template v-slot="scope">
-            <div v-if="scope.row.couponAmount">￥{{ scope.row.couponAmount }}</div>
-            <div v-else>无</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="合计" prop="totalAmount" width="140">
-          <template v-slot="scope">
-            <div>
-              <span>总数： </span>
-              <span style="color: red;">{{ scope.row.buyNum }}</span>
-            </div>
-            <div>实付： ￥{{ scope.row.payAmount }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="商品规格" prop="productList" width="280">
-          <template v-slot="scope">
-            <div v-for="item in scope.row.productList" class="product-container">
-              <el-popover
-                placement="right"
-                trigger="hover">
-                <el-image :src="item.pic" style="width: 350px;height: 350px"/>
-                <el-image slot="reference" class="small-img product-item" :src="item.pic"
-                          style="width: 40px;height: 40px"/>
-              </el-popover>
-              <div class="product-item" style="margin-left: 5px">
-                <div class="sp-data">
-                  <span v-for="(value, key) in JSON.parse(item.spData)">{{ key }}：{{ value }}&nbsp;</span>
-                </div>
-                <div class="product-item quantity">
-                  <span style="margin-right: 10px">￥{{ item.salePrice }}</span>
-                  <span>x{{ item.buyNum }}</span>
-                </div>
+  <div class="app-container" v-if="show">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+             class="ry_form">
+      <el-form-item label="订单状态" prop="status">
+        <DictRadio v-model="queryParams.status" :radioData="dict.type.oms_order_status" size="small" :show-all="'all'"
+                   :filter="['11', '12', '13', '14']" @change="handleQuery"></DictRadio>
+      </el-form-item>
+      <el-form-item label="订单编号" prop="orderSn">
+        <el-input v-model.trim="queryParams.orderSn" placeholder="请输入订单编号" clearable size="small"
+                  @keyup.enter.native="handleQuery"/>
+      </el-form-item>
+      <el-form-item label="会员手机号" prop="userPhone">
+        <el-input v-model.trim="queryParams.userPhone" placeholder="请输入会员手机号" clearable size="small"
+                  @keyup.enter.native="handleQuery"/>
+      </el-form-item>
+      <el-form-item label="省市区" prop="provinces">
+        <address-selector v-model="queryParams.provinces" size="small"></address-selector>
+      </el-form-item>
+      <el-form-item label="下单时间" prop="Time">
+        <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
+                        range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']"
+                        align="right"
+                        @change="handleChange">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item class="flex_one tr">
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-table v-loading="loading" :data="omsOrderList" border @selection-change="handleSelectionChange"
+              cell-class-name="my-cell">
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="收件信息" prop="receiverName" width="280">
+        <template v-slot="scope">
+          <div>
+            <span>{{ scope.row.decrypt?scope.row.receiverName:getHiddenName(scope.row.receiverName) }} {{ scope.row.receiverPhone }}</span>
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleWatch(scope.row)"
+              style="margin-left: 10px"
+            >查看
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleUpdate(scope.row)"
+            >修改
+            </el-button>
+          </div>
+          <div>
+            <span>{{ scope.row.receiverProvince }}{{ scope.row.receiverCity }}{{ scope.row.receiverDistrict }}</span>
+            <span>{{ scope.row.decrypt?scope.row.receiverDetailAddress:getHiddenDetailAddress(scope.row.receiverDetailAddress) }}</span>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="客户信息" prop="receiverName" width="160">
+        <template v-slot="scope">
+          <p>{{ scope.row.nickName }}</p>
+          <p>{{ scope.row.mark }}</p>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注留言" prop="note" width="160">
+        <template v-slot="scope">
+          <div>
+            <span v-if="scope.row.merchantNote" class="note-title" style="margin-right: 10px">平台备注</span>
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleSaveNote(scope.row)"
+            >{{ scope.row.merchantNote ? '修改' : '添加平台备注' }}
+            </el-button>
+          </div>
+          <div v-if="scope.row.merchantNote">{{ scope.row.merchantNote }}</div>
+          <div v-if="scope.row.note" class="note-title">买家备注</div>
+          <div v-if="scope.row.note">{{ scope.row.note }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="下单时间/支付时间" prop="payTime" width="140">
+        <template slot-scope="scope">
+          <div v-if="scope.row.createTime">{{ parseTime(scope.row.createTime, '{mm}-{dd} {hh}:{ii}') }} 下单</div>
+          <div v-if="scope.row.payTime">{{ parseTime(scope.row.payTime, '{mm}-{dd} {hh}:{ii}') }} 支付</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="优惠券" prop="couponAmount" width="80">
+        <template v-slot="scope">
+          <div v-if="scope.row.couponAmount">￥{{ scope.row.couponAmount }}</div>
+          <div v-else>无</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="合计" prop="totalAmount" width="140">
+        <template v-slot="scope">
+          <div>
+            <span>总数： </span>
+            <span style="color: red;">{{ scope.row.buyNum }}</span>
+          </div>
+          <div>实付： ￥{{ scope.row.payAmount }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="商品规格" prop="productList" width="280">
+        <template v-slot="scope">
+          <div v-for="item in scope.row.productList" class="product-container">
+            <el-popover
+              placement="right"
+              trigger="hover">
+              <el-image :src="item.pic" style="width: 350px;height: 350px"/>
+              <el-image slot="reference" class="small-img product-item" :src="item.pic"
+                        style="width: 40px;height: 40px"/>
+            </el-popover>
+            <div class="product-item" style="margin-left: 5px">
+              <div class="sp-data">
+                <span v-for="(value, key) in JSON.parse(item.spData)">{{ key }}：{{ value }}&nbsp;</span>
+              </div>
+              <div class="product-item quantity">
+                <span style="margin-right: 10px">￥{{ item.salePrice }}</span>
+                <span>x{{ item.buyNum }}</span>
               </div>
             </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="订单状态" prop="status" width="160">
-          <template v-slot="scope">
-            <div>
-              <el-tag :type="getOrderStatusTag(scope.row.status)" style="margin-right: 10px">
-                {{ getOrderStatusText(scope.row.status) }}
-              </el-tag>
-            </div>
-            <div v-if="scope.row.deliverySn">物流单号：{{ scope.row.deliverySn }}
-              <el-link @click="copy(scope.row.deliverySn)" :underline="false"><i
-                class="el-icon-document-copy el-icon--right"></i></el-link>
-            </div>
-            <div v-if="scope.row.deliveryTime">发货时间：{{ parseTime(scope.row.deliveryTime, '') }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="订单编号/操作" class-name="small-padding fixed-width" width="220" fixed="right" >
-          <template slot-scope="scope" >
-            <div style="float: right">
-              {{ scope.row.orderSn }}
-              <!--            <el-link-->
-              <!--              size="mini"-->
-              <!--              icon="el-icon-document-copy"-->
-              <!--              @click="copyOrderSn(scope.row.orderSn)"-->
-              <!--            ></el-link>-->
-              <el-link @click="copy(scope.row.orderSn)" :underline="false"><i
-                class="el-icon-document-copy el-icon--right"></i></el-link>
-            </div>
-            <div style="float: right">
-              <el-button
-                size="mini"
-                type="text"
-                @click="goDetail(scope.row)"
-                v-hasPermi="['oms:order:query']"
-              >详情
-              </el-button>
-              <el-button
-                size="mini"
-                type="text"
-                @click="showLog(scope.row.id)"
-                v-hasPermi="['oms:order:log']"
-              >日志
-              </el-button>
-              <el-button
-                size="mini"
-                type="text"
-                @click="handleDelivery(scope.row)"
-                :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
-              >发货
-              </el-button>
-            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单状态" prop="status" width="160">
+        <template v-slot="scope">
+          <div>
+            <el-tag :type="getOrderStatusTag(scope.row.status)" style="margin-right: 10px">
+              {{ getOrderStatusText(scope.row.status) }}
+            </el-tag>
+          </div>
+          <div v-if="scope.row.deliverySn">物流单号：{{ scope.row.deliverySn }}
+            <el-link @click="copy(scope.row.deliverySn)" :underline="false"><i
+              class="el-icon-document-copy el-icon--right"></i></el-link>
+          </div>
+          <div v-if="scope.row.deliveryTime">发货时间：{{ parseTime(scope.row.deliveryTime, '') }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单编号/操作" class-name="small-padding fixed-width" width="220" fixed="right" >
+        <template slot-scope="scope" >
+          <div style="float: right">
+            {{ scope.row.orderSn }}
+            <!--            <el-link-->
+            <!--              size="mini"-->
+            <!--              icon="el-icon-document-copy"-->
+            <!--              @click="copyOrderSn(scope.row.orderSn)"-->
+            <!--            ></el-link>-->
+            <el-link @click="copy(scope.row.orderSn)" :underline="false"><i
+              class="el-icon-document-copy el-icon--right"></i></el-link>
+          </div>
+          <div style="float: right">
+            <el-button
+              size="mini"
+              type="text"
+              @click="goDetail(scope.row)"
+              v-hasPermi="['oms:order:query']"
+            >详情
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              @click="showLog(scope.row.id)"
+              v-hasPermi="['oms:order:log']"
+            >日志
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleDelivery(scope.row)"
+              :disabled="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
+            >发货
+            </el-button>
+          </div>
 
-          </template>
-        </el-table-column>
-      </el-table>
-      <InBody v-show="total>0">
-        <pagination
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-        />
-      </InBody>
-    </div>
-    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <InBody v-show="total>0">
+      <pagination
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </InBody>
+
+
     <!-- 发货对话框 -->
     <el-dialog :title="deliveryObj.title" :visible.sync="deliveryObj.open" width="500px" append-to-body>
       <el-form ref="deliveryForm" :model="deliveryObj.form" :rules="deliveryObj.rules" label-width="100px">
@@ -284,7 +285,6 @@ import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import dateUtil, {dateFormat} from '@/utils/DateUtil';
 import {isStarRepo} from "@/utils/is-star-plugin"
 import {mapGetters} from "vuex";
-import SeeAdsComponent from "@/components/SeeAdsComponent.vue";
 
 export default {
   computed:{
@@ -293,7 +293,6 @@ export default {
   name: "OmsOrder",
   dicts: ["oms_order_status", "oms_pay_type"],
   components: {
-    SeeAdsComponent,
     AddressSelector
   },
   data() {
@@ -412,30 +411,23 @@ export default {
     };
   },
   async created() {
-    this.$nextTick(()=>{
-      this.$refs.seeAdsComponentRef.show()
-    })
+    const res = await isStarRepo('zccbbg', 'RuoYi-Mall', this.userId, 'https://mall.ichengle.top/order/order', 'ruoyi-mall-商城', 'https://gitee.com/zccbbg/RuoYi-Mall')
+    this.show = res;
+    if (res) {
+      const {phone, status, today} = this.$route.query
+      if (phone) {
+        this.queryParams.userPhone = phone
+      }
+      if (status) {
+        this.queryParams.status = status
+      }
+      if (today) {
+        this.setToday()
+      }
+      this.getList();
+    }
   },
   methods: {
-    async confirmOk(success) {
-      if (success) {
-        const res = await isStarRepo('zccbbg', 'RuoYi-Mall', this.userId, 'https://mall.ichengle.top/order/order', 'ruoyi-mall-商城', 'https://gitee.com/zccbbg/RuoYi-Mall')
-        this.show = res;
-        if (res) {
-          const {phone, status, today} = this.$route.query
-          if (phone) {
-            this.queryParams.userPhone = phone
-          }
-          if (status) {
-            this.queryParams.status = status
-          }
-          if (today) {
-            this.setToday()
-          }
-          this.getList();
-        }
-      }
-    },
     /** 日期组件设置为今天 */
     setToday() {
       const temp = new Date();
